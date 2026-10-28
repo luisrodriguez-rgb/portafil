@@ -32,8 +32,8 @@ const KitSnippet = {
   },
 
   /**
-   * options: { apiBase, dark, light, lang, adaptive, rival, snake: { morph, speed, pause } }
-   * adaptive=false usa solo el tema oscuro.
+   * options: { apiBase, dark, light, lang, adaptive, rival, snake: { morph, speed, pause }, themes: { pieza: tema } }
+   * adaptive=false usa solo el tema oscuro. themes da a una pieza su propio estilo en vez del general.
    */
   context(username, options = {}) {
     return {
@@ -44,7 +44,8 @@ const KitSnippet = {
       light: options.light || 'paper',
       adaptive: options.adaptive !== false,
       lang: options.lang && options.lang !== 'en' ? options.lang : '',
-      snake: options.snake || {}
+      snake: options.snake || {},
+      themes: options.themes || {}
     };
   },
 
@@ -65,6 +66,23 @@ const KitSnippet = {
     }
     if (this.PIECES[kind].pair) return `${ctx.api}/api/${kind}/${ctx.user}-vs-${ctx.rival}.svg?${params}`;
     return `${ctx.api}/api/${kind}/${ctx.user}.svg?${params}`;
+  },
+
+  /**
+   * Temas de una pieza en el modo oscuro y en el claro de GitHub. Con estilo propio, ese tema y su pareja
+   * (Tinta/Papel, Fósforo/GitHub claro); los temas de color (ThemeTokens.fixed) no cambian con el modo.
+   */
+  themesFor(kind, ctx) {
+    const own = ctx.themes[kind];
+    if (!own) {
+      // El mismo tema en los dos modos (uno de color, por ejemplo) no necesita <picture>
+      const adaptive = ctx.adaptive && ctx.dark !== ctx.light;
+      return { dark: ctx.dark, light: adaptive ? ctx.light : ctx.dark, adaptive };
+    }
+    if (!ctx.adaptive || ThemeTokens.fixed.includes(own)) return { dark: own, light: own, adaptive: false };
+    return ThemeTokens.light.includes(own)
+      ? { dark: ThemeTokens.partner[own], light: own, adaptive: true }
+      : { dark: own, light: ThemeTokens.partner[own], adaptive: true };
   },
 
   alt(kind, ctx) {
@@ -93,11 +111,12 @@ const KitSnippet = {
     // Las de media anchura llevan su tamaño real: en escritorio caben dos por fila y en el móvil GitHub las
     // limita al ancho (max-width: 100%) y se apilan, legibles. Con 49% quedaban dos de ~170 px en el móvil.
     const width = meta.width === 'half' ? '390' : '100%';
-    const img = `<img alt="${this.alt(kind, ctx)}" src="${this.url(kind, ctx.adaptive ? ctx.light : ctx.dark, ctx)}" width="${width}">`;
-    let html = ctx.adaptive
+    const themes = this.themesFor(kind, ctx);
+    const img = `<img alt="${this.alt(kind, ctx)}" src="${this.url(kind, themes.light, ctx)}" width="${width}">`;
+    let html = themes.adaptive
       ? `<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="${this.url(kind, ctx.dark, ctx)}">
-  <source media="(prefers-color-scheme: light)" srcset="${this.url(kind, ctx.light, ctx)}">
+  <source media="(prefers-color-scheme: dark)" srcset="${this.url(kind, themes.dark, ctx)}">
+  <source media="(prefers-color-scheme: light)" srcset="${this.url(kind, themes.light, ctx)}">
   ${img}
 </picture>`
       : img;

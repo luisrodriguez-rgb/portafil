@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const on = mode !== 'snake';
     if (was === 'snake' && on) for (const id of Object.keys(saved)) saved[id] = $(id).textContent;
     if (!on) for (const [id, text] of Object.entries(saved)) $(id).textContent = text;
-    studio.setArcade(on);
+    studio.setArcade(on, mode);
     canvas.hidden = !on;
     snakeCanvas.hidden = on;
     // Lo que solo tiene sentido para la serpiente: su barra de progreso y la longitud

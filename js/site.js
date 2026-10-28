@@ -69,6 +69,8 @@
       'rival.label': 'Usuario rival', 'rival.cta': 'Comparar', 'rival.placeholder': 'rival',
       'rival.needed': 'Escribe un rival arriba para ver esta pieza.',
       'snake.morph': 'Forma', 'snake.speed': 'Velocidad',
+      'piece.theme': 'Estilo', 'piece.themeAll': 'Igual que el resto',
+      'res.fixed': (name) => `${name} es un tema de color: se ve igual en el modo claro y en el oscuro. La casilla afecta a las piezas con Tinta, Papel, Fósforo o GitHub claro.`,
       morph: { matrix_viper: 'Víbora', capsule: 'Cápsula', retro: 'Retro' },
       speed: { normal: 'Normal', fast: 'Rápida', relaxed: 'Tranquila' },
       themes: { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub claro', cyberpunk: 'Cyberpunk', neon_cyan: 'Cian', amber_terminal: 'Ámbar' },
@@ -131,6 +133,8 @@
       'msg.notFound': (u) => `We could not find @${u} on GitHub.`,
       'msg.org': (u) => `@${u} is an organization: Portafil works with personal accounts.`,
       'msg.down': 'GitHub is not answering right now. Try again in a moment.',
+      'piece.theme': 'Style', 'piece.themeAll': 'Same as the rest',
+      'res.fixed': (name) => `${name} is a color theme: it looks the same in light and dark mode. The checkbox applies to pieces in Ink, Paper, Phosphor or GitHub light.`,
       'piece.add': 'Add to README', 'piece.copy': 'Copy code', 'piece.copied': 'Copied', 'piece.open': 'Open SVG',
       'tab.profile': 'Profile', 'tab.games': 'Games', 'tab.pair': 'Versus', 'tab.share': 'Share', 'tabs.label': 'Piece groups',
       'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two. Data refreshes every few hours and days are counted in UTC, as in the GitHub API.',
@@ -189,6 +193,7 @@
     template: KitSnippet.TEMPLATES[params.get('tpl')] ? params.get('tpl') : 'pieces',
     group: 'profile',
     previewMode: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    pieceThemes: Object.fromEntries(String(params.get('pt') || '').split(',').map(p => p.split(':')).filter(([k, t]) => KitSnippet.PIECES[k] && THEMES.includes(t))),
     picked: new Set((params.get('p') || KitSnippet.templatePieces(params.get('tpl')) || KitSnippet.DEFAULT_SELECTION).toString().split(',').filter(k => KitSnippet.PIECES[k]))
   };
   if (!['es', 'en'].includes(state.ui)) state.ui = 'en';
@@ -215,13 +220,18 @@
   }
 
   const otherTheme = () => state.other || PARTNER[state.theme];
+  // Los temas de color (Cyberpunk, Cian, Ámbar) no cambian con el modo de GitHub: el mismo en los dos.
+  // La casilla «cambiar con el modo» sigue valiendo para las piezas con Tinta, Papel, Fósforo o GitHub claro.
+  const FIXED = new Set(ThemeTokens.fixed);
   const snippetOptions = (base) => {
     const light = LIGHT.has(state.theme);
+    const fixed = FIXED.has(state.theme);
     return {
       apiBase: base,
-      dark: state.adaptive ? (light ? otherTheme() : state.theme) : state.theme,
-      light: light ? state.theme : otherTheme(),
+      dark: state.adaptive && !fixed ? (light ? otherTheme() : state.theme) : state.theme,
+      light: fixed ? state.theme : (light ? state.theme : otherTheme()),
       adaptive: state.adaptive,
+      themes: state.pieceThemes,
       lang: state.ui,
       rival: state.rival,
       snake: { morph: state.morph, speed: state.speed }
@@ -346,6 +356,8 @@
     if (state.theme !== 'ink') p.set('t', state.theme);
     if (state.other) p.set('o', state.other);
     if (!state.adaptive) p.set('a', '0');
+    const own = Object.entries(state.pieceThemes).map(([k, t]) => `${k}:${t}`).join(',');
+    if (own) p.set('pt', own);
     if (state.rival) p.set('r', state.rival);
     if (state.morph !== 'matrix_viper') p.set('m', state.morph);
     if (state.speed !== 'normal') p.set('s', state.speed);
@@ -363,7 +375,7 @@
   function pieceUrl(kind, base = previewBase) {
     const opts = snippetOptions(base);
     const ctx = KitSnippet.context(state.user, { ...opts, adaptive: false });
-    return KitSnippet.url(kind, state.theme, ctx);
+    return KitSnippet.url(kind, state.pieceThemes[kind] || state.theme, ctx);
   }
 
 /** En el móvil los grupos van en pestañas: once tarjetas seguidas eran casi 7.000 px de página */
@@ -449,11 +461,15 @@
     const card = document.createElement('article');
     card.className = `piece ${meta.width === 'half' ? 'half' : 'full'}`;
     card.dataset.kind = kind;
-    let opts = '';
+    // Cada pieza puede llevar su propio estilo; vacío = el general de la barra
+    const own = state.pieceThemes[kind] || '';
+    const themeSelect = `<label class="inline piece-theme">${T('piece.theme')} <select data-piece-theme><option value="">${T('piece.themeAll')}</option>${THEMES.map(t => `<option value="${t}"${t === own ? ' selected' : ''}>${T('themes')[t]}</option>`).join('')}</select></label>`;
+    let opts = themeSelect;
     if (kind === 'snake') {
       const select = (id, label, values, current) => `<label class="inline">${label} <select data-opt="${id}">${Object.entries(values).map(([v, name]) => `<option value="${v}"${v === current ? ' selected' : ''}>${name}</option>`).join('')}</select></label>`;
-      opts = `<div class="piece-opts">${select('morph', T('snake.morph'), T('morph'), state.morph)}${select('speed', T('snake.speed'), T('speed'), state.speed)}</div>`;
+      opts += select('morph', T('snake.morph'), T('morph'), state.morph) + select('speed', T('snake.speed'), T('speed'), state.speed);
     }
+    opts = `<div class="piece-opts">${opts}</div>`;
     card.innerHTML = `<div class="piece-head"><h4>${title}</h4><span>${desc}</span></div>
       ${opts}
       <div class="preview"></div>
@@ -471,6 +487,10 @@
         copy(e.currentTarget, code);
         track('copy-piece', { kind });
       }
+    });
+    card.querySelector('[data-piece-theme]').addEventListener('change', (e) => {
+      if (e.target.value) state.pieceThemes[kind] = e.target.value; else delete state.pieceThemes[kind];
+      refresh();
     });
     card.querySelectorAll('[data-opt]').forEach(sel => sel.addEventListener('change', () => {
       state[sel.dataset.opt] = sel.value;
@@ -614,9 +634,14 @@
 
   /** El README tal como lo pintaría GitHub en el modo elegido: sin <picture>, con el tema de ese modo */
   function renderPreview() {
+    // Cada pieza con el tema que GitHub mostraría en ese modo (el suyo propio o el general, con la misma regla)
     const opts = snippetOptions(previewBase);
-    const theme = state.previewMode === 'dark' ? opts.dark : opts.light;
-    const md = KitSnippet.build(state.user, { ...opts, adaptive: false, dark: theme, pieces: [...state.picked], template: state.template });
+    const ctx = KitSnippet.context(state.user, opts);
+    const themes = Object.fromEntries(Object.keys(KitSnippet.PIECES).map(kind => {
+      const t = KitSnippet.themesFor(kind, ctx);
+      return [kind, state.previewMode === 'dark' ? t.dark : t.light];
+    }));
+    const md = KitSnippet.build(state.user, { ...opts, adaptive: false, themes, pieces: [...state.picked], template: state.template });
     const box = $('ghPreview');
     box.dataset.mode = state.previewMode;
     box.innerHTML = KitSnippet.previewHtml(md) || `<p>${T('readme.empty').replace(/[<>]/g, '')}</p>`;
@@ -648,7 +673,10 @@
     const other = $('otherTheme');
     other.innerHTML = THEMES.filter(t => LIGHT.has(t) !== LIGHT.has(state.theme)).map(t => `<option value="${t}"${t === otherTheme() ? ' selected' : ''}>${T('themes')[t]}</option>`).join('');
     $('otherLabel').textContent = LIGHT.has(state.theme) ? T('res.inDark') : T('res.inLight');
-    $('otherWrap').hidden = !state.adaptive;
+    const fixed = FIXED.has(state.theme);
+    $('otherWrap').hidden = !state.adaptive || fixed;
+    $('fixedNote').hidden = !fixed;
+    $('fixedNote').textContent = fixed ? T('res.fixed', T('themes')[state.theme]) : '';
     $('adaptive').checked = state.adaptive;
   }
 

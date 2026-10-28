@@ -19,6 +19,8 @@ const NAMES = { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub c
 const THEMES = [...SnakeCore.CARD_OPTION_VALUES.theme];
 
 function pairFor(theme) {
+  // Los temas de color se ven igual en claro y en oscuro
+  if (ThemeTokens.fixed.includes(theme)) return { dark: theme, light: theme, adaptive: false };
   return LIGHT.includes(theme) ? { light: theme, dark: PARTNER[theme] } : { dark: theme, light: PARTNER[theme] };
 }
 

@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const recordBtn = document.getElementById('recordBtn');
   const recordBtnText = document.getElementById('recordBtnText');
   const exportSvgBtn = document.getElementById('exportSvgBtn');
+  const exportSvgModeNote = document.getElementById('exportSvgModeNote');
   const exportYamlBtn = document.getElementById('exportYamlBtn');
   const achievementsBtn = document.getElementById('achievementsBtn');
   const achievementsLabel = document.getElementById('achievementsLabel');
@@ -132,9 +133,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   let grid = [];
   // Modos de juego del estudio (js/arcade.js): toman el tablero, el teclado y la cruceta mientras están activos
   let arcadeActive = false;
+  // Modo que se está jugando: «Descargar SVG» y «Clip para redes» exportan ese y no siempre la serpiente
+  let arcadeMode = 'snake';
   window.PortafilStudio = {
     grid: () => grid,
-    setArcade(on) { arcadeActive = Boolean(on); }
+    setArcade(on, mode = 'snake') {
+      arcadeActive = Boolean(on);
+      arcadeMode = on ? mode : 'snake';
+    }
   };
   let totalCommitsInitial = 0;
   let totalPointsInitial = 0;
@@ -982,6 +988,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Sincronizar con el tema actual
     const currentTheme = document.body.getAttribute('data-theme') || 'ink';
     exportThemeSelect.value = currentTheme;
+    // Forma, velocidad y pausa son de la serpiente: en los juegos solo cuenta el tema
+    const game = arcadeMode !== 'snake';
+    for (const select of [exportSpeedSelect, exportMorphSelect, exportPauseSelect]) select.parentElement.hidden = game;
+    exportSvgModeNote.textContent = t('export.mode', { name: t(`game.${arcadeMode}`) });
     modalExportSvg.classList.add('visible');
   });
 
@@ -998,8 +1008,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       morph: exportMorphSelect.value,
       pause: exportPauseSelect.value
     };
-    analytics.trackEvent('export_svg', options);
-    exporter.exportAnimatedSvg(grid, currentUsername, { ...options, ...svgIdentity() });
+    analytics.trackEvent('export_svg', { ...options, game: arcadeMode });
+    exporter.exportAnimatedSvg(grid, currentUsername, { ...options, game: arcadeMode, ...svgIdentity() });
     modalExportSvg.classList.remove('visible');
   });
 
@@ -1373,6 +1383,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const vsPostText = document.getElementById('vsPostText');
   const vsCopyTextBtn = document.getElementById('vsCopyTextBtn');
   const videoStudio = new VideoStudio(exporter);
+  const vsModeNote = document.getElementById('vsModeNote');
   let vsVideo = null; // { blob, url, file, extension }
   vsTheme.innerHTML = exportThemeSelect.innerHTML;
   vsTheme.value = 'ink';
@@ -1452,6 +1463,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pageTheme = document.body.getAttribute('data-theme');
     if ([...vsTheme.options].some(option => option.value === pageTheme)) vsTheme.value = pageTheme;
     document.getElementById('vsChooser').hidden = direct;
+    vsModeNote.textContent = t('video.mode', { name: t(`game.${arcadeMode}`) });
     document.getElementById('vsDirectNote').hidden = !direct;
     vsGenerateBtn.hidden = direct;
     modalVideoStudio.classList.add('visible');
@@ -1497,8 +1509,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         const avatar = await loadAvatarForVideo();
         const link = shareLinkFor(gridOwner).replace(/^https?:\/\//, '');
-        fileOwner = gridOwner || 'grid';
-        out = await videoStudio.render({ grid, user: gridOwner, lang: I18n.lang, theme: vsTheme.value, format, shareUrl: link, avatar, onProgress });
+        fileOwner = `${gridOwner || 'grid'}${arcadeMode === 'snake' ? '' : `-${arcadeMode}`}`;
+        out = await videoStudio.render({ grid, user: gridOwner, lang: I18n.lang, theme: vsTheme.value, format, shareUrl: link, avatar, game: arcadeMode, onProgress });
       }
       if (vsVideo) URL.revokeObjectURL(vsVideo.url);
       const name = `portafil-${fileOwner}-${format}.${out.extension}`;
@@ -1512,7 +1524,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       vsStatus.textContent = out.extension === 'mp4'
         ? t('video.ready', { mb: (out.blob.size / 1048576).toFixed(1) })
         : t('video.readyWebm');
-      analytics.trackEvent('video_render', { format, content, method: out.method });
+      analytics.trackEvent('video_render', { format, content, game: arcadeMode, method: out.method });
     } catch (err) {
       console.error(err);
       vsStatus.textContent = t('video.error');

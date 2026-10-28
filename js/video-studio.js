@@ -28,7 +28,10 @@ const VIDEO_TEXT = {
     wins: 'WINS',
     tie: "IT'S A TIE",
     duelCta: 'Can your GitHub beat ours?',
-    duelSub: 'Challenge any profile: same AI, 60 seconds'
+    duelSub: 'Challenge any profile: same AI, 60 seconds',
+    games: { life: 'GAME OF LIFE', pacman: 'PAC-MAN', invaders: 'INVADERS', tetris: 'TETRIS' },
+    units: { life: 'generations', pacman: 'pts', invaders: 'hits', tetris: 'full weeks' },
+    ctaGame: (name) => `Put ${name} on your profile with one line`
   },
   es: {
     contributions: 'contribuciones en el último año',
@@ -43,7 +46,10 @@ const VIDEO_TEXT = {
     wins: 'GANA',
     tie: 'EMPATE',
     duelCta: '¿Tu GitHub nos gana?',
-    duelSub: 'Reta a cualquier perfil: misma IA, 60 segundos'
+    duelSub: 'Reta a cualquier perfil: misma IA, 60 segundos',
+    games: { life: 'JUEGO DE LA VIDA', pacman: 'PAC-MAN', invaders: 'INVASORES', tetris: 'TETRIS' },
+    units: { life: 'generaciones', pacman: 'pts', invaders: 'impactos', tetris: 'semanas completas' },
+    ctaGame: (name) => `Pon ${name} en tu perfil con una línea`
   }
 };
 
@@ -90,11 +96,32 @@ class VideoStudio {
   }
 
   /** Prepara todo lo que no cambia entre fotogramas */
-  buildScene({ grid, user, lang, theme, format, shareUrl, avatar }) {
+  /**
+   * Partida de un modo de juego (shared/games.js) jugada por la IA, la misma que la del SVG del perfil:
+   * una vista por tick con los niveles de las celdas, los actores, la puntuación y el progreso.
+   */
+  simulateGame(game, grid) {
+    const state = GameModes.create(game, grid, {});
+    const frames = [];
+    const snap = () => {
+      const v = GameModes.view(state);
+      frames.push({ levels: v.levels.map(col => col.slice()), actors: v.actors.map(a => ({ ...a })), score: v.score, progress: v.progress || 0 });
+    };
+    snap();
+    while (!state.done && frames.length < 4000) {
+      GameModes.step(state, null);
+      snap();
+    }
+    return frames;
+  }
+
+  buildScene({ grid, user, lang, theme, format, shareUrl, avatar, game = 'snake' }) {
     const size = VIDEO_FORMATS[format] || VIDEO_FORMATS.landscape;
     const palette = this.exporter.themePalettes[theme] || this.exporter.themePalettes.ink;
-    const sim = this.exporter.simulate(grid);
-    const totalSteps = sim.history.length;
+    // Con un modo de juego el clip es esa partida; si no, la serpiente
+    const frames = game !== 'snake' && typeof GameModes !== 'undefined' && GameModes.MODES.includes(game) ? this.simulateGame(game, grid) : null;
+    const sim = frames ? { simGrid: grid, history: [], cellBites: {}, totalLevels: 1, eatenLevels: 0 } : this.exporter.simulate(grid);
+    const totalSteps = frames ? frames.length : sim.history.length;
 
     // Sin cartela: el primer frame ya es la comida. El recorrido dura 6-8 s.
     const timing = { intro: 0, play: Math.min(8, Math.max(6, totalSteps * 0.02)), finale: 1.6, outro: 1.6 };
@@ -130,7 +157,7 @@ class VideoStudio {
     const boardY = Math.round(format === 'vertical' ? size.height * 0.31 : format === 'square' ? size.height * 0.27 : size.height * 0.4);
 
     return {
-      ...size, format, palette, user, lang, avatar, shareUrl,
+      ...size, format, palette, user, lang, avatar, shareUrl, theme, game: frames ? game : 'snake', frames,
       text: VIDEO_TEXT[lang] || VIDEO_TEXT.en,
       stats: this.computeStats(grid),
       sim, totalSteps, timing, bursts, allBites, bitesByCell,
@@ -313,9 +340,13 @@ class VideoStudio {
     ctx.globalAlpha = 1;
 
     // --- Barra de progreso sobre la rejilla ---
+    const frame = scene.frames ? scene.frames[Math.min(scene.frames.length - 1, Math.floor(step))] : null;
+    const lastFrame = scene.frames ? scene.frames[scene.frames.length - 1] : null;
     const eatenNow = scene.allBites.filter(b => b <= step).length;
     const totalLevels = Math.max(1, scene.sim.totalLevels);
-    const progress = t >= playEnd ? scene.sim.eatenLevels / totalLevels : eatenNow / totalLevels;
+    const progress = frame
+      ? (t >= playEnd ? lastFrame.progress : frame.progress)
+      : (t >= playEnd ? scene.sim.eatenLevels / totalLevels : eatenNow / totalLevels);
     const barY = L.boardY - 34 * unit;
     const barW = L.boardWidth;
     ctx.fillStyle = P.empty;
@@ -330,7 +361,7 @@ class VideoStudio {
     ctx.font = `700 ${20 * unit}px ${font}`;
     ctx.fillStyle = P.text;
     ctx.textAlign = 'right';
-    ctx.fillText(`${Math.round(progress * 100)}% ${text.devoured}`, L.boardLeft + barW, barY - 10 * unit);
+    ctx.fillText(frame ? `${Math.round(progress * 100)}%` : `${Math.round(progress * 100)}% ${text.devoured}`, L.boardLeft + barW, barY - 10 * unit);
     ctx.textAlign = 'left';
 
     // --- Rejilla: aparece en ola en la intro, baja de nivel con los mordiscos y se rellena en ola al final ---
@@ -339,7 +370,7 @@ class VideoStudio {
       const refillAt = playEnd + 0.9 + (x / 52) * 0.9;
       for (let y = 0; y < 7; y++) {
         const original = scene.sim.simGrid[x][y].originalLevel;
-        let level = t >= refillAt ? original : this.levelAt(scene, x, y, step);
+        let level = t >= refillAt ? original : frame ? frame.levels[x][y] : this.levelAt(scene, x, y, step);
         const { x: px, y: py } = this.cellOrigin(L, x, y);
         ctx.globalAlpha = appear;
         ctx.fillStyle = colors[level] || P.empty;
@@ -370,7 +401,8 @@ class VideoStudio {
     // --- Serpiente: cuerpo continuo (un círculo cada medio paso) y cabeza con ojos ---
     const snakeAlpha = t < playStart ? this.ease((t - T.intro * 0.6) / (T.intro * 0.4)) : 1 - this.ease((t - playEnd) / 0.4);
     if (snakeAlpha > 0) {
-      this.drawSnake(ctx, L, scene.sim.history, step, P, snakeAlpha);
+      if (frame) this.drawActors(ctx, L, scene, step, snakeAlpha);
+      else this.drawSnake(ctx, L, scene.sim.history, step, P, snakeAlpha);
     }
 
     // --- Celebración: texto grande y tarjetas con datos ---
@@ -380,7 +412,9 @@ class VideoStudio {
       ctx.globalAlpha = p * fade;
       const celebrateY = L.boardY + L.boardHeight + (scene.format === 'vertical' ? 80 : scene.format === 'square' ? 72 : 82) * unit;
       ctx.textAlign = 'center';
-      const headline = scene.sim.eatenLevels === scene.sim.totalLevels ? text.cleared : `${Math.round(progress * 100)}%`;
+      const headline = frame
+        ? `${text.games[scene.game]} · ${this.formatNumber(lastFrame.score, scene.lang)} ${text.units[scene.game]}`
+        : scene.sim.eatenLevels === scene.sim.totalLevels ? text.cleared : `${Math.round(progress * 100)}%`;
       this.fitFont(ctx, headline, 900, 52 * unit * (0.8 + 0.2 * p), W - L.margin * 2, font);
       ctx.fillStyle = P.head;
       ctx.shadowColor = P.head;
@@ -429,8 +463,9 @@ class VideoStudio {
       this.fitFont(ctx, text.cta, 900, 50 * unit, W - L.margin * 2, font);
       ctx.fillText(text.cta, W / 2, H * 0.46);
       ctx.fillStyle = P.l4;
-      this.fitFont(ctx, text.ctaSub, 600, 24 * unit, W - L.margin * 2, font);
-      ctx.fillText(text.ctaSub, W / 2, H * 0.46 + 62 * unit);
+      const ctaSub = frame ? text.ctaGame(text.games[scene.game].toLowerCase()) : text.ctaSub;
+      this.fitFont(ctx, ctaSub, 600, 24 * unit, W - L.margin * 2, font);
+      ctx.fillText(ctaSub, W / 2, H * 0.46 + 62 * unit);
       ctx.fillStyle = P.head;
       this.fitFont(ctx, scene.shareUrl, 700, 22 * unit, W - L.margin * 2, font);
       ctx.fillText(scene.shareUrl, W / 2, H * 0.46 + 120 * unit);
@@ -446,6 +481,61 @@ class VideoStudio {
     ctx.fillText('portafil', W - L.margin, L.margin * 0.7);
     ctx.textAlign = 'left';
     ctx.globalAlpha = 1;
+  }
+
+  /**
+   * Actores de un modo de juego en el paso fraccionario `step`: Pac-Man y fantasmas, nave y balas. Se dibujan
+   * como en el estudio (js/arcade.js), escalados a la celda del clip, y se mueven suave entre ticks.
+   */
+  drawActors(ctx, L, scene, step, alpha) {
+    const P = scene.palette;
+    const i = Math.min(scene.frames.length - 1, Math.floor(step));
+    const now = scene.frames[i].actors;
+    const next = (scene.frames[i + 1] || scene.frames[i]).actors;
+    const f = step - i;
+    const s = L.cell / 11;
+    const neutral = ['ink', 'paper'].includes(scene.theme);
+    const shape = (key, d) => (typeof Path2D === 'undefined' ? null : (this[key] = this[key] || new Path2D(d)));
+    const ghost = shape('ghostPath', 'M0 11V5.5a5.5 5.5 0 0 1 11 0V11l-1.85-1.6-1.85 1.6-1.8-1.6-1.8 1.6-1.85-1.6z');
+    const ship = shape('shipPath', 'M0 8V5h2V3.5h3V0h1v3.5h3V5h2v3z');
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    now.forEach((a, k) => {
+      // Solo se interpola un paso de una celda: los saltos (túneles, balas nuevas) van directos
+      const b = next[k] && next[k].kind === a.kind && Math.abs(next[k].x - a.x) <= 1 && Math.abs(next[k].y - a.y) <= 1 ? next[k] : a;
+      const o = this.cellOrigin(L, a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f);
+      ctx.save();
+      ctx.translate(o.x, o.y);
+      ctx.scale(s, s);
+      if (a.kind === 'pac') {
+        const open = 0.15 + 0.5 * Math.abs(Math.sin(step * 2.2));
+        ctx.translate(5.5, 5.5);
+        ctx.rotate((a.dir * Math.PI) / 2);
+        ctx.fillStyle = P.body;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 6.5, open, Math.PI * 2 - open);
+        ctx.closePath();
+        ctx.fill();
+      } else if (a.kind === 'ghost') {
+        ctx.fillStyle = a.scared ? P.l1 : (neutral ? P.l3 : P.head);
+        if (ghost) ctx.fill(ghost); else ctx.fillRect(0, 0, 11, 11);
+        ctx.fillStyle = '#fff';
+        for (const ex of [3.7, 7.3]) { ctx.beginPath(); ctx.arc(ex, 5, 1.7, 0, Math.PI * 2); ctx.fill(); }
+        ctx.fillStyle = '#111';
+        for (const ex of [4.1, 7.7]) { ctx.beginPath(); ctx.arc(ex, 5.2, 0.8, 0, Math.PI * 2); ctx.fill(); }
+      } else if (a.kind === 'ship') {
+        ctx.translate(0, -2);
+        ctx.fillStyle = P.body;
+        if (ship) ctx.fill(ship); else ctx.fillRect(0, 0, 11, 8);
+      } else if (a.kind === 'bullet') {
+        ctx.fillStyle = P.head;
+        this.roundRect(ctx, 4.5, 0, 2, 5, 1);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+    ctx.restore();
   }
 
   /**
@@ -702,11 +792,11 @@ class VideoStudio {
   /**
    * Genera el video. onProgress(0..1). Devuelve { blob, mimeType, extension, method }.
    */
-  async render({ grid, user = '', lang = 'en', theme = 'ink', format = 'landscape', shareUrl = '', avatar = null, duel = null, fps = 30, onProgress = () => {} }) {
+  async render({ grid, user = '', lang = 'en', theme = 'ink', format = 'landscape', shareUrl = '', avatar = null, duel = null, game = 'snake', fps = 30, onProgress = () => {} }) {
     // duel: [{ grid, user, avatar }, { grid, user, avatar }] genera el video del duelo
     const scene = duel
       ? this.buildDuelScene({ players: duel, lang, theme, format, shareUrl })
-      : this.buildScene({ grid, user, lang, theme, format, shareUrl, avatar });
+      : this.buildScene({ grid, user, lang, theme, format, shareUrl, avatar, game });
     const canvas = document.createElement('canvas');
     canvas.width = scene.width;
     canvas.height = scene.height;

@@ -69,6 +69,8 @@ const ThemeTokens = {
 
   // Temas claros y su pareja para el otro modo (README adaptable): la web y los ejemplos usan la misma
   light: ['paper', 'light'],
+  // Temas de color propio: se ven igual en el modo claro y en el oscuro de GitHub (no cambian a su pareja)
+  fixed: ['cyberpunk', 'neon_cyan', 'amber_terminal'],
   partner: { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper' },
 
   names() {

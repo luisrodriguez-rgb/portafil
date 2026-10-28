@@ -74,3 +74,33 @@ test('video del duelo: mismo resultado que DuelSimulator y todo dentro del fotog
   // Correr el duelo para el video no altera las matrices originales
   assert.ok(gridA.flat().every(c => c.level === c.originalLevel));
 });
+
+test('clip de un modo de juego: la partida de la IA de ese modo, dibujable en cada formato', () => {
+  const engine = loadStudio(loadEngine());
+  const studio = new engine.VideoStudio(new engine.ExporterEngine());
+  const grid = weeksToGrid(require('./visual.helpers').fixtureWeeks(2));
+  // Canvas simulado: cualquier método no hace nada; así se ejecuta todo drawFrame sin navegador
+  const calls = [];
+  const ctx = new Proxy({}, {
+    get: (target, prop) => (prop in target ? target[prop] : (...args) => {
+      calls.push(prop);
+      if (prop === 'createRadialGradient') return { addColorStop() {} };
+      if (prop === 'measureText') return { width: 10 };
+      return undefined;
+    }),
+    set: (target, prop, value) => { target[prop] = value; return true; }
+  });
+  for (const game of ['pacman', 'invaders', 'tetris', 'life']) {
+    for (const format of ['landscape', 'vertical']) {
+      const scene = studio.buildScene({ grid, user: 'octocat', lang: 'es', theme: 'cyberpunk', format, shareUrl: 'x', game });
+      assert.strictEqual(scene.game, game);
+      assert.ok(scene.frames.length > 10, `${game}: ${scene.frames.length} fotogramas`);
+      assert.ok(scene.timing.total >= 9 && scene.timing.total <= 12, `${game} ${format}: ${scene.timing.total}s`);
+      assert.ok(scene.frames[scene.frames.length - 1].progress > 0, `${game}: la partida avanza`);
+      for (const t of [0, scene.timing.play / 2, scene.timing.play + 0.5, scene.timing.total - 0.1]) studio.drawFrame(ctx, scene, t);
+    }
+  }
+  assert.ok(calls.includes('arc'), 'Pac-Man y los fantasmas se dibujan');
+  // Sin modo, la serpiente de siempre
+  assert.strictEqual(studio.buildScene({ grid, user: 'octocat', lang: 'es', theme: 'ink', format: 'landscape', shareUrl: 'x' }).game, 'snake');
+});

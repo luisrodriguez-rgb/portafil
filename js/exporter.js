@@ -16,17 +16,20 @@ class ExporterEngine {
   }
 
   /**
-   * Genera y descarga un SVG animado ultra optimizado
+   * Genera y descarga el SVG animado: la serpiente o, con options.game, ese modo de juego
    */
   exportAnimatedSvg(grid, username = 'developer', options = {}) {
-    const svgFinal = this.buildAnimatedSvg(grid, options);
+    const svgFinal = this.buildSvg(grid, options);
     if (!svgFinal) return;
 
     const blob = new Blob([svgFinal], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `portafil-snake-${username}-${options.theme || 'ink'}-${options.speed || 'normal'}.svg`;
+    const game = options.game || 'snake';
+    a.download = game === 'snake'
+      ? `portafil-snake-${username}-${options.theme || 'ink'}-${options.speed || 'normal'}.svg`
+      : `portafil-${game}-${username}-${options.theme || 'ink'}.svg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

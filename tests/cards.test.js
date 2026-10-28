@@ -239,3 +239,21 @@ test('lenguajes: los que no llegan al 0,5 % van a «otros» y los repos llevan s
   assert.ok(content.includes('9.999 repos'), 'separador de miles');
   assert.ok(content.includes('&lt;0,5%') && !content.includes('0,0%'), 'nunca «0,0 %»');
 });
+
+test('README: los temas de color no cambian con el modo y cada pieza puede llevar su propio estilo', () => {
+  const { KitSnippet } = loadEngine();
+  const ctx = { pieces: ['header', 'stats', 'streak', 'snake'], dark: 'ink', light: 'paper', adaptive: true, themes: { stats: 'dark', streak: 'cyberpunk', snake: 'paper' } };
+  const md = KitSnippet.build('octocat', ctx);
+  // Sin estilo propio: el general, con su pareja para el modo claro
+  assert.match(md, /api\/header\/octocat\.svg\?theme=ink/);
+  assert.match(md, /api\/header\/octocat\.svg\?theme=paper/);
+  // Fósforo cambia a GitHub claro en el modo claro: es la pareja verde
+  assert.match(md, /api\/stats\/octocat\.svg\?theme=dark/);
+  assert.match(md, /api\/stats\/octocat\.svg\?theme=light/);
+  // Cyberpunk es un tema de color: una sola imagen, sin <picture>
+  assert.match(md, /<img alt="@octocat streak" src="[^"]*api\/streak\/octocat\.svg\?theme=cyberpunk" width="390">/);
+  assert.ok(!/api\/streak\/octocat\.svg\?theme=paper/.test(md));
+  // Papel es claro: en oscuro pasa a Tinta
+  assert.match(md, /api\/octocat\.svg\?theme=ink/);
+  assert.match(md, /api\/octocat\.svg\?theme=paper/);
+});

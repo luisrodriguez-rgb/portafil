@@ -12,8 +12,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <!-- ?v= obliga al navegador a descargar CSS/JS nuevos tras cada despliegue: cambiar el valor en cada release -->
-  <link rel="stylesheet" href="css/site.css?v=20261028-studio8">
-  <link rel="stylesheet" href="css/studio.css?v=20261028-studio8">
+  <link rel="stylesheet" href="css/site.css?v=20261028-studio9">
+  <link rel="stylesheet" href="css/studio.css?v=20261028-studio9">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <!-- URL base de la API de Portafil. Vacío = el mismo dominio que la web (despliegue en Vercel) -->
   <meta name="snake-api" content="">
@@ -317,6 +317,7 @@
         <button id="closeExportSvgModalBtn" class="modal-close-btn">&times;</button>
       </div>
       <div class="modal-body">
+        <p id="exportSvgModeNote" class="wf-step"></p>
         <div style="display: flex; flex-direction: column; gap: 1rem;">
           <div>
             <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
@@ -530,6 +531,7 @@
         <p class="wf-step">MP4 listo para X, LinkedIn, Instagram, TikTok o YouTube Shorts. Se genera en tu navegador.</p>
 
         <p id="vsDirectNote" class="wf-step" hidden>Clip vertical 9:16. Empieza a comer en el primer segundo.</p>
+        <p id="vsModeNote" class="wf-step"></p>
         <div id="vsChooser">
         <div class="wf-mode" role="radiogroup" aria-label="Contenido">
           <label><input type="radio" name="vsContent" value="profile" checked> Mi perfil</label>
@@ -638,25 +640,25 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/i18n.js?v=20261028-studio8"></script>
-  <script src="js/calendar.js?v=20261028-studio8"></script>
-  <script src="js/analytics.js?v=20261028-studio8"></script>
-  <script src="js/audio.js?v=20261028-studio8"></script>
-  <script src="js/recorder.js?v=20261028-studio8"></script>
-  <script src="js/templates.js?v=20261028-studio8"></script>
-  <script src="js/achievements.js?v=20261028-studio8"></script>
-  <script src="shared/brand.js?v=20261028-studio8"></script>
-  <script src="shared/theme-tokens.js?v=20261028-studio8"></script>
-  <script src="js/exporter.js?v=20261028-studio8"></script>
-  <script src="js/github.js?v=20261028-studio8"></script>
-  <script src="js/pathfinding.js?v=20261028-studio8"></script>
-  <script src="js/snake.js?v=20261028-studio8"></script>
-  <script src="js/renderer.js?v=20261028-studio8"></script>
-  <script src="js/duel.js?v=20261028-studio8"></script>
-  <script src="shared/games.js?v=20261028-studio8"></script>
-  <script src="js/video-studio.js?v=20261028-studio8"></script>
-  <script src="js/app.js?v=20261028-studio8"></script>
-  <script src="js/arcade.js?v=20261028-studio8"></script>
+  <script src="js/i18n.js?v=20261028-studio9"></script>
+  <script src="js/calendar.js?v=20261028-studio9"></script>
+  <script src="js/analytics.js?v=20261028-studio9"></script>
+  <script src="js/audio.js?v=20261028-studio9"></script>
+  <script src="js/recorder.js?v=20261028-studio9"></script>
+  <script src="js/templates.js?v=20261028-studio9"></script>
+  <script src="js/achievements.js?v=20261028-studio9"></script>
+  <script src="shared/brand.js?v=20261028-studio9"></script>
+  <script src="shared/theme-tokens.js?v=20261028-studio9"></script>
+  <script src="js/exporter.js?v=20261028-studio9"></script>
+  <script src="js/github.js?v=20261028-studio9"></script>
+  <script src="js/pathfinding.js?v=20261028-studio9"></script>
+  <script src="js/snake.js?v=20261028-studio9"></script>
+  <script src="js/renderer.js?v=20261028-studio9"></script>
+  <script src="js/duel.js?v=20261028-studio9"></script>
+  <script src="shared/games.js?v=20261028-studio9"></script>
+  <script src="js/video-studio.js?v=20261028-studio9"></script>
+  <script src="js/app.js?v=20261028-studio9"></script>
+  <script src="js/arcade.js?v=20261028-studio9"></script>
   <!-- Cloudflare Web Analytics -->
   <!-- End Cloudflare Web Analytics -->
 </body>

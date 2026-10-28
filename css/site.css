@@ -242,6 +242,7 @@ select { font: inherit; font-size: 14px; color: var(--text); background: var(--s
 .piece-actions a:not(.btn) { font-size: 13px; color: var(--muted); }
 
 .piece-opts { display: flex; gap: 10px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.fixed-note { margin: 0; font-size: 13px; }
 .rival-form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; max-width: 520px; }
 .rival-form .field { flex-basis: 220px; }
 
