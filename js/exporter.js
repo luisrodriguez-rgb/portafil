@@ -20,7 +20,7 @@ class ExporterEngine {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `github-snake-${username}-${options.theme || 'dark'}-${options.speed || 'normal'}.svg`;
+    a.download = `perfila-snake-${username}-${options.theme || 'ink'}-${options.speed || 'normal'}.svg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -33,8 +33,8 @@ class ExporterEngine {
   buildAnimatedSvg(grid, options = {}) {
     if (!grid || grid.length === 0) return null;
 
-    const themeKey = options.theme || 'dark';
-    const palette = this.themePalettes[themeKey] || this.themePalettes.dark;
+    const themeKey = options.theme || 'ink';
+    const palette = this.themePalettes[themeKey] || this.themePalettes.ink;
     const speedMode = options.speed || 'normal';
     const morphMode = options.morph || 'matrix_viper';
     const pauseMode = options.pause || 'fast';
@@ -263,8 +263,8 @@ class ExporterEngine {
 
     // 6. SVG Minificado Final
     const credit = username
-      ? `snake eating @${this.escapeXml(username)} contributions by GITHUB_SNAKE.EXE`
-      : 'snake eating a GitHub contribution graph by GITHUB_SNAKE.EXE';
+      ? `snake eating @${this.escapeXml(username)} contributions by Perfila`
+      : 'snake eating a GitHub contribution graph by Perfila';
     // Con prefijo (tablero dentro de otro SVG) el fondo es un rect: el fondo CSS solo se pinta en el <svg> raíz
     const frameCss = n ? '' : `svg{background:${palette.bg};border-radius:12px;border:1px solid ${palette.border}}`;
     const frameRect = n ? `<rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="11.5" fill="${palette.bg}" stroke="${palette.border}"/>` : '';
@@ -292,14 +292,14 @@ class ExporterEngine {
       if (style.lang && style.lang !== 'en') params.set('lang', style.lang);
       return params.toString();
     };
-    const darkTheme = style.darkTheme || 'dark';
+    const darkTheme = style.darkTheme || 'ink';
 
     if (style.adaptive === false) {
-      return [{ file: 'github-snake.svg', query: query(darkTheme) }];
+      return [{ file: 'perfila-snake.svg', query: query(darkTheme) }];
     }
     return [
-      { file: 'github-snake.svg', query: query(style.lightTheme || 'light') },
-      { file: 'github-snake-dark.svg', query: query(darkTheme) }
+      { file: 'perfila-snake.svg', query: query(style.lightTheme || 'paper') },
+      { file: 'perfila-snake-dark.svg', query: query(darkTheme) }
     ];
   }
 
@@ -385,7 +385,7 @@ class ExporterEngine {
       .map(o => `            dist/${o.file}?${o.query}`)
       .join('\n');
 
-    return `name: GitHub Snake
+    return `name: Perfila snake
 
 on:
   # Se regenera cada dia a medianoche (UTC)
@@ -406,7 +406,7 @@ jobs:
 
     steps:
       - name: Generate Snake SVG
-        uses: luisrodriguez-rgb/GITHUB_SNAKE.EXE@v3
+        uses: ${Brand.actionRef}
         with:
           github_user_name: ${username}
           outputs: |
@@ -428,7 +428,7 @@ ${outputs}
   generateReadmeSnippet(username = 'USUARIO', style = {}, apiBase = '') {
     const safeUser = String(username).replace(/[^A-Za-z0-9-]/g, '') || 'user';
     const base = `https://raw.githubusercontent.com/${safeUser}/${safeUser}/output`;
-    const alt = `snake eating @${safeUser} contributions by GITHUB_SNAKE.EXE`;
+    const alt = `snake eating @${safeUser} contributions by Perfila`;
     const urlFor = (output) => (apiBase ? `${apiBase}/api/${safeUser}.svg?${output.query}` : `${base}/${output.file}`);
     const [light, dark] = this.workflowOutputs(style);
 

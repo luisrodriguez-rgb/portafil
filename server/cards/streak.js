@@ -47,7 +47,7 @@ function render({ weeks, tokens, lang, login }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${login} streak by GITHUB_SNAKE.EXE`,
+    title: `@${login} streak by Perfila`,
     content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.streak, subtitle: L.lastYear, right: todayText, body })
   };
 }

@@ -64,7 +64,7 @@ function render({ profile, tokens, lang }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${profile.login} languages by GITHUB_SNAKE.EXE`,
+    title: `@${profile.login} languages by Perfila`,
     content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.languages, subtitle: L.bySize, right: `${profile.publicRepos} ${L.repos}`, body })
   };
 }

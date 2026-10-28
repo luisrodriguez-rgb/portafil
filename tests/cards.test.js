@@ -188,15 +188,34 @@ test('la bio larga se parte en dos líneas y la segunda termina en …', () => {
   assert.ok(lines[1].endsWith('…'));
 });
 
-test('el bloque README del kit enlaza cada pieza en claro y oscuro', () => {
+test('el bloque README: cada pieza en claro y oscuro, solo las elegidas y las de dos perfiles con rival', () => {
   const { KitSnippet } = loadEngine();
   const md = KitSnippet.build('octocat', { dark: 'cyberpunk', lang: 'es', snake: { morph: 'capsule' } });
   for (const kind of ['header', 'stats', 'streak', 'langs', 'activity']) {
     assert.ok(md.includes(`/api/${kind}/octocat.svg?theme=cyberpunk&lang=es`), kind);
-    assert.ok(md.includes(`/api/${kind}/octocat.svg?theme=light&lang=es`), kind);
+    assert.ok(md.includes(`/api/${kind}/octocat.svg?theme=paper&lang=es`), `${kind} en claro usa paper por defecto`);
   }
   assert.ok(md.includes('/api/octocat.svg?theme=cyberpunk&lang=es&morph=capsule'));
+  assert.ok(!md.includes('/api/kit/'), 'el bloque por defecto no repite el dashboard');
+
+  // Una sola pieza, sin modo adaptativo
+  const one = KitSnippet.piece('streak', 'octocat', { adaptive: false });
+  assert.strictEqual(one, '<img alt="@octocat streak" src="https://perfila.vercel.app/api/streak/octocat.svg?theme=ink" width="49%">');
+
+  // Dos medias seguidas comparten fila; una media sola va en su propia fila
+  const pair = KitSnippet.build('octocat', { pieces: ['langs', 'stats'], adaptive: false });
+  assert.strictEqual((pair.match(/<p align="center">/g) || []).length, 1);
+  const lone = KitSnippet.build('octocat', { pieces: ['activity', 'header'], adaptive: false });
+  assert.ok(lone.indexOf('/api/header/') < lone.indexOf('/api/activity/'), 'orden del catálogo');
+
+  // Versus y duelo necesitan rival; el duelo enlaza a su página
+  assert.strictEqual(KitSnippet.piece('duel', 'octocat', {}), null);
+  assert.strictEqual(KitSnippet.piece('versus', 'octocat', { rival: 'OCTOCAT' }), null);
+  const duel = KitSnippet.piece('duel', 'octocat', { rival: 'hubot', adaptive: false, apiBase: 'https://x.dev/' });
+  assert.match(duel, /^<a href="https:\/\/x.dev\/duel\/octocat-vs-hubot">/);
+  assert.match(duel, /\/api\/duel\/octocat-vs-hubot.svg\?theme=ink/);
+
   const single = KitSnippet.build('octocat', { layout: 'single', adaptive: false });
-  assert.ok(single.includes('/api/kit/octocat.svg?theme=dark'));
+  assert.ok(single.includes('/api/kit/octocat.svg?theme=ink'));
   assert.ok(!single.includes('<picture>'));
 });

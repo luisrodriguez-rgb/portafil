@@ -1,5 +1,5 @@
 /**
- * GITHUB_SNAKE.EXE GitHub Action
+ * Perfila · GitHub Action
  * Ejecuta el mismo motor del navegador (pathfinding, serpiente y exportador SVG) en Node.js,
  * sin dependencias, y escribe los SVG animados en las rutas pedidas.
  */
@@ -9,7 +9,7 @@ const path = require('path');
 const vm = require('vm');
 
 const ROOT = path.join(__dirname, '..');
-const ENGINE_FILES = ['shared/theme-tokens.js', 'js/calendar.js', 'js/github.js', 'js/pathfinding.js', 'js/snake.js', 'js/exporter.js', 'shared/snake-core.js', 'shared/kit-snippet.js', 'js/duel.js'];
+const ENGINE_FILES = ['shared/brand.js', 'shared/theme-tokens.js', 'js/calendar.js', 'js/github.js', 'js/pathfinding.js', 'js/snake.js', 'js/exporter.js', 'shared/snake-core.js', 'shared/kit-snippet.js', 'js/duel.js'];
 
 /** Carga los scripts del navegador en un contexto aislado y devuelve sus clases */
 function loadEngine() {

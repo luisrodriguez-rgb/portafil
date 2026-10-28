@@ -76,7 +76,7 @@ function render({ pair, tokens, lang }) {
   return {
     width: WIDTH,
     height,
-    title: `@${loginA} vs @${loginB} by GITHUB_SNAKE.EXE`,
+    title: `@${loginA} vs @${loginB} by Perfila`,
     content: framed({ width: WIDTH, height, tokens, title: '', body })
   };
 }

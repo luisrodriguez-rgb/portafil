@@ -99,7 +99,7 @@ class VideoRecorderEngine {
     const isMp4 = mimeType.includes('mp4');
     const extension = isMp4 ? 'mp4' : 'webm';
     const duration = options.duration || 10; // segundos (0 para manual)
-    const filenamePrefix = options.filenamePrefix || 'github-snake-screen';
+    const filenamePrefix = options.filenamePrefix || 'perfila-screen';
 
     this.mediaRecorder = new MediaRecorder(stream, {
       mimeType,

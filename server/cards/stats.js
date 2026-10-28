@@ -37,7 +37,7 @@ function render({ profile, weeks, tokens, lang }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${profile.login} stats by GITHUB_SNAKE.EXE`,
+    title: `@${profile.login} stats by Perfila`,
     content: framed({
       width: WIDTH, height: HEIGHT, tokens,
       title: L.stats, subtitle: L.lastYear,

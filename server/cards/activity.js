@@ -56,7 +56,7 @@ function render({ weeks, tokens, lang, login }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${login} weekly activity by GITHUB_SNAKE.EXE`,
+    title: `@${login} weekly activity by Perfila`,
     content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.activity, subtitle: L.perWeek, right, body })
   };
 }

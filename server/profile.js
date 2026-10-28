@@ -48,7 +48,7 @@ async function fetchAvatar(url, fetchImpl) {
     try {
       const sized = new URL(url);
       sized.searchParams.set('s', String(size));
-      const res = await fetchImpl(sized.toString(), { headers: { 'User-Agent': 'github-snake' } });
+      const res = await fetchImpl(sized.toString(), { headers: { 'User-Agent': engine.Brand.userAgent } });
       if (!res.ok) return null;
       const bytes = Buffer.from(await res.arrayBuffer());
       const type = imageType(bytes);

@@ -9,10 +9,10 @@ function logRender({ endpoint, user, theme, status, start }) {
   // Solo en el servidor desplegado: las pruebas y la Action no ensucian la salida
   if (!process.env.VERCEL) return;
   console.log(JSON.stringify({
-    evt: 'gse.render',
+    evt: 'perfila.render',
     endpoint,
     user: user ? String(user).toLowerCase() : null,
-    theme: theme || 'dark',
+    theme: theme || 'ink',
     status,
     ms: Date.now() - start
   }));

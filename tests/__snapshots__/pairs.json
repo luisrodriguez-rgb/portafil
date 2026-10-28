@@ -1,12 +1,16 @@
 {
-  "duel/dark": "ddd1a0917892e835",
-  "versus/dark": "e346678fb9d52955",
-  "duel/light": "5803c5cc56428102",
-  "versus/light": "723396a1e4a1753a",
-  "duel/cyberpunk": "456982307901e1cc",
-  "versus/cyberpunk": "cc4de7efefe8a646",
-  "duel/neon_cyan": "4c66acf6e83fe21c",
-  "versus/neon_cyan": "e06f26449acc676b",
-  "duel/amber_terminal": "5d3bbfd1931f71be",
-  "versus/amber_terminal": "d8d0130d52ac5751"
+  "duel/ink": "8e9d19abc187f283",
+  "versus/ink": "ced04da8796c6ca0",
+  "duel/paper": "a19e53f2633cd4ff",
+  "versus/paper": "bc0c06236092ee37",
+  "duel/dark": "c18ff204ed8d3570",
+  "versus/dark": "bdd130daf23640f4",
+  "duel/light": "e556e64e41f90455",
+  "versus/light": "2956ae0e7fb7adeb",
+  "duel/cyberpunk": "8a81106c39eed287",
+  "versus/cyberpunk": "02e051d8d8975a18",
+  "duel/neon_cyan": "185fec8787a6310e",
+  "versus/neon_cyan": "20e08f1b3497e794",
+  "duel/amber_terminal": "bd67668d3c7cb7bd",
+  "versus/amber_terminal": "8d3873d136dc824d"
 }

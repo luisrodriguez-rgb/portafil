@@ -22,6 +22,19 @@ const ThemeTokens = {
   // Colores por tema. Las claves de la serpiente (text, bg, border, empty, l1-l4, head, body, glow, spine) no cambian:
   // el exportador las usa tal cual. muted y series son para las tarjetas.
   themes: {
+    // Neutros de la marca (docs/BRAND.md): ink es el tema por defecto
+    ink: {
+      text: '#ecedef', muted: '#8a8f98', bg: '#0e0f11', border: 'rgba(255, 255, 255, 0.1)',
+      empty: '#1a1c20', l1: '#2e3137', l2: '#4a4f57', l3: '#7d838d', l4: '#c9cdd3',
+      head: '#ffffff', body: '#e6e8eb', glow: 'rgba(255, 255, 255, 0.3)', spine: '#0e0f11',
+      series: ['#e6e8eb', '#a9aeb6', '#7d838d', '#c9cdd3', '#5b6068', '#3e4248']
+    },
+    paper: {
+      text: '#1a1b1e', muted: '#6b7079', bg: '#ffffff', border: 'rgba(17, 18, 20, 0.12)',
+      empty: '#eeeff1', l1: '#d3d6da', l2: '#a3a8b0', l3: '#6b7079', l4: '#2a2d33',
+      head: '#111214', body: '#2a2d33', glow: 'rgba(17, 18, 20, 0.18)', spine: '#ffffff',
+      series: ['#1a1b1e', '#5b6068', '#8a8f98', '#3e4248', '#b4b9c0', '#d3d6da']
+    },
     dark: {
       text: '#e6fff2', muted: '#8fb8a2', bg: '#040806', border: 'rgba(0, 255, 102, 0.15)',
       empty: '#0a140e', l1: '#07381b', l2: '#096831', l3: '#00b34d', l4: '#00ff66',
@@ -60,7 +73,7 @@ const ThemeTokens = {
 
   /** Colores de un tema (dark si no existe) */
   get(theme) {
-    return this.themes[theme] || this.themes.dark;
+    return this.themes[theme] || this.themes.ink;
   },
 
   /** Paleta en la forma que espera el exportador de la serpiente */

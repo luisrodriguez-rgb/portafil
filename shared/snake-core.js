@@ -12,7 +12,7 @@ const SnakeCore = {
   CONTRACT_VERSION: 1,
 
   OPTION_VALUES: {
-    theme: ['dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],
+    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],
     speed: ['normal', 'fast', 'relaxed'],
     morph: ['matrix_viper', 'capsule', 'retro'],
     pause: ['fast', 'medium', 'none'],
@@ -22,7 +22,7 @@ const SnakeCore = {
   // Tarjetas del kit (/api/<pieza>/<usuario>.svg): solo tema e idioma, para que todas combinen
   CARD_KINDS: ['header', 'stats', 'streak', 'langs', 'activity', 'kit'],
   CARD_OPTION_VALUES: {
-    theme: ['dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],
+    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],
     lang: ['en', 'es']
   },
 
@@ -99,7 +99,7 @@ const SnakeCore = {
       headers: {
         Authorization: `bearer ${token}`,
         'Content-Type': 'application/json',
-        'User-Agent': 'github-snake'
+        'User-Agent': Brand.userAgent
       },
       body: JSON.stringify({ query, variables: { login: username } })
     });

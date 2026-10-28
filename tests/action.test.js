@@ -95,7 +95,7 @@ test('run escribe un archivo por salida (API pública simulada)', async () => {
   } finally {
     global.fetch = realFetch;
   }
-  assert.ok(fs.readFileSync(path.join(dir, 'out/a.svg'), 'utf8').includes('#040806'));
+  assert.ok(fs.readFileSync(path.join(dir, 'out/a.svg'), 'utf8').includes('#0e0f11'), 'sin tema usa ink, el de la marca');
   assert.ok(fs.readFileSync(path.join(dir, 'out/b.svg'), 'utf8').includes('#ffffff'));
 });
 
@@ -108,17 +108,17 @@ test('el workflow que genera la web usa salidas que la Action acepta', () => {
     adaptive: true, darkTheme: 'cyberpunk', lightTheme: 'light', morph: 'capsule', speed: 'fast', pause: 'none'
   });
   assert.deepStrictEqual(parseOutputs(outputsOf(adaptive)), [
-    { file: 'dist/github-snake.svg', options: { theme: 'light', morph: 'capsule', speed: 'fast', pause: 'none' } },
-    { file: 'dist/github-snake-dark.svg', options: { theme: 'cyberpunk', morph: 'capsule', speed: 'fast', pause: 'none' } }
+    { file: 'dist/perfila-snake.svg', options: { theme: 'light', morph: 'capsule', speed: 'fast', pause: 'none' } },
+    { file: 'dist/perfila-snake-dark.svg', options: { theme: 'cyberpunk', morph: 'capsule', speed: 'fast', pause: 'none' } }
   ]);
 
   const single = exporter.generateWorkflowYaml('octocat', { adaptive: false, darkTheme: 'amber_terminal' });
   assert.deepStrictEqual(parseOutputs(outputsOf(single)), [
-    { file: 'dist/github-snake.svg', options: { theme: 'amber_terminal' } }
+    { file: 'dist/perfila-snake.svg', options: { theme: 'amber_terminal' } }
   ]);
-  assert.match(exporter.generateReadmeSnippet('octocat', { adaptive: false }), /^<img [^>]*output\/github-snake\.svg/);
-  assert.match(exporter.generateReadmeSnippet('octocat', { adaptive: true }), /github-snake-dark\.svg/);
-  assert.match(exporter.generateReadmeSnippet('octocat', { adaptive: false }), /snake eating @octocat contributions by GITHUB_SNAKE\.EXE/);
+  assert.match(exporter.generateReadmeSnippet('octocat', { adaptive: false }), /^<img [^>]*output\/perfila-snake\.svg/);
+  assert.match(exporter.generateReadmeSnippet('octocat', { adaptive: true }), /perfila-snake-dark\.svg/);
+  assert.match(exporter.generateReadmeSnippet('octocat', { adaptive: false }), /snake eating @octocat contributions by Perfila/);
 });
 
 test('el SVG parte de la matriz original aunque la partida ya haya comido celdas', () => {
@@ -180,5 +180,5 @@ test('lang es una opción válida de la Action y el generador de la web la inclu
   assert.throws(() => parseOutputs('dist/a.svg?lang=fr'), /no válido para 'lang'/);
   const engine = loadEngine();
   const yaml = new engine.ExporterEngine().generateWorkflowYaml('octocat', { adaptive: false, darkTheme: 'dark', lang: 'es' });
-  assert.match(yaml, /dist\/github-snake\.svg\?theme=dark&lang=es/);
+  assert.match(yaml, /dist\/perfila-snake\.svg\?theme=dark&lang=es/);
 });

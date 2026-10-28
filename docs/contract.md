@@ -8,7 +8,7 @@ Las URL de este documento ya están pegadas en perfiles reales. Regla: **se pued
 
 | Opción | Valores | Por defecto |
 | --- | --- | --- |
-| `theme` | `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal` | `dark` |
+| `theme` | `ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal` | `ink` |
 | `speed` | `normal`, `fast`, `relaxed` | `normal` |
 | `morph` | `matrix_viper`, `capsule`, `retro` | `matrix_viper` |
 | `pause` | `fast`, `medium`, `none` | `fast` |
@@ -31,7 +31,7 @@ La GitHub Action acepta las mismas opciones en cada línea de `outputs`.
 
 | Opción | Valores | Por defecto |
 | --- | --- | --- |
-| `theme` | igual que la serpiente | `dark` |
+| `theme` | igual que la serpiente | `ink` |
 | `lang` | `en`, `es` | `en` |
 
 Los anchos encajan con la serpiente (797 px): una pieza `half` de 390 px más 17 px de separación más otra de 390 px.

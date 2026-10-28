@@ -62,7 +62,7 @@ function render({ profile, weeks, tokens, lang }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${profile.login} by GITHUB_SNAKE.EXE`,
+    title: `@${profile.login} by Perfila`,
     content: framed({ width: WIDTH, height: HEIGHT, tokens, title: '', body: avatar + ring + left + right })
   };
 }

@@ -34,7 +34,7 @@ const kit = {
       const piece = PIECES[kind].render(data);
       return `<g transform="translate(${x} ${y})">${piece.content}</g>`;
     }).join('');
-    return { width, height, title: `@${data.login} GitHub profile by GITHUB_SNAKE.EXE`, content };
+    return { width, height, title: `@${data.login} GitHub profile by Perfila`, content };
   }
 };
 

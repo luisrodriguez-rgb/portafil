@@ -33,7 +33,7 @@ function svgResponse(status, body, cacheControl) {
 async function renderCardSvg({ kind, user, query = '', token, fetchImpl = fetch }) {
   const { SnakeCore } = engine;
   let options = {};
-  let tokens = T.get('dark');
+  let tokens = T.get('ink');
   const width = kind === 'header' || kind === 'kit' ? T.size.full : T.size.half;
 
   if (!KINDS[kind]) {

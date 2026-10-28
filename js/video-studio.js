@@ -92,7 +92,7 @@ class VideoStudio {
   /** Prepara todo lo que no cambia entre fotogramas */
   buildScene({ grid, user, lang, theme, format, shareUrl, avatar }) {
     const size = VIDEO_FORMATS[format] || VIDEO_FORMATS.landscape;
-    const palette = this.exporter.themePalettes[theme] || this.exporter.themePalettes.dark;
+    const palette = this.exporter.themePalettes[theme] || this.exporter.themePalettes.ink;
     const sim = this.exporter.simulate(grid);
     const totalSteps = sim.history.length;
 
@@ -151,7 +151,7 @@ class VideoStudio {
    */
   buildDuelScene({ players, lang, theme, format, shareUrl }) {
     const size = VIDEO_FORMATS[format] || VIDEO_FORMATS.landscape;
-    const palette = this.exporter.themePalettes[theme] || this.exporter.themePalettes.dark;
+    const palette = this.exporter.themePalettes[theme] || this.exporter.themePalettes.ink;
     const result = DuelSimulator.run(players.map(p => p.grid));
     const timing = { intro: 0, play: Math.min(8, Math.max(6, result.ticks * 0.018)), finale: 1.8, outro: 1.4 };
     timing.total = timing.intro + timing.play + timing.finale + timing.outro;
@@ -302,7 +302,7 @@ class VideoStudio {
     ctx.fillStyle = P.text;
     ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
-    const title = scene.user ? `@${scene.user}` : 'GITHUB_SNAKE.EXE';
+    const title = scene.user ? `@${scene.user}` : 'perfila';
     this.fitFont(ctx, title, 800, bigFont, W - textX - L.margin, font);
     ctx.fillText(title, textX, titleY - bigFont * 0.1);
     const counter = Math.round(scene.stats.total * this.ease((t - 0.2) / (T.intro + 0.8)));
@@ -443,7 +443,7 @@ class VideoStudio {
     ctx.fillStyle = P.text;
     ctx.globalAlpha = 0.55;
     ctx.textAlign = 'right';
-    ctx.fillText('GITHUB_SNAKE.EXE', W - L.margin, L.margin * 0.7);
+    ctx.fillText('perfila', W - L.margin, L.margin * 0.7);
     ctx.textAlign = 'left';
     ctx.globalAlpha = 1;
   }
@@ -683,7 +683,7 @@ class VideoStudio {
     ctx.fillStyle = P.text;
     ctx.globalAlpha = 0.55;
     ctx.textAlign = 'right';
-    ctx.fillText('GITHUB_SNAKE.EXE', W - scene.margin, scene.margin * 0.7);
+    ctx.fillText('perfila', W - scene.margin, scene.margin * 0.7);
     ctx.textAlign = 'left';
     ctx.globalAlpha = 1;
   }
@@ -702,7 +702,7 @@ class VideoStudio {
   /**
    * Genera el video. onProgress(0..1). Devuelve { blob, mimeType, extension, method }.
    */
-  async render({ grid, user = '', lang = 'en', theme = 'dark', format = 'landscape', shareUrl = '', avatar = null, duel = null, fps = 30, onProgress = () => {} }) {
+  async render({ grid, user = '', lang = 'en', theme = 'ink', format = 'landscape', shareUrl = '', avatar = null, duel = null, fps = 30, onProgress = () => {} }) {
     // duel: [{ grid, user, avatar }, { grid, user, avatar }] genera el video del duelo
     const scene = duel
       ? this.buildDuelScene({ players: duel, lang, theme, format, shareUrl })

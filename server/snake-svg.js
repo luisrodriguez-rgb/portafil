@@ -6,6 +6,7 @@
 
 const { engine, USER_RE, calendarCache, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
 const { logRender } = require('./metrics');
+const { messageCard, T } = require('./cards/frame');
 
 // GitHub actualiza el calendario a lo largo del día: 6 h de caché en la CDN y 1 día sirviendo la copia vieja mientras se regenera.
 // max-age de 4 h para el proxy de imágenes de GitHub (camo): cada recarga del README no llega a Vercel
@@ -15,13 +16,10 @@ const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 // Una sola instancia: memoriza la simulación por matriz, así cada estilo extra de un perfil cuesta solo el SVG
 const exporter = new engine.ExporterEngine();
 
-function escapeXml(text) {
-  return String(text).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[c]);
-}
 
 /** SVG con un mensaje: en un README una imagen rota no explica nada; esto sí */
 function messageSvg(text) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="797" height="60" viewBox="0 0 797 60"><rect width="797" height="60" rx="12" fill="#040806" stroke="#00ff66" stroke-opacity=".3"/><text x="398" y="36" text-anchor="middle" font-family="monospace" font-size="15" fill="#e6fff2">GITHUB_SNAKE.EXE: ${escapeXml(text)}</text></svg>`;
+  return messageCard(text, T.get('ink'), T.size.full);
 }
 
 function svgResponse(status, body, cacheControl) {
