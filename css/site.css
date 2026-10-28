@@ -42,6 +42,8 @@
 }
 
 * { box-sizing: border-box; }
+/* hidden siempre gana a los display de los componentes (botones, rejillas) */
+[hidden] { display: none !important; }
 
 body {
   margin: 0;

@@ -10,90 +10,54 @@
   <meta property="og:image" content="/assets/brand/og.png">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
   <!-- ?v= obliga al navegador a descargar CSS/JS nuevos tras cada despliegue: cambiar el valor en cada release -->
-  <link rel="stylesheet" href="style.css?v=20261028-clip">
+  <link rel="stylesheet" href="css/site.css?v=20261028-studio">
+  <link rel="stylesheet" href="css/studio.css?v=20261028-studio">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="apple-touch-icon" href="favicon.svg">
   <!-- URL base de la API de Perfila. Vacío = el mismo dominio que la web (despliegue en Vercel) -->
   <meta name="snake-api" content="">
 </head>
 <body data-theme="ink">
-
-  <!-- Ambient Matrix Digital Rain Canvas -->
-  <canvas id="matrixCanvas"></canvas>
-
-  <!-- Interactive Floating Tooltip for Contribution Grid -->
-  <div id="matrixTooltip" class="cyber-tooltip">
+  <!-- Tooltip de las celdas del tablero -->
+  <div id="matrixTooltip" class="cyber-tooltip" role="tooltip">
     <div class="tooltip-count" id="tooltipCount"></div>
     <div class="tooltip-date" id="tooltipDate"></div>
     <div class="tooltip-level-tag" id="tooltipLevel"></div>
   </div>
 
-  <div class="app-container">
-    <!-- Cyber Terminal Header -->
-    <header>
-      <a class="logo-group brand-link" href="./" aria-label="Perfila, volver al inicio">
-        <img src="assets/brand/mark-paper.svg" alt="" width="40" height="40">
-        <div class="title-area">
-          <h1>perfila <span class="brand-sub">estudio</span></h1>
-          <p>Juega, compite y graba clips con tu gráfico de contribuciones</p>
-        </div>
-      </a>
-
-      <div class="header-status">
-        <button id="achievementsBtn" class="terminal-status-pill tool-btn" style="cursor: pointer; border: 1px solid var(--border-color);">
-          <span class="status-dot"></span>
-          <span id="achievementsLabel">Logros: 0/7</span>
-        </button>
-        <div class="lang-switch" role="group" aria-label="Idioma / Language">
-          <button type="button" class="lang-btn" data-lang-btn="es" aria-pressed="true">ES</button>
-          <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false">EN</button>
-        </div>
-        <div class="theme-selector">
-          <select id="themeSelect" class="cyber-select">
-            <option value="ink" selected>Tinta (neutro oscuro)</option>
-              <option value="paper">Papel (neutro claro)</option>
-              <option value="dark">Matrix Phosphor (Oscuro)</option>
-            <option value="light">Modo Claro (GitHub Light)</option>
-            <option value="cyberpunk">Cyberpunk Neon (Fucsia)</option>
-            <option value="neon_cyan">Cyber Cyan (Azul)</option>
-            <option value="amber_terminal">Amber CRT (Terminal)</option>
-          </select>
-        </div>
+  <header class="top">
+    <a class="brand" href="./" aria-label="Perfila">
+      <img src="assets/brand/mark.svg" alt="" width="28" height="28">
+      <span>perfila</span>
+    </a>
+    <nav class="nav">
+      <a href="./">Piezas</a>
+      <a href="play.html" aria-current="page">Estudio</a>
+      <button id="achievementsBtn" type="button" class="pill-btn">
+        <span id="achievementsLabel">Logros: 0/7</span>
+      </button>
+      <div class="lang-switch" role="group" aria-label="Idioma / Language">
+        <button type="button" class="lang-btn" data-lang-btn="es" aria-pressed="true">ES</button>
+        <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false">EN</button>
       </div>
-    </header>
+    </nav>
+  </header>
 
-    <!-- Terminal Command Toolbar & Input -->
-    <section class="glass-panel">
-      <div class="input-header-label">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span>Ingresa un nombre de usuario o pega el enlace completo de GitHub:</span>
-      </div>
-
-      <div class="toolbar-grid">
-        <div class="cyber-input-wrapper">
-          <div class="terminal-prefix">
-            <span>github.com/</span>
-          </div>
-          <input type="text" id="usernameInput" placeholder="usuario o enlace (ej: midudev, torvalds, https://github.com/antfu)..." autocomplete="off" value="torvalds" spellcheck="false">
+  <main class="studio" id="main">
+    <section class="intro">
+      <h1>Estudio</h1>
+      <p class="lead">Juega con tu gráfico de contribuciones: deja que la IA se lo coma, mueve tú la serpiente, compite contra otro perfil o graba un clip para redes.</p>
+      <div class="load-row">
+        <div class="field">
+          <span class="prefix" aria-hidden="true">github.com/</span>
+          <input type="text" id="usernameInput" placeholder="usuario o enlace (ej: midudev, torvalds, https://github.com/antfu)..." autocomplete="off" value="torvalds" spellcheck="false" aria-label="Usuario de GitHub">
         </div>
-        
-        <button id="fetchBtn" class="btn btn-cyber-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
-          Ejecutar Caza
-        </button>
-        
-        <button id="randomGridBtn" class="btn btn-cyber-secondary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          Matriz Aleatoria
-        </button>
+        <button id="fetchBtn" type="button" class="btn btn-cyber-primary">Cargar</button>
+        <button id="randomGridBtn" type="button" class="btn btn-cyber-secondary">Aleatorio</button>
       </div>
-
-      <div class="presets-container">
-        <span class="presets-label">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Accesos directos:
-        </span>
+      <div class="presets">
+        <span class="muted">Prueba:</span>
         <button class="preset-pill active" data-user="torvalds">Linus Torvalds</button>
         <button class="preset-pill" data-user="midudev">Midudev</button>
         <button class="preset-pill" data-user="antfu">Anthony Fu</button>
@@ -103,59 +67,95 @@
       </div>
     </section>
 
-    <!-- Active Profile Info Card -->
-    <section id="activeProfileCard" class="glass-panel profile-banner">
-      <div class="profile-banner-content">
-        <div class="profile-avatar-wrap">
-          <img id="activeAvatar" src="https://github.com/torvalds.png?size=100" alt="Avatar" class="active-avatar-img">
-          <span class="avatar-ring-pulse"></span>
+    <section class="card board" aria-label="Tablero">
+      <div class="board-head" id="activeProfileCard">
+        <div class="who-row">
+          <img id="activeAvatar" src="https://github.com/torvalds.png?size=100" alt="" class="avatar" width="48" height="48">
+          <div class="who-text">
+            <div class="name-row">
+              <h2 id="activeDevName">Linus Torvalds</h2>
+              <a id="activeDevLink" href="https://github.com/torvalds" target="_blank" rel="noopener noreferrer" class="handle"><span id="activeDevUsername">@torvalds</span></a>
+            </div>
+            <p id="activeDevBio" class="bio">Creador de Linux & Git</p>
+            <div class="meta">
+              <span id="activeDevLocation">Portland, EE.UU.</span>
+              <span id="activeDevRepos">Repos: 42</span>
+            </div>
+          </div>
         </div>
-        <div class="profile-details">
-          <div class="profile-name-row">
-            <h3 id="activeDevName">Linus Torvalds</h3>
-            <a id="activeDevLink" href="https://github.com/torvalds" target="_blank" rel="noopener noreferrer" class="profile-gh-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-              <span id="activeDevUsername">@torvalds</span>
-            </a>
-          </div>
-          <p id="activeDevBio" class="profile-bio-text">Creador de Linux & Git</p>
-          <div class="profile-meta-tags">
-            <span id="activeDevLocation" class="meta-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Portland, EE.UU.
-            </span>
-            <span id="activeDevRepos" class="meta-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              Repos: 42
-            </span>
-          </div>
+        <div class="board-opts">
+          <label class="inline"><span>Estilo</span>
+            <select id="themeSelect">
+              <option value="ink" selected>Tinta</option>
+              <option value="paper">Papel</option>
+              <option value="dark">Fósforo</option>
+              <option value="light">GitHub claro</option>
+              <option value="cyberpunk">Cyberpunk</option>
+              <option value="neon_cyan">Cian</option>
+              <option value="amber_terminal">Ámbar</option>
+            </select>
+          </label>
+          <label class="inline"><span>Forma</span>
+            <select id="snakeStyleSelect">
+              <option value="matrix_viper" selected>Víbora</option>
+              <option value="capsule">Cápsula</option>
+              <option value="smooth">Continua</option>
+              <option value="retro">Retro</option>
+            </select>
+          </label>
         </div>
       </div>
 
-      <!-- Live Consumption Progress Bar -->
-      <div class="consumption-progress-container">
-        <div class="progress-info-row">
-          <span id="progressLabelText">Progreso de Devoracion del Mapa:</span>
+      <div class="canvas-wrapper">
+        <canvas id="snakeCanvas" width="920" height="145"></canvas>
+      </div>
+
+      <div class="progress">
+        <div class="progress-row">
+          <span id="progressLabelText">Progreso</span>
           <span id="progressPercentText">0%</span>
         </div>
         <div class="progress-track" id="singleProgressTrack">
           <div id="progressBarFill" class="progress-bar-fill"></div>
         </div>
-
-        <!-- Barra Dual de Progreso para Modo Duelo -->
         <div class="dual-progress-track" id="dualProgressTrack" style="display: none;">
           <div id="p1ProgressFill" class="p1-progress-fill" style="width: 50%;">IA: 0%</div>
           <div id="p2ProgressFill" class="p2-progress-fill" style="width: 50%;">P2: 0%</div>
         </div>
       </div>
-    </section>
 
-    <!-- Canvas Visualization Stage -->
-    <section class="glass-panel stage-container">
-      <div class="canvas-wrapper">
-        <canvas id="snakeCanvas" width="920" height="145"></canvas>
+      <div class="controls">
+        <div class="playback">
+          <button id="playPauseBtn" type="button" class="btn btn-cyber-primary"><span id="playIcon">Pausar</span></button>
+          <button id="stepBtn" type="button" class="btn btn-cyber-secondary">Paso</button>
+          <button id="resetBtn" type="button" class="btn btn-cyber-secondary">Reiniciar</button>
+        </div>
+        <label class="speed"><span>Velocidad</span>
+          <input type="range" id="speedSlider" min="1" max="9" value="5" step="1">
+          <span id="speedValue">5 t/s · óptima</span>
+        </label>
       </div>
-      <!-- D-Pad Virtual Tactil para Moviles -->
+
+      <dl class="stats">
+        <div class="stat-card">
+          <dt class="stat-label">Por comer</dt>
+          <dd class="stat-value" id="statRemaining">0</dd>
+        </div>
+        <div class="stat-card" id="cardP1">
+          <dt class="stat-label" id="labelP1">Puntos de la IA</dt>
+          <dd class="stat-value" id="statP1Score">0 pts</dd>
+        </div>
+        <div class="stat-card" id="cardP2">
+          <dt class="stat-label" id="labelP2">P2 · tú</dt>
+          <dd class="stat-value" id="statP2Score">0 pts</dd>
+        </div>
+        <div class="stat-card">
+          <dt class="stat-label">Estado</dt>
+          <dd class="stat-value small" id="statState">Escaneando red...</dd>
+        </div>
+      </dl>
+
+      <!-- Cruceta táctil: en móvil, para el modo manual y el duelo contra la IA -->
       <div class="mobile-dpad-container" id="mobileDpad">
         <button class="dpad-btn dpad-up" data-dir="up" aria-label="Arriba">▲</button>
         <div class="dpad-row">
@@ -167,99 +167,30 @@
       </div>
     </section>
 
-    <!-- Pro Interaction Tools Bar -->
-    <section class="tools-bar">
-      <div class="tools-group">
-        <button id="modeBtn" class="btn btn-cyber-secondary tool-btn">
-          Control: IA Autonoma
-        </button>
-        <button id="duelBtn" class="btn btn-cyber-secondary tool-btn">
-          Modo Duelo (IA vs Jugador)
-        </button>
-        <button id="paintBtn" class="btn btn-cyber-secondary tool-btn">
-          Pintar: Inactivo
-        </button>
-        <button id="templateBtn" class="btn btn-cyber-secondary tool-btn">
-          Plantillas Art
-        </button>
-        <button id="audioBtn" class="btn btn-cyber-secondary tool-btn">
-          Audio: OFF
-        </button>
+    <section class="tools" aria-label="Herramientas">
+      <div class="tool-group">
+        <h2>Jugar</h2>
+        <div class="tool-buttons">
+          <button id="modeBtn" type="button" class="btn btn-cyber-secondary tool-btn">Modo: IA</button>
+          <button id="duelBtn" type="button" class="btn btn-cyber-secondary tool-btn">Contra la IA</button>
+          <button id="paintBtn" type="button" class="btn btn-cyber-secondary tool-btn">Pintar</button>
+          <button id="templateBtn" type="button" class="btn btn-cyber-secondary tool-btn">Commit Art</button>
+          <button id="audioBtn" type="button" class="btn btn-cyber-secondary tool-btn">Sonido: no</button>
+        </div>
       </div>
-
-      <div class="tools-group">
-        <button id="recordBtn" class="btn btn-cyber-secondary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-          <span id="recordBtnText">Grabar Video (Pantalla / Tablero)</span>
-        </button>
-        <button id="videoStudioBtn" class="btn btn-cyber-primary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3z"/></svg>
-          Video para redes
-        </button>
-        <button id="exportSvgBtn" class="btn btn-cyber-secondary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Exportar SVG Pro
-        </button>
-        <button id="exportYamlBtn" class="btn btn-cyber-primary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          Poner en mi perfil
-        </button>
-      </div>
-    </section>
-
-    <!-- Real-time HUD Stats -->
-    <section class="hud-grid">
-      <div class="stat-card">
-        <span class="stat-label">Commits Restantes</span>
-        <div class="stat-value highlight" id="statRemaining">0</div>
-      </div>
-      <div class="stat-card" id="cardP1">
-        <span class="stat-label" id="labelP1">P1 (IA Verde) Puntos</span>
-        <div class="stat-value" id="statP1Score">0 pts</div>
-      </div>
-      <div class="stat-card" id="cardP2">
-        <span class="stat-label" id="labelP2">P2 (Jugador Cian) Puntos</span>
-        <div class="stat-value" style="color: #00f2fe;" id="statP2Score">0 pts</div>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Estado de la Partida</span>
-        <div class="stat-value" style="font-size: 0.90rem;" id="statState">Escaneando red...</div>
-      </div>
-    </section>
-
-    <!-- Playback & Simulation Controls -->
-    <section class="control-bar">
-      <div class="playback-controls">
-        <button id="playPauseBtn" class="btn btn-cyber-primary" style="padding: 0.65rem 1.2rem;">
-          <span id="playIcon">Pausar</span>
-        </button>
-        <button id="stepBtn" class="btn btn-cyber-secondary" style="padding: 0.65rem 1rem;">
-          Paso
-        </button>
-        <button id="resetBtn" class="btn btn-cyber-secondary" style="padding: 0.65rem 1rem;">
-          Reiniciar
-        </button>
-      </div>
-
-      <div class="slider-group">
-        <span>Frecuencia:</span>
-        <input type="range" id="speedSlider" min="1" max="9" value="5" step="1">
-        <span id="speedValue" style="color: var(--matrix-green); font-weight: 700; width: auto; white-space: nowrap;">5 t/s (Optimo)</span>
-      </div>
-
-      <div class="slider-group">
-        <span>Morfologia:</span>
-        <select id="snakeStyleSelect" class="cyber-select">
-          <option value="matrix_viper" selected>Cyber Matrix Viper</option>
-          <option value="capsule">Neon Capsule</option>
-          <option value="smooth">Laser Continuo</option>
-          <option value="retro">Pixel Block</option>
-        </select>
+      <div class="tool-group">
+        <h2>Llévatelo</h2>
+        <div class="tool-buttons">
+          <button id="exportYamlBtn" type="button" class="btn btn-cyber-primary tool-btn">Poner en mi perfil</button>
+          <button id="videoStudioBtn" type="button" class="btn btn-cyber-secondary tool-btn">Clip para redes</button>
+          <button id="recordBtn" type="button" class="btn btn-cyber-secondary tool-btn"><span id="recordBtnText">Grabar pantalla</span></button>
+          <button id="exportSvgBtn" type="button" class="btn btn-cyber-secondary tool-btn">Descargar SVG</button>
+        </div>
       </div>
     </section>
 
     <!-- Duelo de Perfiles -->
-    <section id="duelSection" class="glass-panel">
+    <section id="duelSection" class="card section">
       <div class="section-title-bar">
         <div>
           <h2>Duelo de Perfiles</h2>
@@ -309,8 +240,12 @@
         </div>
       </div>
     </section>
+  </main>
 
-  </div>
+  <footer class="foot">
+    <span class="brand small"><img src="assets/brand/mark.svg" alt="" width="18" height="18"> perfila</span>
+    <a href="./">Ver todas las piezas para tu perfil</a>
+  </footer>
 
   <!-- Modal Grabar Video HD / Pantalla Completa -->
   <div id="modalRecordVideo" class="modal-backdrop">
@@ -372,9 +307,9 @@
               Velocidad de Animacion (Pasos por segundo):
             </label>
             <select id="exportSpeedSelect" class="cyber-select" style="width: 100%;">
-              <option value="fast">Rapida (8 t/s - Animacion agil)</option>
-              <option value="normal" selected>Normal (5 t/s - Velocidad recomendada)</option>
-              <option value="relaxed">Relajada (3 t/s - Recorrido pausado)</option>
+              <option value="fast">Rápida</option>
+              <option value="normal" selected>Normal</option>
+              <option value="relaxed">Tranquila</option>
             </select>
           </div>
 
@@ -383,13 +318,13 @@
               Tema / Paleta de Colores:
             </label>
             <select id="exportThemeSelect" class="cyber-select" style="width: 100%;">
-              <option value="ink" selected>Tinta (neutro oscuro)</option>
-              <option value="paper">Papel (neutro claro)</option>
-              <option value="dark">Matrix Phosphor (Oscuro / Verde)</option>
-              <option value="light">Modo Claro (GitHub Light)</option>
-              <option value="cyberpunk">Cyberpunk Neon (Fucsia / Neón)</option>
-              <option value="neon_cyan">Cyber Cyan (Azul Eléctrico)</option>
-              <option value="amber_terminal">Amber CRT (Ámbar Retro)</option>
+              <option value="ink" selected>Tinta</option>
+              <option value="paper">Papel</option>
+              <option value="dark">Fósforo</option>
+              <option value="light">GitHub claro</option>
+              <option value="cyberpunk">Cyberpunk</option>
+              <option value="neon_cyan">Cian</option>
+              <option value="amber_terminal">Ámbar</option>
             </select>
           </div>
 
@@ -398,9 +333,9 @@
               Morfologia de la Serpiente:
             </label>
             <select id="exportMorphSelect" class="cyber-select" style="width: 100%;">
-              <option value="matrix_viper" selected>Cyber Matrix Viper (Alto contraste con núcleo láser)</option>
-              <option value="capsule">Neon Capsule</option>
-              <option value="retro">Pixel Block (Retro 8-bit)</option>
+              <option value="matrix_viper" selected>Víbora</option>
+              <option value="capsule">Cápsula</option>
+              <option value="retro">Retro</option>
             </select>
           </div>
 
@@ -409,9 +344,9 @@
               Pausa de Reinicio (Loop):
             </label>
             <select id="exportPauseSelect" class="cyber-select" style="width: 100%;">
-              <option value="fast" selected>Corta (1.5s de celebracion)</option>
-              <option value="medium">Larga (2.5s de celebracion)</option>
-              <option value="none">Sin pausa (bucle continuo, sin celebracion)</option>
+              <option value="fast" selected>Corta (1,5 s)</option>
+              <option value="medium">Larga (2,5 s)</option>
+              <option value="none">Sin pausa</option>
             </select>
           </div>
         </div>
@@ -444,8 +379,8 @@
             <div class="result-stat">Porcentaje del mapa: <span id="resP1Percent">0%</span></div>
           </div>
           <div class="result-player-box p2-box" id="resP2Box">
-            <div class="player-tag" style="color: #00f2fe;">SERPIENTE 2 (JUGADOR CIAN)</div>
-            <div class="result-score" style="color: #00f2fe;" id="resP2Score">0 pts</div>
+            <div class="player-tag p2-text">SERPIENTE 2 (JUGADOR CIAN)</div>
+            <div class="result-score p2-text" id="resP2Score">0 pts</div>
             <div class="result-stat">Commits devorados: <span id="resP2Eaten">0</span></div>
             <div class="result-stat">Porcentaje del mapa: <span id="resP2Percent">0%</span></div>
           </div>
@@ -687,23 +622,23 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/i18n.js?v=20261028-clip"></script>
-  <script src="js/calendar.js?v=20261028-clip"></script>
-  <script src="js/analytics.js?v=20261028-clip"></script>
-  <script src="js/audio.js?v=20261028-clip"></script>
-  <script src="js/recorder.js?v=20261028-clip"></script>
-  <script src="js/templates.js?v=20261028-clip"></script>
-  <script src="js/achievements.js?v=20261028-clip"></script>
-  <script src="shared/brand.js?v=20261028-clip"></script>
-  <script src="shared/theme-tokens.js?v=20261028-clip"></script>
-  <script src="js/exporter.js?v=20261028-clip"></script>
-  <script src="js/github.js?v=20261028-clip"></script>
-  <script src="js/pathfinding.js?v=20261028-clip"></script>
-  <script src="js/snake.js?v=20261028-clip"></script>
-  <script src="js/renderer.js?v=20261028-clip"></script>
-  <script src="js/duel.js?v=20261028-clip"></script>
-  <script src="js/video-studio.js?v=20261028-clip"></script>
-  <script src="js/app.js?v=20261028-clip"></script>
+  <script src="js/i18n.js?v=20261028-studio"></script>
+  <script src="js/calendar.js?v=20261028-studio"></script>
+  <script src="js/analytics.js?v=20261028-studio"></script>
+  <script src="js/audio.js?v=20261028-studio"></script>
+  <script src="js/recorder.js?v=20261028-studio"></script>
+  <script src="js/templates.js?v=20261028-studio"></script>
+  <script src="js/achievements.js?v=20261028-studio"></script>
+  <script src="shared/brand.js?v=20261028-studio"></script>
+  <script src="shared/theme-tokens.js?v=20261028-studio"></script>
+  <script src="js/exporter.js?v=20261028-studio"></script>
+  <script src="js/github.js?v=20261028-studio"></script>
+  <script src="js/pathfinding.js?v=20261028-studio"></script>
+  <script src="js/snake.js?v=20261028-studio"></script>
+  <script src="js/renderer.js?v=20261028-studio"></script>
+  <script src="js/duel.js?v=20261028-studio"></script>
+  <script src="js/video-studio.js?v=20261028-studio"></script>
+  <script src="js/app.js?v=20261028-studio"></script>
   <!-- Cloudflare Web Analytics -->
   <!-- End Cloudflare Web Analytics -->
 </body>

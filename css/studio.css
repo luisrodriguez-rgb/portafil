@@ -1,0 +1,266 @@
+/*
+ * Perfila · estudio. Se apoya en css/site.css (tokens, cabecera, botones, campos) para que la portada
+ * y el estudio sean el mismo producto. La página es neutra y sigue el modo del sistema; el tema elegido
+ * (body[data-theme]) solo colorea el tablero (el renderer lee --cell-*, --snake-* y --matrix-green)
+ * y un acento de progreso.
+ */
+
+:root {
+  /* Alias para los estilos en línea de los modales */
+  --font-mono: var(--mono);
+  --text-muted: var(--muted);
+  --border-color: var(--line);
+  --p2: #0b8a99;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { --p2: #00e0ec; }
+}
+
+/* --- Temas del tablero (colores de shared/theme-tokens.js) --- */
+body[data-theme="ink"] {
+  --cell-empty: #1a1c20; --cell-l1: #2e3137; --cell-l2: #4a4f57; --cell-l3: #7d838d; --cell-l4: #c9cdd3;
+  --snake-head: #ffffff; --snake-body: #e6e8eb; --snake-glow: rgba(255, 255, 255, 0.3);
+  --matrix-green: #e6e8eb; --canvas-bg: #0e0f11; --game-accent: var(--strong);
+}
+body[data-theme="paper"] {
+  --cell-empty: #eeeff1; --cell-l1: #d3d6da; --cell-l2: #a3a8b0; --cell-l3: #6b7079; --cell-l4: #2a2d33;
+  --snake-head: #111214; --snake-body: #2a2d33; --snake-glow: rgba(17, 18, 20, 0.18);
+  --matrix-green: #2a2d33; --canvas-bg: #ffffff; --game-accent: var(--strong);
+}
+body[data-theme="dark"] {
+  --cell-empty: #0a140e; --cell-l1: #07381b; --cell-l2: #096831; --cell-l3: #00b34d; --cell-l4: #00ff66;
+  --snake-head: #ffffff; --snake-body: #00ff66; --snake-glow: rgba(0, 255, 102, 0.85);
+  --matrix-green: #00ff66; --canvas-bg: #040806; --game-accent: #00b34d;
+}
+body[data-theme="light"] {
+  --cell-empty: #ebedf0; --cell-l1: #9be9a8; --cell-l2: #40c463; --cell-l3: #30a14e; --cell-l4: #216e39;
+  --snake-head: #0969da; --snake-body: #1a7f37; --snake-glow: rgba(26, 127, 55, 0.35);
+  --matrix-green: #1a7f37; --canvas-bg: #ffffff; --game-accent: #1a7f37;
+}
+body[data-theme="cyberpunk"] {
+  --cell-empty: #170d2b; --cell-l1: #3b1059; --cell-l2: #72128a; --cell-l3: #c01ec7; --cell-l4: #ff007f;
+  --snake-head: #00ffff; --snake-body: #ff007f; --snake-glow: rgba(255, 0, 127, 0.85);
+  --matrix-green: #ff007f; --canvas-bg: #090614; --game-accent: #ff007f;
+}
+body[data-theme="neon_cyan"] {
+  --cell-empty: #091c2e; --cell-l1: #073a54; --cell-l2: #08668f; --cell-l3: #00aee6; --cell-l4: #00f2fe;
+  --snake-head: #ffffff; --snake-body: #00f2fe; --snake-glow: rgba(0, 242, 254, 0.85);
+  --matrix-green: #00f2fe; --canvas-bg: #030a12; --game-accent: #00aee6;
+}
+body[data-theme="amber_terminal"] {
+  --cell-empty: #241806; --cell-l1: #4a3006; --cell-l2: #855304; --cell-l3: #d98200; --cell-l4: #ffaa00;
+  --snake-head: #ffffff; --snake-body: #ffaa00; --snake-glow: rgba(255, 170, 0, 0.85);
+  --matrix-green: #ffaa00; --canvas-bg: #0f0a02; --game-accent: #d98200;
+}
+
+/* --- Cabecera --- */
+.nav a[aria-current="page"] { color: var(--text); font-weight: 600; }
+.pill-btn { white-space: nowrap; font: inherit; font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.pill-btn:hover { color: var(--text); }
+.lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lang-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 0; padding: 5px 9px; cursor: pointer; }
+.lang-btn[aria-pressed="true"] { background: var(--strong); color: var(--on-strong); }
+
+/* --- Estructura --- */
+.studio { display: grid; gap: 20px; padding-bottom: 56px; }
+.intro { padding: 32px 0 8px; }
+.intro h1 { font-size: clamp(32px, 5vw, 44px); letter-spacing: -0.035em; }
+.intro .lead { margin: 12px 0 20px; }
+.load-row { display: flex; gap: 8px; flex-wrap: wrap; max-width: 680px; }
+.load-row .field { flex: 1 1 280px; }
+.load-row .field input { flex: 1; min-width: 0; font: inherit; font-family: var(--mono); font-size: 15px; border: 0; background: transparent; color: var(--text); padding: 12px 14px 12px 2px; outline: none; }
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; font-size: 14px; }
+.preset-pill { font: inherit; font-size: 13px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.preset-pill:hover { border-color: var(--muted); }
+.preset-pill.active { background: var(--strong); color: var(--on-strong); border-color: var(--strong); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; min-width: 0; }
+
+/* Los botones del motor usan estas clases; el JS las alterna en los botones que cambian de estado */
+.btn-cyber-primary { background: var(--strong); color: var(--on-strong); border-color: var(--strong); }
+.btn-cyber-primary:hover { opacity: 0.9; }
+.btn-cyber-secondary { background: var(--surface); color: var(--text); }
+.active-tool { border-color: var(--strong); box-shadow: inset 0 0 0 1px var(--strong); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* --- Tablero --- */
+.board { display: grid; gap: 16px; }
+.board-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.who-row { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); flex: none; }
+.who-text { min-width: 0; }
+.name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.name-row h2 { font-size: 18px; }
+.handle { font-family: var(--mono); font-size: 13px; color: var(--muted); text-decoration: none; }
+.handle:hover { color: var(--text); }
+.bio { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.board-opts { display: flex; gap: 12px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+
+.canvas-wrapper { position: relative; background: var(--canvas-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; justify-content: center; overflow: hidden; }
+.canvas-wrapper canvas { display: block; max-width: 100%; height: auto; touch-action: none; image-rendering: -webkit-optimize-contrast; }
+
+.progress { display: grid; gap: 6px; }
+.progress-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-family: var(--mono); }
+.progress-track { height: 6px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.progress-bar-fill { height: 100%; width: 0; background: var(--game-accent); transition: width 0.3s ease; }
+.dual-progress-track { height: 18px; border-radius: 6px; background: var(--soft); overflow: hidden; display: flex; }
+.p1-progress-fill, .p2-progress-fill { height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; transition: width 0.3s ease; }
+.p1-progress-fill { background: var(--game-accent); color: var(--canvas-bg); }
+.p2-progress-fill { background: #00f2fe; color: #031014; }
+
+.controls { display: flex; justify-content: space-between; align-items: center; gap: 12px 20px; flex-wrap: wrap; }
+.playback { display: flex; gap: 8px; flex-wrap: wrap; }
+.playback .btn { padding: 8px 14px; font-size: 14px; }
+.speed { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.speed input { accent-color: var(--strong); width: 140px; }
+#speedValue { font-family: var(--mono); font-size: 13px; color: var(--text); white-space: nowrap; }
+
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.stat-card { background: var(--soft); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-value { margin: 2px 0 0; font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
+.stat-value.small { font-size: 13px; font-weight: 600; }
+.stat-value.highlight { color: var(--game-accent); }
+.p2, .p2-text { color: var(--p2); }
+
+/* Cruceta: solo en pantallas táctiles o estrechas */
+.mobile-dpad-container { display: none; flex-direction: column; align-items: center; gap: 6px; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.dpad-row { display: flex; gap: 6px; }
+.dpad-btn { width: 48px; height: 48px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px; cursor: pointer; }
+.dpad-btn:active { background: var(--soft); }
+.dpad-action { width: 62px; font-size: 11px; font-family: var(--mono); }
+@media (pointer: coarse), (max-width: 720px) {
+  .mobile-dpad-container { display: flex; }
+}
+
+/* --- Herramientas --- */
+.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.tool-group h2 { font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: 0; margin-bottom: 10px; }
+.tool-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool-buttons .btn { font-size: 14px; padding: 9px 13px; }
+
+/* --- Duelo de perfiles --- */
+.section-title-bar h2 { font-size: 20px; }
+.section-title-bar p { margin: 6px 0 16px; color: var(--muted); font-size: 15px; }
+.duel-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.duel-input { flex: 1 1 180px; min-width: 0; font: inherit; font-family: var(--mono); font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; }
+.duel-input:focus { border-color: var(--strong); outline: none; }
+.duel-vs { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.duel-status { min-height: 1.4em; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+.duel-arena { display: grid; gap: 14px; margin-top: 16px; }
+.duel-player-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-family: var(--mono); font-size: 14px; }
+.duel-avatar { width: 24px; height: 24px; border-radius: 50%; }
+.duel-name { font-weight: 700; }
+.duel-sim { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; }
+.duel-score { margin-left: auto; font-weight: 700; }
+.duel-player[data-player="1"] .duel-score { color: var(--p2); }
+.duel-bar { height: 6px; border-radius: 999px; background: var(--soft); overflow: hidden; margin-bottom: 8px; }
+.duel-bar-fill { height: 100%; width: 0; background: var(--game-accent); transition: width 0.3s ease; }
+.duel-player[data-player="1"] .duel-bar-fill { background: #00c4d0; }
+.duel-player.is-winner .canvas-wrapper { border-color: var(--strong); box-shadow: inset 0 0 0 1px var(--strong); }
+.duel-timer { justify-self: center; font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--muted); }
+.duel-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* --- Tooltip del tablero --- */
+.cyber-tooltip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); font-size: 12px; opacity: 0; transform: translateY(4px); transition: opacity 0.12s ease, transform 0.12s ease; }
+.cyber-tooltip.visible { opacity: 1; transform: none; }
+.tooltip-count { font-weight: 700; }
+.tooltip-date, .tooltip-level-tag { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+
+/* --- Modales --- */
+.modal-backdrop { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(10, 11, 13, 0.55); backdrop-filter: blur(4px); }
+.modal-backdrop.visible { display: flex; }
+.modal-card { width: 100%; max-width: 640px !important; max-height: 90vh; overflow-y: auto; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+.modal-card.wf-card { max-width: 760px !important; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.modal-header h3 { font-size: 18px; letter-spacing: -0.01em; }
+.modal-close-btn { font: inherit; font-size: 22px; line-height: 1; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: none; color: var(--muted); cursor: pointer; }
+.modal-close-btn:hover { color: var(--text); }
+.modal-body { display: grid; gap: 14px; font-size: 15px; }
+.modal-body p { margin: 0; }
+.modal-body label, .modal-body h4 { font-family: var(--sans) !important; font-weight: 600 !important; letter-spacing: 0; }
+.cyber-select { font: inherit; font-size: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.code-box { width: 100%; min-height: 140px; font-family: var(--mono); font-size: 12px; color: var(--text); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px; resize: vertical; }
+.info-alert-box { background: var(--soft); border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+.info-alert-box code { font-family: var(--mono); font-size: 12px; }
+
+/* Fin de partida */
+.victory-card { text-align: center; }
+.winner-announcement { display: grid; gap: 8px; justify-items: center; }
+.winner-badge { display: inline-block; font-family: var(--mono); font-size: 18px; font-weight: 800; padding: 6px 16px; border: 2px solid var(--game-accent); border-radius: 999px; color: var(--game-accent); }
+.duel-results-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; text-align: left; }
+.result-player-box { background: var(--soft); border-radius: 10px; padding: 12px; display: grid; gap: 4px; }
+.result-player-box.p1-box { border-left: 3px solid var(--game-accent); }
+.result-player-box.p2-box { border-left: 3px solid var(--p2); }
+.player-tag { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.result-score { font-family: var(--mono); font-size: 22px; font-weight: 800; }
+.result-stat { font-size: 13px; color: var(--muted); }
+
+/* Commit Art y logros */
+.templates-list, .achievements-modal-list { display: grid; gap: 8px; }
+.template-item, .ach-card { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--soft); border: 1px solid transparent; border-radius: 10px; padding: 12px 14px; }
+.template-item h4, .ach-card h4 { margin: 0; font-size: 15px; }
+.template-item p, .ach-card p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.template-item .btn, .ach-card .btn { flex: none; font-size: 13px; padding: 7px 11px; }
+.ach-card { opacity: 0.6; }
+.ach-card.unlocked { opacity: 1; border-color: var(--line); background: var(--surface); }
+.ach-status-badge { font-size: 12px; font-family: var(--mono); color: var(--muted); white-space: nowrap; }
+.custom-word-card { display: grid; gap: 8px; }
+.custom-input-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.custom-input-row input { flex: 1 1 200px; min-width: 0; font: inherit; font-family: var(--mono); color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; }
+
+/* Aviso de logro */
+.achievement-toast { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; gap: 12px; align-items: center; max-width: 340px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); transform: translateY(16px); opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; }
+.achievement-toast.show { transform: none; opacity: 1; pointer-events: auto; }
+.toast-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: var(--soft); flex: none; }
+.toast-tag { font-size: 11px; font-family: var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.toast-content h4 { margin: 0; font-size: 14px; }
+.toast-content p { margin: 0; font-size: 13px; color: var(--muted); }
+
+/* Estudio de video */
+.vs-formats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.vs-format { position: relative; display: grid; justify-items: center; gap: 4px; padding: 12px 8px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; text-align: center; font-size: 14px; }
+.vs-format input { position: absolute; opacity: 0; pointer-events: none; }
+.vs-format:has(input:checked) { border-color: var(--strong); box-shadow: inset 0 0 0 1px var(--strong); }
+.vs-format:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.vs-format small { color: var(--muted); font-size: 12px; }
+.vs-shape { display: block; border: 2px solid var(--text); border-radius: 4px; }
+.vs-shape-landscape { width: 48px; height: 27px; }
+.vs-shape-square { width: 36px; height: 36px; }
+.vs-shape-vertical { width: 24px; height: 42px; }
+.vs-progress { height: 6px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.vs-progress-fill { height: 100%; width: 0; background: var(--strong); }
+.vs-preview { display: block; width: 100%; max-height: 60vh; border-radius: 10px; background: #000; }
+
+/* Workflow / poner en mi perfil */
+.wf-step { font-size: 14px; color: var(--muted); margin: 0; }
+.wf-label { font-size: 13px; color: var(--muted); }
+.wf-mode { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+.wf-mode label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 400 !important; }
+.wf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.wf-grid .cyber-select { width: 100%; }
+.wf-preview { display: grid; gap: 10px; }
+.wf-preview figure { margin: 0; }
+.wf-preview img { display: block; width: 100%; height: auto; border-radius: 10px; background: #0d1117; padding: 6px; }
+.wf-preview figcaption { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+@media (max-width: 720px) {
+  /* La cabecera del estudio tiene más elementos que la de la portada: la navegación baja a su propia fila */
+  .top { flex-wrap: wrap; justify-content: flex-start; row-gap: 10px; column-gap: 6px; }
+  .top .nav { display: contents; }
+  .top .lang-switch { order: 1; margin-left: auto; }
+  .top::after { content: ''; order: 1; flex-basis: 100%; }
+  .top .nav a, .top .pill-btn { order: 2; }
+  .top .nav a:first-child { margin-left: -10px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tools { grid-template-columns: minmax(0, 1fr); }
+  .card { padding: 14px; }
+  .controls { align-items: stretch; }
+  .speed { width: 100%; }
+  .speed input { flex: 1; }
+  .duel-results-grid { grid-template-columns: minmax(0, 1fr); }
+  .modal-card { padding: 16px; }
+  .duel-vs { display: none; }
+}

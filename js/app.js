@@ -7,7 +7,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Elementos del DOM
   const canvas = document.getElementById('snakeCanvas');
-  const matrixCanvas = document.getElementById('matrixCanvas');
   const usernameInput = document.getElementById('usernameInput');
   const fetchBtn = document.getElementById('fetchBtn');
   const randomGridBtn = document.getElementById('randomGridBtn');
@@ -193,54 +192,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     achievementsLabel.textContent = t('achievements.label', { unlocked, total });
   }
 
-  // --- Lluvia Matrix ---
-  const matrixCtx = matrixCanvas.getContext('2d');
-  let matrixColumns = 0;
-  let drops = [];
-  const matrixChars = '0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ'.split('');
-
-  function initMatrixRain() {
-    matrixCanvas.width = window.innerWidth;
-    matrixCanvas.height = window.innerHeight;
-    const fontSize = 14;
-    matrixColumns = Math.floor(matrixCanvas.width / fontSize);
-    drops = Array(matrixColumns).fill(1).map(() => Math.floor(Math.random() * -50));
-  }
-
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let rainTheme = null;
-  let rainColor = '#00ff66';
-
-  function drawMatrixRain() {
-    if (reducedMotion.matches) return;
-
-    const theme = document.body.getAttribute('data-theme');
-    const isLight = theme === 'light';
-    matrixCtx.fillStyle = isLight ? 'rgba(246, 248, 250, 0.15)' : 'rgba(4, 8, 6, 0.08)';
-    matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-
-    // getComputedStyle fuerza un recálculo de estilos: solo se consulta al cambiar de tema
-    if (theme !== rainTheme) {
-      rainTheme = theme;
-      rainColor = getComputedStyle(document.body).getPropertyValue('--matrix-green').trim() || '#00ff66';
-    }
-
-    matrixCtx.fillStyle = rainColor;
-    matrixCtx.font = '12px JetBrains Mono';
-
-    for (let i = 0; i < drops.length; i++) {
-      const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-      matrixCtx.fillText(char, i * 14, drops[i] * 14);
-
-      if (drops[i] * 14 > matrixCanvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-      drops[i]++;
-    }
-  }
-
-  window.addEventListener('resize', initMatrixRain);
-  initMatrixRain();
 
   function renderLeaderboard() {
     if (!leaderboardGrid) return;
@@ -414,25 +365,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (p2Score > p1Score) {
         winnerBadge.textContent = t('gameover.p2Wins');
-        winnerBadge.style.color = '#00f2fe';
-        winnerBadge.style.borderColor = '#00f2fe';
+        winnerBadge.style.color = 'var(--p2)';
+        winnerBadge.style.borderColor = 'var(--p2)';
         winnerSummary.textContent = t('gameover.p2WinsSummary', { score: p2Score, eaten: p2Eaten });
       } else if (p1Score > p2Score) {
         winnerBadge.textContent = t('gameover.aiWins');
-        winnerBadge.style.color = 'var(--matrix-green)';
-        winnerBadge.style.borderColor = 'var(--matrix-green)';
+        winnerBadge.style.color = 'var(--game-accent)';
+        winnerBadge.style.borderColor = 'var(--game-accent)';
         winnerSummary.textContent = t('gameover.aiWinsSummary', { score: p1Score, eaten: p1Eaten });
       } else {
         winnerBadge.textContent = t('gameover.tie');
-        winnerBadge.style.color = '#fcee0a';
-        winnerBadge.style.borderColor = '#fcee0a';
+        winnerBadge.style.color = 'var(--text)';
+        winnerBadge.style.borderColor = 'var(--line)';
         winnerSummary.textContent = t('gameover.tieSummary', { score: p1Score });
       }
     } else {
       resP2Box.style.display = 'none';
       winnerBadge.textContent = t('gameover.cleared');
-      winnerBadge.style.color = 'var(--matrix-green)';
-      winnerBadge.style.borderColor = 'var(--matrix-green)';
+      winnerBadge.style.color = 'var(--game-accent)';
+      winnerBadge.style.borderColor = 'var(--game-accent)';
       winnerSummary.textContent = t('gameover.clearedSummary', { user: currentUsername, score: p1Score });
     }
 
@@ -532,7 +483,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function gameLoop(now) {
-    drawMatrixRain();
 
     const tickInterval = 1000 / ticksPerSecond;
     const elapsed = now - lastTickTime;
@@ -1067,7 +1017,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   wfSpeed.innerHTML = exportSpeedSelect.innerHTML;
   wfPause.innerHTML = exportPauseSelect.innerHTML;
   wfDarkTheme.value = 'ink';
-  wfLightTheme.value = 'light';
+  wfLightTheme.value = 'paper';
   wfMorph.value = 'matrix_viper';
   wfSpeed.value = 'normal';
   wfPause.value = 'fast';

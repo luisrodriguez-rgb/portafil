@@ -27,7 +27,7 @@ Estado: ✅ hecho · 🟡 parcial · ⬜ pendiente
 | ✅ | Fuera lo que no sirve: perfiles destacados, documentación vieja, capturas, proxy de Cloudflare, cabeceras de Pages, carpetas de herramientas | — |
 | ✅ | Web nueva: portada que explica qué hace, un solo campo de usuario, galería de todas las piezas con tema, idioma y "copiar" por pieza, y bloque README con solo lo elegido | `index.html`, `css/site.css`, `js/site.js` |
 | ✅ | El juego, el duelo en vivo, Commit Art y el estudio de video pasan a `/play.html`, con la paleta neutra | `play.html`, `style.css`, `js/app.js` |
-| ⬜ | Rediseñar el estudio con el mismo lenguaje limpio de la portada (hoy solo cambió la paleta; conserva la maquetación anterior) | `play.html`, `style.css` |
+| ✅ | Estudio rediseñado con el lenguaje de la portada: cabecera común, tablero en una tarjeta, controles y herramientas agrupados (Jugar / Llévatelo), modales limpios, sin lluvia matrix ni brillos; la página es neutra y el tema solo colorea el tablero | `play.html`, `css/studio.css` |
 | ⬜ | Logo definitivo: trazado propio para el nombre (hoy usa la tipografía del sistema) | `assets/brand/` |
 | ✅ | Servidor local que sirve la web y la API como Vercel, con datos de prueba sin token | `scripts/dev-server.js` |
 | ⬜ | Conectar el repositorio remoto que pase el autor, poner `repo` y `actionRef` en `shared/brand.js` y hacer push | — |
