@@ -12,8 +12,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <!-- ?v= obliga al navegador a descargar CSS/JS nuevos tras cada despliegue: cambiar el valor en cada release -->
-  <link rel="stylesheet" href="css/site.css?v=20261028-studio4">
-  <link rel="stylesheet" href="css/studio.css?v=20261028-studio4">
+  <link rel="stylesheet" href="css/site.css?v=20261028-studio5">
+  <link rel="stylesheet" href="css/studio.css?v=20261028-studio5">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <!-- URL base de la API de Perfila. Vacío = el mismo dominio que la web (despliegue en Vercel) -->
   <meta name="snake-api" content="">
@@ -123,6 +123,18 @@
         <canvas id="arcadeCanvas" width="797" height="160" hidden aria-label="Tablero del modo de juego"></canvas>
       </div>
       <p class="arcade-hint" id="arcadeHint" hidden></p>
+      <p class="rotate-hint">Gira el móvil para ver el tablero más grande.</p>
+
+      <!-- Cruceta táctil: en móvil, justo debajo del tablero para jugar sin desplazarse -->
+      <div class="mobile-dpad-container" id="mobileDpad">
+        <button class="dpad-btn dpad-up" data-dir="up" aria-label="Arriba">▲</button>
+        <div class="dpad-row">
+          <button class="dpad-btn dpad-left" data-dir="left" aria-label="Izquierda">◀</button>
+          <button class="dpad-btn dpad-action" id="dpadActionBtn">MODO</button>
+          <button class="dpad-btn dpad-right" data-dir="right" aria-label="Derecha">▶</button>
+        </div>
+        <button class="dpad-btn dpad-down" data-dir="down" aria-label="Abajo">▼</button>
+      </div>
 
       <div class="progress">
         <div class="progress-row">
@@ -169,16 +181,6 @@
         </div>
       </dl>
 
-      <!-- Cruceta táctil: en móvil, para el modo manual y el duelo contra la IA -->
-      <div class="mobile-dpad-container" id="mobileDpad">
-        <button class="dpad-btn dpad-up" data-dir="up" aria-label="Arriba">▲</button>
-        <div class="dpad-row">
-          <button class="dpad-btn dpad-left" data-dir="left" aria-label="Izquierda">◀</button>
-          <button class="dpad-btn dpad-action" id="dpadActionBtn">MODO</button>
-          <button class="dpad-btn dpad-right" data-dir="right" aria-label="Derecha">▶</button>
-        </div>
-        <button class="dpad-btn dpad-down" data-dir="down" aria-label="Abajo">▼</button>
-      </div>
     </section>
 
     <section class="tools" aria-label="Herramientas">
@@ -636,25 +638,25 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/i18n.js?v=20261028-studio4"></script>
-  <script src="js/calendar.js?v=20261028-studio4"></script>
-  <script src="js/analytics.js?v=20261028-studio4"></script>
-  <script src="js/audio.js?v=20261028-studio4"></script>
-  <script src="js/recorder.js?v=20261028-studio4"></script>
-  <script src="js/templates.js?v=20261028-studio4"></script>
-  <script src="js/achievements.js?v=20261028-studio4"></script>
-  <script src="shared/brand.js?v=20261028-studio4"></script>
-  <script src="shared/theme-tokens.js?v=20261028-studio4"></script>
-  <script src="js/exporter.js?v=20261028-studio4"></script>
-  <script src="js/github.js?v=20261028-studio4"></script>
-  <script src="js/pathfinding.js?v=20261028-studio4"></script>
-  <script src="js/snake.js?v=20261028-studio4"></script>
-  <script src="js/renderer.js?v=20261028-studio4"></script>
-  <script src="js/duel.js?v=20261028-studio4"></script>
-  <script src="shared/games.js?v=20261028-studio4"></script>
-  <script src="js/video-studio.js?v=20261028-studio4"></script>
-  <script src="js/app.js?v=20261028-studio4"></script>
-  <script src="js/arcade.js?v=20261028-studio4"></script>
+  <script src="js/i18n.js?v=20261028-studio5"></script>
+  <script src="js/calendar.js?v=20261028-studio5"></script>
+  <script src="js/analytics.js?v=20261028-studio5"></script>
+  <script src="js/audio.js?v=20261028-studio5"></script>
+  <script src="js/recorder.js?v=20261028-studio5"></script>
+  <script src="js/templates.js?v=20261028-studio5"></script>
+  <script src="js/achievements.js?v=20261028-studio5"></script>
+  <script src="shared/brand.js?v=20261028-studio5"></script>
+  <script src="shared/theme-tokens.js?v=20261028-studio5"></script>
+  <script src="js/exporter.js?v=20261028-studio5"></script>
+  <script src="js/github.js?v=20261028-studio5"></script>
+  <script src="js/pathfinding.js?v=20261028-studio5"></script>
+  <script src="js/snake.js?v=20261028-studio5"></script>
+  <script src="js/renderer.js?v=20261028-studio5"></script>
+  <script src="js/duel.js?v=20261028-studio5"></script>
+  <script src="shared/games.js?v=20261028-studio5"></script>
+  <script src="js/video-studio.js?v=20261028-studio5"></script>
+  <script src="js/app.js?v=20261028-studio5"></script>
+  <script src="js/arcade.js?v=20261028-studio5"></script>
   <!-- Cloudflare Web Analytics -->
   <!-- End Cloudflare Web Analytics -->
 </body>

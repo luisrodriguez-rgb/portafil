@@ -134,3 +134,16 @@ test('eventos de la web: límite por IP y minuto', () => {
   assert.strictEqual(overLimit('10.0.0.2', 1000), false, 'otra IP tiene su propio contador');
   assert.strictEqual(overLimit('10.0.0.1', 1000 + 61000), false, 'al pasar el minuto se reinicia');
 });
+
+test('tarjeta para redes: sin cuadros vacíos con emoji, ideogramas o árabe', () => {
+  const { profileCardSvg, printable } = require('../server/social');
+  const { fixtureProfile, fixtureWeeks } = require('./visual.helpers');
+  const { T } = require('../server/cards/frame');
+  assert.strictEqual(printable('José 🚀 中文名字 العربية'), 'José');
+  assert.strictEqual(printable('Ñandú — Привет, Αθήνα'), 'Ñandú — Привет, Αθήνα', 'latín, cirílico y griego sí están en la fuente');
+  const profile = { ...fixtureProfile(), name: '中文名字 🚀', location: '東京', bio: '🚀 Building 中文 tools' };
+  const svg = profileCardSvg({ profile, weeks: fixtureWeeks(), tokens: T.get('ink'), lang: 'en' });
+  assert.ok(svg.includes('>octocat<') || svg.includes('>octocat</text>'), 'sin caracteres dibujables, el nombre pasa a ser el usuario');
+  assert.ok(!/[\u{1F300}-\u{1FAFF}一-鿿]/u.test(svg), 'no queda ningún carácter que la fuente no tenga');
+  assert.ok(svg.includes('@octocat<'), 'sin ubicación, el usuario va solo');
+});

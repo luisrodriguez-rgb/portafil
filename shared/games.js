@@ -684,8 +684,13 @@ const GameModes = {
     const shipPx = (p) => `${+(L.pad + p.x * L.step).toFixed(2)}px,${shipY}px`;
 
     // Balas: un grupo pequeño de elementos que se reutilizan por turnos (como las ondas de la serpiente)
+    // Con gráficos muy intensos dispara casi en cada tick: si el SVG no cabe en el presupuesto de peso se dibujan
+    // como mucho MAX_DRAWN_SHOTS balas repartidas por la partida (las celdas caen igual con cada impacto)
+    const MAX_DRAWN_SHOTS = 240;
+    const stride = options.trimmed ? sim.shots.length / MAX_DRAWN_SHOTS : 1;
+    const drawn = stride > 1 ? Array.from({ length: MAX_DRAWN_SHOTS }, (_, k) => sim.shots[Math.floor(k * stride)]) : sim.shots;
     const pool = [];
-    for (const shot of sim.shots) {
+    for (const shot of drawn) {
       const end = shot.end == null ? sim.ticks : shot.end;
       let slot = pool.findIndex(list => list[list.length - 1].endTick < shot.fire);
       if (slot < 0) { pool.push([]); slot = pool.length - 1; }
@@ -699,8 +704,8 @@ const GameModes = {
           const bx = +(L.pad + shot.x * L.step + 4.5).toFixed(2);
           const by = shot.endY >= 0 ? L.gridTop + shot.endY * L.step + 6 : L.gridTop - 12;
           const from = t.pct(shot.fire - 1);
-          frames += `${Math.max(0, +(from - 0.001).toFixed(3))}%{transform:translate(${bx}px,${shipY - 4}px);opacity:0}${from}%{opacity:1}`
-            + `${t.pct(shot.endTick)}%{transform:translate(${bx}px,${by}px);opacity:1}${+(t.pct(shot.endTick) + 0.001).toFixed(3)}%{opacity:0}`;
+          frames += `${Math.max(0, +(from - 0.001).toFixed(3))}%{translate:${bx}px ${shipY - 4}px;opacity:0}${from}%{opacity:1}`
+            + `${t.pct(shot.endTick)}%{translate:${bx}px ${by}px;opacity:1}${+(t.pct(shot.endTick) + 0.001).toFixed(3)}%{opacity:0}`;
         }
         out += `.b${i}{animation:b${i} ${t.total}s infinite linear}@keyframes b${i}{${frames}}`;
       });
@@ -713,7 +718,7 @@ const GameModes = {
     const ship = `<path class="sh" d="M0 8V5h2V3.5h3V0h1v3.5h3V5h2v3z" fill="${tokens.body}"/>`;
     const bullets = pool.map((_, i) => `<rect class="b${i}" width="2" height="5" rx="1" fill="${tokens.head}" opacity="0"/>`).join('');
 
-    return this.frame({
+    const svg = this.frame({
       grid, tokens,
       title: [user ? `@${user}` : '', T.invaders, T.hits(this.fmt(sim.hits, lang))].filter(Boolean).join(' · '),
       credit: `invaders on ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
@@ -721,6 +726,7 @@ const GameModes = {
       cellChanges: sim.cellChanges, restoreWave: true, progress: sim.progress,
       gridClass: 'sw', css, body: `<g class="ac">${ship}${bullets}</g>`
     });
+    return svg.length > 118 * 1024 && !options.trimmed ? this.buildInvadersSvg(grid, { ...options, trimmed: true }) : svg;
   },
 
   // ---------- Tetris ----------

@@ -215,3 +215,21 @@ test('interfaz común: create, step y view en los cuatro modos, también con con
   assert.strictEqual(life.alive[3][3], true);
   assert.strictEqual(life.gens, 0);
 });
+
+test('con gráficos muy intensos la serpiente y los juegos siguen dentro del presupuesto de peso', () => {
+  // Todas las celdas activas: solo nivel 4, solo nivel 1 y mezclado
+  for (const pick of [() => 4, () => 1, (x, y) => 1 + ((x * 7 + y * 3) % 4)]) {
+    const cells = [];
+    for (let x = 0; x < 53; x++) for (let y = 0; y < 7; y++) cells.push([x, y, pick(x, y)]);
+    const grid = gridOf(cells);
+    for (const morph of SnakeCore.OPTION_VALUES.morph) {
+      const svg = exporter.buildAnimatedSvg(gridOf(cells), { morph, user: 'a-very-long-username-39' });
+      assert.ok(svg.length < 120 * 1024, `serpiente ${morph} pesa ${svg.length} bytes`);
+      assert.ok(svg.includes('100% DEVOURED'), 'aunque muerda de dos en dos, se come el gráfico entero');
+    }
+    for (const game of ['life', 'pacman', 'invaders', 'tetris']) {
+      const svg = exporter.buildSvg(grid, { game, user: 'a-very-long-username-39' });
+      assert.ok(svg.length < 120 * 1024, `${game} pesa ${svg.length} bytes`);
+    }
+  }
+});

@@ -200,7 +200,7 @@ test('el bloque README: cada pieza en claro y oscuro, solo las elegidas y las de
 
   // Una sola pieza, sin modo adaptativo
   const one = KitSnippet.piece('streak', 'octocat', { adaptive: false });
-  assert.strictEqual(one, '<img alt="@octocat streak" src="https://perfila.vercel.app/api/streak/octocat.svg?theme=ink" width="49%">');
+  assert.strictEqual(one, '<img alt="@octocat streak" src="https://perfila.vercel.app/api/streak/octocat.svg?theme=ink" width="390">');
 
   // Dos medias seguidas comparten fila; una media sola va en su propia fila
   const pair = KitSnippet.build('octocat', { pieces: ['langs', 'stats'], adaptive: false });

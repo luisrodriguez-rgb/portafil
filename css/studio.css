@@ -144,6 +144,22 @@ body[data-theme="amber_terminal"] {
 .dpad-action { width: 62px; font-size: 11px; font-family: var(--mono); }
 @media (pointer: coarse), (max-width: 720px) {
   .mobile-dpad-container { display: flex; }
+  .dpad-btn { width: 56px; height: 56px; font-size: 18px; }
+  .dpad-action { width: 72px; }
+}
+/* En vertical las celdas miden ~6 px: girado, el tablero gana casi la mitad de ancho */
+.rotate-hint { display: none; margin: -6px 0 0; font-size: 13px; color: var(--muted); }
+@media (max-width: 600px) and (orientation: portrait) and (pointer: coarse) {
+  .rotate-hint { display: block; }
+}
+/* Girado, la cruceta va al lado del tablero para que quepan los dos en la pantalla */
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .board { grid-template-columns: minmax(0, 1fr) auto; grid-auto-flow: row dense; align-items: center; }
+  .board > :not(.canvas-wrapper):not(.mobile-dpad-container) { grid-column: 1 / -1; }
+  .board > .canvas-wrapper { grid-column: 1; }
+  .board > .mobile-dpad-container { grid-column: 2; }
+  .dpad-btn { width: 46px; height: 46px; }
+  .dpad-action { width: 60px; }
 }
 
 /* --- Herramientas --- */

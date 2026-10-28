@@ -90,7 +90,9 @@ const KitSnippet = {
   pieceWithContext(kind, ctx) {
     const meta = this.PIECES[kind];
     if (!meta || (meta.pair && (!ctx.rival || ctx.rival.toLowerCase() === ctx.user.toLowerCase()))) return null;
-    const width = meta.width === 'half' ? '49%' : '100%';
+    // Las de media anchura llevan su tamaño real: en escritorio caben dos por fila y en el móvil GitHub las
+    // limita al ancho (max-width: 100%) y se apilan, legibles. Con 49% quedaban dos de ~170 px en el móvil.
+    const width = meta.width === 'half' ? '390' : '100%';
     const img = `<img alt="${this.alt(kind, ctx)}" src="${this.url(kind, ctx.adaptive ? ctx.light : ctx.dark, ctx)}" width="${width}">`;
     let html = ctx.adaptive
       ? `<picture>

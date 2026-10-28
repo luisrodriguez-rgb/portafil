@@ -18,12 +18,12 @@ Desarrollo [qué haces: webs, APIs, apps...] con [tus tecnologías principales].
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=paper&lang=es">
-  <img alt="@luisrodriguez-rgb stats" src="https://perfila.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=paper&lang=es" width="49%">
+  <img alt="@luisrodriguez-rgb stats" src="https://perfila.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=paper&lang=es">
-  <img alt="@luisrodriguez-rgb streak" src="https://perfila.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=paper&lang=es" width="49%">
+  <img alt="@luisrodriguez-rgb streak" src="https://perfila.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
@@ -31,12 +31,12 @@ Desarrollo [qué haces: webs, APIs, apps...] con [tus tecnologías principales].
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=paper&lang=es">
-  <img alt="@luisrodriguez-rgb languages" src="https://perfila.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=paper&lang=es" width="49%">
+  <img alt="@luisrodriguez-rgb languages" src="https://perfila.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=paper&lang=es">
-  <img alt="@luisrodriguez-rgb weekly activity" src="https://perfila.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=paper&lang=es" width="49%">
+  <img alt="@luisrodriguez-rgb weekly activity" src="https://perfila.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
@@ -73,12 +73,12 @@ Desarrollo [qué haces: webs, APIs, apps...] con [tus tecnologías principales].
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario stats" src="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario stats" src="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
@@ -86,12 +86,12 @@ Desarrollo [qué haces: webs, APIs, apps...] con [tus tecnologías principales].
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario languages" src="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario languages" src="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=amber_terminal&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario weekly activity" src="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario weekly activity" src="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 

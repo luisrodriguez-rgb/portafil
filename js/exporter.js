@@ -3,6 +3,12 @@
  * Máxima compresión de keyframes, eliminación de redundancias, sin saltos en bordes y peso reducido al mínimo.
  */
 
+// Ondas de las celdas intensas cuando el SVG no cabe en el presupuesto de peso (120 KB)
+const MAX_BURSTS = 60;
+// Por encima de este peso la serpiente reparte menos ondas y, si aún no cabe, se vuelve a simular con
+// mordiscos de varios niveles (1 -> 2 -> 4): menos pasos, giros y fotogramas. Queda bajo los 120 KB del presupuesto con cualquier nombre de usuario.
+const SNAKE_BUDGET = 118 * 1024;
+
 class ExporterEngine {
   constructor() {
     // Colores de shared/theme-tokens.js: los mismos que usan las tarjetas del kit
@@ -153,7 +159,8 @@ class ExporterEngine {
 
     // 1-2. Simulación (solo depende de la matriz: se reutiliza entre temas, velocidades y formas).
     // El duelo pasa su propia simulación (options.simulation) para que el SVG dé el mismo ganador que la web.
-    const { simGrid, history, cellBites, totalLevels, eatenLevels } = options.simulation || this.simulate(grid, cols, rows);
+    const biteSize = options.biteSize || 1;
+    const { simGrid, history, cellBites, totalLevels, eatenLevels } = options.simulation || this.simulate(grid, cols, rows, biteSize);
     const totalSteps = history.length;
 
     // Duración según velocidad seleccionada
@@ -193,12 +200,12 @@ class ExporterEngine {
           // Sin fotograma 0%: la animación parte del atributo fill de la celda
           let frames = '';
           bites.forEach((biteStep, i) => {
-            frames += `${pctOf(biteStep)}%{fill:${colorVars[Math.max(0, origLevel - i - 1)]}}`;
+            frames += `${pctOf(biteStep)}%{fill:${colorVars[Math.max(0, origLevel - (i + 1) * biteSize)]}}`;
           });
           frames += `${Math.max(restorePct, pctOf(bites[bites.length - 1] + 1))}%,100%{fill:${colorVars[origLevel]}}`;
 
           gridSvg += `<rect class="${animClass}" x="${cellX(x)}" y="${cellY(y)}" width="${cellSize}" height="${cellSize}" rx="2.5" fill="${colorVars[origLevel]}"/>`;
-          cellKeyframes += `.${animClass}{animation:${animClass} ${totalDuration}s infinite steps(1,end)}@keyframes ${animClass}{${frames}}`;
+          cellKeyframes += `.${animClass}{animation-name:${animClass}}@keyframes ${animClass}{${frames}}`;
         } else {
           gridSvg += `<rect x="${cellX(x)}" y="${cellY(y)}" width="${cellSize}" height="${cellSize}" rx="2.5" fill="${colorVars[origLevel] || colorVars[0]}"/>`;
         }
@@ -291,6 +298,12 @@ class ExporterEngine {
       if (simGrid[bx][by].originalLevel >= 3) bursts.push({ step: bites[bites.length - 1], x: bx, y: by });
     }
     bursts.sort((p, q) => p.step - q.step);
+    // En gráficos muy intensos casi todas las celdas tienen onda: si el SVG no cabe en el presupuesto,
+    // se reparten como mucho MAX_BURSTS a lo largo de la partida (cada onda son ~100 bytes)
+    if (options.trimmed && bursts.length > MAX_BURSTS) {
+      const stride = bursts.length / MAX_BURSTS;
+      bursts.splice(0, bursts.length, ...Array.from({ length: MAX_BURSTS }, (_, k) => bursts[Math.floor(k * stride)]));
+    }
     // options.rings=false las quita (el duelo tiene dos tableros y no las necesita)
     const ringCount = options.rings === false ? 0 : Math.min(4, bursts.length);
     let ringElements = '';
@@ -331,11 +344,20 @@ class ExporterEngine {
 
     const barWidth = 150;
     const barX = width - padding - barWidth;
-    const allBites = Object.values(cellBites).flat().sort((p, q) => p - q);
+    // Cada mordisco quita biteSize niveles (o los que queden en la celda)
+    const allBites = [];
+    for (const [key, bites] of Object.entries(cellBites)) {
+      const [bx, by] = key.split('_').map(Number);
+      const level = simGrid[bx][by].originalLevel;
+      bites.forEach((step, i) => allBites.push({ step, amount: Math.min(biteSize, level - i * biteSize) }));
+    }
+    allBites.sort((p, q) => p.step - q.step);
+    let eatenSoFar = 0;
     let progressFrames = '0%{transform:scaleX(0)}';
     let lastEmitted = 0;
-    allBites.forEach((biteStep, i) => {
-      const fraction = (i + 1) / Math.max(1, totalLevels);
+    allBites.forEach(({ step: biteStep, amount }, i) => {
+      eatenSoFar += amount;
+      const fraction = eatenSoFar / Math.max(1, totalLevels);
       if (fraction - lastEmitted >= 0.02 || i === allBites.length - 1) {
         progressFrames += `${pctOf(biteStep)}%{transform:scaleX(${+fraction.toFixed(3)})}`;
         lastEmitted = fraction;
@@ -362,9 +384,16 @@ class ExporterEngine {
     const frameCss = n ? '' : `svg{background:${palette.bg};border-radius:12px;border:1px solid ${palette.border}}`;
     const frameRect = n ? `<rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="11.5" fill="${palette.bg}" stroke="${palette.border}"/>` : '';
     // Con movimiento reducido queda el gráfico completo, sin serpiente ni barra de progreso a medias
+    // Todas las celdas animadas comparten duración y ritmo; cada una solo nombra sus fotogramas
+    const cellCss = cellKeyframes ? `.${n}gc>[class]{animation-duration:${totalDuration}s;animation-iteration-count:infinite;animation-timing-function:steps(1,end)}` : '';
     const reducedCss = `@media (prefers-reduced-motion:reduce){*{animation:none!important}.${n}sn,.${n}pb,.${n}dn{display:none}}`;
-    const svgFinal = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><title>${credit}</title><defs><filter id="${n}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><style>${frameCss}${headerCss}${cellKeyframes}${snakeKeyframes}${reducedCss}</style>${frameRect}${headerSvg}<g>${gridSvg}</g><g class="${n}sn" filter="url(#${n}g)">${snakeElements}</g><g filter="url(#${n}g)">${ringElements}</g></svg>`;
+    const svgFinal = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><title>${credit}</title><defs><filter id="${n}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><style>${frameCss}${headerCss}${cellCss}${cellKeyframes}${snakeKeyframes}${reducedCss}</style>${frameRect}${headerSvg}<g class="${n}gc">${gridSvg}</g><g class="${n}sn" filter="url(#${n}g)">${snakeElements}</g><g filter="url(#${n}g)">${ringElements}</g></svg>`;
 
+    // Fuera del presupuesto: primero menos ondas y después mordiscos de 2 y de 4 niveles
+    if (!options.simulation && svgFinal.length > SNAKE_BUDGET) {
+      if (!options.trimmed) return this.buildAnimatedSvg(grid, { ...options, trimmed: true });
+      if (biteSize < 4) return this.buildAnimatedSvg(grid, { ...options, biteSize: biteSize * 2 });
+    }
     return svgFinal;
   }
 
@@ -403,8 +432,8 @@ class ExporterEngine {
    * así que se memoriza por contenido de la matriz: la versión clara y la oscura de un perfil simulan una sola vez.
    * Quien lo use solo debe leerlo.
    */
-  simulate(grid, cols = 53, rows = 7) {
-    let signature = '';
+  simulate(grid, cols = 53, rows = 7, biteSize = 1) {
+    let signature = `${biteSize}:`;
     for (let x = 0; x < cols; x++) {
       for (let y = 0; y < rows; y++) {
         const c = grid[x] && grid[x][y];
@@ -456,10 +485,14 @@ class ExporterEngine {
       if (!next) break;
 
       step++;
-      if (simGrid[next.x][next.y].level > 0) {
+      const target = simGrid[next.x][next.y];
+      if (target.level > 0) {
         const key = `${next.x}_${next.y}`;
         (cellBites[key] = cellBites[key] || []).push(step);
-        remainingLevels--;
+        // moveTo quita un nivel; con mordiscos mayores se quitan aquí los demás
+        const amount = Math.min(biteSize, target.level);
+        target.level -= amount - 1;
+        remainingLevels -= amount;
       }
 
       simSnake.moveTo(next, simGrid);

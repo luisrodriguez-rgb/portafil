@@ -4,6 +4,7 @@
  * y se rasteriza a PNG con resvg y las fuentes incluidas (assets/fonts, JetBrains Mono, licencia OFL).
  */
 
+const fs = require('fs');
 const path = require('path');
 const { T, escapeXml, fmtNumber, truncate, wrap } = require('./cards/frame');
 const { metricsOf } = require('./cards/versus');
@@ -13,6 +14,46 @@ const H = 630;
 const MARGIN = 72;
 const FONT = "'JetBrains Mono', ui-monospace, monospace";
 const FONT_FILES = ['Regular', 'Bold', 'ExtraBold'].map(w => path.join(__dirname, '..', 'assets', 'fonts', `JetBrainsMono-${w}.ttf`));
+
+/** Rangos de caracteres de una fuente TrueType (tabla cmap, formatos 4 y 12) */
+function fontRanges(file) {
+  const buf = fs.readFileSync(file);
+  const numTables = buf.readUInt16BE(4);
+  let cmap = -1;
+  for (let i = 0; i < numTables; i++) {
+    if (buf.toString('latin1', 12 + i * 16, 16 + i * 16) === 'cmap') cmap = buf.readUInt32BE(20 + i * 16);
+  }
+  const ranges = [];
+  if (cmap < 0) return ranges;
+  const subtables = buf.readUInt16BE(cmap + 2);
+  for (let i = 0; i < subtables; i++) {
+    const at = cmap + buf.readUInt32BE(cmap + 8 + i * 8);
+    const format = buf.readUInt16BE(at);
+    if (format === 12) {
+      const groups = buf.readUInt32BE(at + 12);
+      for (let g = 0; g < groups; g++) ranges.push([buf.readUInt32BE(at + 16 + g * 12), buf.readUInt32BE(at + 20 + g * 12)]);
+    } else if (format === 4) {
+      const segs = buf.readUInt16BE(at + 6) / 2;
+      for (let s = 0; s < segs; s++) {
+        const end = buf.readUInt16BE(at + 14 + s * 2);
+        const start = buf.readUInt16BE(at + 16 + segs * 2 + s * 2);
+        if (start !== 0xffff) ranges.push([start, end]);
+      }
+    }
+  }
+  return ranges;
+}
+
+let coverage = null;
+/**
+ * Solo los caracteres que la fuente incluida sabe dibujar: resvg pinta un cuadro vacío por cada emoji, ideograma
+ * o letra árabe (no hay fuentes del sistema en el servidor). Los demás se quitan; si no queda nada, devuelve ''.
+ */
+function printable(value) {
+  if (!coverage) coverage = fontRanges(FONT_FILES[0]);
+  const ok = (cp) => coverage.some(([a, b]) => cp >= a && cp <= b);
+  return [...String(value || '')].filter(ch => /\s/.test(ch) || ok(ch.codePointAt(0))).join('').replace(/\s+/g, ' ').trim();
+}
 
 const TEXT = {
   en: { contributions: 'contributions', current: 'current streak', longest: 'longest streak', language: 'top language', days: 'days', wins: 'wins', tie: 'tie', pts: 'pts', devoured: 'devoured', duel: 'GitHub duel · same AI, same ticks' },
@@ -74,7 +115,9 @@ function profileCardSvg({ profile, weeks, tokens, lang = 'en' }) {
   const r = 58;
   const cx = MARGIN + r;
   const cy = MARGIN + r;
-  const initials = String(profile.name || profile.login).split(/[\s_-]+/).filter(Boolean).slice(0, 2).map(w => [...w][0]).join('').toUpperCase();
+  const shownName = printable(profile.name) || profile.login;
+  const location = printable(profile.location);
+  const initials = String(shownName).split(/[\s_-]+/).filter(Boolean).slice(0, 2).map(w => [...w][0]).join('').toUpperCase();
   const avatar = profile.avatar
     ? `<clipPath id="a"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath><image href="${profile.avatar}" x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" clip-path="url(#a)" preserveAspectRatio="xMidYMid slice"/>`
     : `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${tokens.empty}"/>${text(cx, cy + 14, escapeXml(initials), { size: 40, weight: 800, fill: tokens.body, anchor: 'middle' })}`;
@@ -82,11 +125,11 @@ function profileCardSvg({ profile, weeks, tokens, lang = 'en' }) {
 
   const textX = cx + r + 36;
   const maxChars = Math.floor((W - MARGIN - textX) / (24 * T.font.charWidth));
-  const name = truncate(profile.name || profile.login, Math.floor((W - MARGIN - textX) / (52 * T.font.charWidth)));
-  const handle = [`@${profile.login}`, profile.location].filter(Boolean).join(' · ');
+  const name = truncate(shownName, Math.floor((W - MARGIN - textX) / (52 * T.font.charWidth)));
+  const handle = [`@${profile.login}`, location].filter(Boolean).join(' · ');
   let head = text(textX, MARGIN + 50, escapeXml(name), { size: 52, weight: 800, fill: tokens.text })
     + text(textX, MARGIN + 92, escapeXml(truncate(handle, maxChars)), { size: 24, fill: tokens.body });
-  wrap(profile.bio, maxChars, 2).forEach((line, i) => {
+  wrap(printable(profile.bio), maxChars, 2).forEach((line, i) => {
     head += text(textX, MARGIN + 132 + i * 32, escapeXml(line), { size: 24, fill: tokens.muted });
   });
 
@@ -96,7 +139,7 @@ function profileCardSvg({ profile, weeks, tokens, lang = 'en' }) {
     [fmtNumber(m.contributions, lang), t.contributions],
     [`${m.currentStreak} ${t.days}`, t.current],
     [`${m.longestStreak} ${t.days}`, t.longest],
-    [truncate(m.topLanguage, 10), t.language]
+    [truncate(printable(m.topLanguage) || '—', 10), t.language]
   ];
   const colW = (W - MARGIN * 2 - 230) / stats.length;
   let row = '';
@@ -164,4 +207,4 @@ function toPng(svg) {
   return new Resvg(svg, { font, fitTo: { mode: 'width', value: W } }).render().asPng();
 }
 
-module.exports = { profileCardSvg, duelCardSvg, toPng, W, H };
+module.exports = { profileCardSvg, duelCardSvg, toPng, printable, W, H };

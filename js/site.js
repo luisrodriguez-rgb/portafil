@@ -49,6 +49,7 @@
       'msg.org': (u) => `@${u} es una organización: Perfila funciona con cuentas personales.`,
       'msg.down': 'GitHub no responde ahora mismo. Inténtalo en un momento.',
       'piece.add': 'Añadir al README', 'piece.copy': 'Copiar código', 'piece.copied': 'Copiado', 'piece.open': 'Abrir SVG',
+      'tab.profile': 'Perfil', 'tab.games': 'Juegos', 'tab.pair': 'Frente a otro', 'tab.share': 'Compartir', 'tabs.label': 'Grupos de piezas',
       'g.profile': 'Tu perfil', 'g.profileP': 'Las piezas básicas. La cabecera va a lo ancho y el resto de dos en dos.',
       'g.games': 'Juegos', 'g.gamesP': 'Tu gráfico de contribuciones convertido en partida, animada en un SVG. La serpiente duerme si llevas una semana sin contribuir y presume de tu racha si pasa de 7 días. Todos se pueden jugar en el estudio.',
       'g.pair': 'Frente a otro perfil', 'g.pairP': 'Compárate con alguien o rétalo a un duelo. El duelo enlaza a una página para compartir.',
@@ -119,6 +120,7 @@
       'msg.org': (u) => `@${u} is an organization: Perfila works with personal accounts.`,
       'msg.down': 'GitHub is not answering right now. Try again in a moment.',
       'piece.add': 'Add to README', 'piece.copy': 'Copy code', 'piece.copied': 'Copied', 'piece.open': 'Open SVG',
+      'tab.profile': 'Profile', 'tab.games': 'Games', 'tab.pair': 'Versus', 'tab.share': 'Share', 'tabs.label': 'Piece groups',
       'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two.',
       'g.games': 'Games', 'g.gamesP': 'Your contribution graph turned into a game, animated in an SVG. The snake sleeps after a week without contributions and shows off your streak once it passes 7 days. You can play all of them in the studio.',
       'g.pair': 'Against another profile', 'g.pairP': 'Compare yourself with someone or challenge them to a duel. The duel links to a page to share.',
@@ -173,6 +175,7 @@
     morph: params.get('m') || 'matrix_viper',
     speed: params.get('s') || 'normal',
     template: KitSnippet.TEMPLATES[params.get('tpl')] ? params.get('tpl') : 'pieces',
+    group: 'profile',
     previewMode: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
     picked: new Set((params.get('p') || KitSnippet.templatePieces(params.get('tpl')) || KitSnippet.DEFAULT_SELECTION).toString().split(',').filter(k => KitSnippet.PIECES[k]))
   };
@@ -231,7 +234,10 @@
   let heroPaused = false;
   function showHero(i) {
     heroIndex = (i + THEMES.length) % THEMES.length;
-    $('heroStage').querySelectorAll('img').forEach((img, k) => img.classList.toggle('on', k === heroIndex));
+    const imgs = $('heroStage').querySelectorAll('img');
+    // Solo se descargan la visible y la siguiente (cada dashboard pesa ~45 KB con el avatar incrustado)
+    [heroIndex, (heroIndex + 1) % imgs.length].forEach(k => { if (imgs[k] && !imgs[k].src) imgs[k].src = imgs[k].dataset.src; });
+    imgs.forEach((img, k) => img.classList.toggle('on', k === heroIndex));
     $('heroDots').querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-pressed', String(k === heroIndex)));
     $('heroCaption').textContent = T('hero.caption', Brand.demoUser, T('themes')[THEMES[heroIndex]]);
   }
@@ -248,7 +254,8 @@
       img.decoding = 'async';
       img.width = 797;
       img.height = 474;
-      img.src = `${previewBase}/api/kit/${Brand.demoUser}.svg?theme=${theme}${state.ui === 'es' ? '&lang=es' : ''}`;
+      img.dataset.src = `${previewBase}/api/kit/${Brand.demoUser}.svg?theme=${theme}${state.ui === 'es' ? '&lang=es' : ''}`;
+      if (i === heroIndex) img.fetchPriority = 'high';
       stage.appendChild(img);
       const dot = document.createElement('button');
       dot.type = 'button';
@@ -347,12 +354,39 @@
     return KitSnippet.url(kind, state.theme, ctx);
   }
 
+/** En el móvil los grupos van en pestañas: once tarjetas seguidas eran casi 7.000 px de página */
+  function buildGroupTabs(gallery) {
+    const tabs = document.createElement('div');
+    tabs.className = 'group-tabs';
+    tabs.setAttribute('role', 'group');
+    tabs.setAttribute('aria-label', T('tabs.label'));
+    for (const id of [...GROUPS.map(g => g.id), 'share']) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.group = id;
+      button.textContent = T(`tab.${id}`);
+      button.addEventListener('click', () => showGroup(id, true));
+      tabs.appendChild(button);
+    }
+    gallery.prepend(tabs);
+    showGroup(state.group);
+  }
+
+  function showGroup(id, scroll = false) {
+    state.group = id;
+    const gallery = $('gallery');
+    gallery.querySelectorAll('.group-tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.group === id)));
+    gallery.querySelectorAll('.group').forEach(s => s.classList.toggle('active', s.dataset.group === id));
+    if (scroll && gallery.getBoundingClientRect().top < 0) gallery.scrollIntoView({ block: 'start' });
+  }
+
   function buildGallery() {
     const gallery = $('gallery');
     gallery.innerHTML = '';
     for (const group of GROUPS) {
       const section = document.createElement('section');
       section.className = 'group';
+      section.dataset.group = group.id;
       section.innerHTML = `<h3>${T(`g.${group.id}`)}</h3><p>${T(`g.${group.id}P`)}</p>`;
       if (group.id === 'pair') {
         section.insertAdjacentHTML('beforeend', `<form class="rival-form" id="rivalForm" novalidate>
@@ -368,6 +402,7 @@
     }
     const share = document.createElement('section');
     share.className = 'group';
+    share.dataset.group = 'share';
     share.innerHTML = `<h3>${T('g.share')}</h3><p>${T('g.shareP')}</p>
       <article class="share"><div class="preview"><img id="ogImg" alt="" loading="lazy" decoding="async" width="1200" height="630"></div>
       <div class="piece-foot"><div class="piece-actions wrap">
@@ -377,6 +412,7 @@
         <a class="btn small" id="ogIn" href="#" target="_blank" rel="noopener noreferrer">${T('share.in')}</a>
       </div></div></article>`;
     gallery.appendChild(share);
+    buildGroupTabs(gallery);
     $('ogCopy').addEventListener('click', (e) => {
       copy(e.currentTarget, shareUrl());
       track('share');
@@ -720,6 +756,7 @@
   $('playPreview').src = `${previewBase}/api/${Brand.demoUser}.svg?game=pacman`;
   updateStudioLinks();
   const rivalParam = cleanUser(params.get('r'));
-  if (USER_RE.test(rivalParam)) state.rival = rivalParam;
+  // Quien llega desde un duelo compartido ve primero el grupo de comparar
+  if (USER_RE.test(rivalParam)) Object.assign(state, { rival: rivalParam, group: 'pair' });
   if (params.get('u')) loadUser(params.get('u'));
 })();

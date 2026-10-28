@@ -143,14 +143,16 @@ test('la simulación se reutiliza entre estilos y se recalcula si cambia la matr
   const exporter = new engine.ExporterEngine();
   const grid = weeksToGrid(fakeWeeks());
   exporter.buildAnimatedSvg(grid, { theme: 'dark' });
+  // Esta matriz pasa del presupuesto de peso: se simula también con mordiscos de dos niveles
+  const simulations = exporter.simulationCache.size;
   exporter.buildAnimatedSvg(grid, { theme: 'light', morph: 'retro', speed: 'fast' });
-  assert.strictEqual(exporter.simulationCache.size, 1);
+  assert.strictEqual(exporter.simulationCache.size, simulations);
 
   // Pintar una celda (modo pintar de la web) cambia originalLevel: nueva simulación, no la vieja
   const cell = grid.flat().find(c => c.originalLevel === 0);
   cell.originalLevel = 4;
   const svg = exporter.buildAnimatedSvg(grid, { theme: 'dark' });
-  assert.strictEqual(exporter.simulationCache.size, 2);
+  assert.ok(exporter.simulationCache.size > simulations);
   assert.ok(svg.includes(`c${cell.x}_${cell.y}`), 'la celda pintada se anima');
 });
 

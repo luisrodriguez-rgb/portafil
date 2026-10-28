@@ -21,12 +21,12 @@ Cambia `theme=ink` / `theme=paper` por cualquiera de `dark`, `light`, `cyberpunk
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=ink&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario stats" src="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario stats" src="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
@@ -34,12 +34,12 @@ Cambia `theme=ink` / `theme=paper` por cualquiera de `dark`, `light`, `cyberpunk
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=ink&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario languages" src="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario languages" src="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=ink&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario weekly activity" src="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario weekly activity" src="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
@@ -58,7 +58,7 @@ Cualquier pieza funciona sola. Por ejemplo, solo la racha:
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
   <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="49%">
+  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 ```
 
