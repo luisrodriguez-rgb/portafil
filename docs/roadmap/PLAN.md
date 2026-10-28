@@ -36,17 +36,22 @@ Estado: ✅ hecho · 🟡 parcial · ⬜ pendiente
 
 ## Fase 3 · Modos y estados (`?game=`)
 
-Interfaz común en `shared/game.js`: `init(grid)`, `step(state)` y una historia determinista que el exportador convierte en keyframes CSS. Límite: 45-120 KB por SVG.
+| Estado | Tarea | Dónde |
+| --- | --- | --- |
+| ✅ | Interfaz común: cada modo es una simulación determinista que devuelve una línea de tiempo (cambios de celda, actores, progreso) y un marco común la convierte en SVG con CSS, con la misma cabecera, rejilla y barra que la serpiente | `shared/games.js` |
+| ✅ | Juego de la vida (B3/S23 en un toro de 53×7) desde tus contribuciones; las celdas se colorean por edad; para al extinguirse o estabilizarse, y deja latir a los osciladores hasta 30 generaciones | `GameModes.simulateLife` |
+| ✅ | Pac-Man: tus contribuciones son la comida, hasta 4 celdas de nivel 4 son pastillas de poder, dos fantasmas persiguen con BFS, 3 vidas. Caminos rectos (menos giros, menos peso) | `GameModes.simulatePacman` |
+| ✅ | Estados (`mood=auto`): la serpiente duerme tras 7 días sin contribuir (tablero atenuado, serpiente enroscada al final, zetas) y la cabecera muestra la racha cuando pasa de 7 días | `js/exporter.js` |
+| ✅ | `?game=` y `?mood=` en el contrato, el endpoint, la Action y la galería web (grupo "Juegos") | `shared/snake-core.js`, `shared/kit-snippet.js`, `js/site.js` |
+| ⬜ | Space Invaders sobre las columnas | `shared/games.js` |
+| ⬜ | Tetris | `shared/games.js` |
+| ⬜ | Pieles por fecha (Halloween, fin de año) y estados también en las tarjetas | — |
+| ⬜ | Los modos nuevos en el estudio (`play.html`), jugables en el canvas | `js/app.js` |
+| ⬜ | Piezas sin juego con el mismo motor: mapa de calor por día de la semana, "año en resumen", insignias de logros | — |
 
-1. Game of Life desde tus contribuciones.
-2. Pac-Man (BFS existente con fantasmas como obstáculos).
-3. Space Invaders sobre las columnas.
-4. Tetris.
-5. Estados según actividad: la serpiente duerme tras varios días sin commits, celebra rachas, pieles por fecha. También en las tarjetas.
+Pesos medidos con perfiles de prueba: juego de la vida 29-63 KB, Pac-Man 92-96 KB (3-7 KB con brotli), serpiente dormida 28 KB. Simular cuesta 1-36 ms.
 
-Piezas que no son juegos con el mismo motor: mapa de calor por día de la semana, tarjeta "año en resumen", insignias de logros (`js/achievements.js` ya existe).
-
-**Puerta:** interfaz común de juego y dos modos en producción. Cada modo aparece solo en la galería de la web.
+**Puerta:** interfaz común ✅ y dos modos en producción ✅ (en cuanto se despliegue).
 
 ## Fase 4 · Imagen para redes y plantillas
 

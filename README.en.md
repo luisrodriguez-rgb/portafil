@@ -21,10 +21,12 @@ Type your username on the web, pick what you like and copy the code. No YAML, no
 | Activity | `/api/activity/<user>.svg` | Contributions per week, 53 weeks |
 | All in one | `/api/kit/<user>.svg` | The five above in a single image |
 | Snake | `/api/<user>.svg` | An AI (BFS + Flood Fill) eats your contribution graph |
+| Game of Life | `/api/<user>.svg?game=life` | Your contributions evolve with Conway's rules |
+| Pac-Man | `/api/<user>.svg?game=pacman` | Pac-Man eats your graph while two ghosts chase it |
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Your numbers next to another profile's |
 | Duel | `/api/duel/<a>-vs-<b>.svg` | The same AI on both graphs, with the score; the `/duel/<a>-vs-<b>` page is for sharing and challenging |
 
-All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed` and `pause`. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
+All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`: with `mood=auto` (the default) it sleeps after a week without contributions and shows off your streak once it passes 7 days. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
 ## Studio
 

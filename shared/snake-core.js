@@ -16,7 +16,10 @@ const SnakeCore = {
     speed: ['normal', 'fast', 'relaxed'],
     morph: ['matrix_viper', 'capsule', 'retro'],
     pause: ['fast', 'medium', 'none'],
-    lang: ['en', 'es']
+    lang: ['en', 'es'],
+    // Modo de juego (shared/games.js) y estados según la actividad (la serpiente duerme o celebra la racha)
+    game: ['snake', 'life', 'pacman'],
+    mood: ['auto', 'off']
   },
 
   // Tarjetas del kit (/api/<pieza>/<usuario>.svg): solo tema e idioma, para que todas combinen

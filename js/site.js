@@ -39,7 +39,7 @@
       'msg.down': 'GitHub no responde ahora mismo. Inténtalo en un momento.',
       'piece.add': 'Añadir al README', 'piece.copy': 'Copiar código', 'piece.copied': 'Copiado', 'piece.open': 'Abrir SVG',
       'g.profile': 'Tu perfil', 'g.profileP': 'Las piezas básicas. La cabecera va a lo ancho y el resto de dos en dos.',
-      'g.snake': 'Serpiente', 'g.snakeP': 'Una IA recorre tu gráfico de contribuciones y se lo come, animada en un SVG.',
+      'g.games': 'Juegos', 'g.gamesP': 'Tu gráfico de contribuciones convertido en partida, animada en un SVG. La serpiente duerme si llevas una semana sin contribuir y presume de tu racha si pasa de 7 días.',
       'g.pair': 'Frente a otro perfil', 'g.pairP': 'Compárate con alguien o rétalo a un duelo. El duelo enlaza a una página para compartir.',
       'rival.label': 'Usuario rival', 'rival.cta': 'Comparar', 'rival.placeholder': 'rival',
       'rival.needed': 'Escribe un rival arriba para ver esta pieza.',
@@ -55,6 +55,8 @@
         activity: ['Actividad', 'Contribuciones por semana'],
         kit: ['Todo en una imagen', 'Las cinco piezas en un solo SVG'],
         snake: ['Serpiente', 'Se come tu año de commits'],
+        life: ['Juego de la vida', 'Tus contribuciones evolucionan con las reglas de Conway'],
+        pacman: ['Pac-Man', 'Se come tu gráfico mientras dos fantasmas lo persiguen'],
         versus: ['Versus', 'Tus cifras frente a las de otro perfil'],
         duel: ['Duelo', 'La misma IA en los dos gráficos, 60 segundos']
       }
@@ -87,7 +89,7 @@
       'msg.down': 'GitHub is not answering right now. Try again in a moment.',
       'piece.add': 'Add to README', 'piece.copy': 'Copy code', 'piece.copied': 'Copied', 'piece.open': 'Open SVG',
       'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two.',
-      'g.snake': 'Snake', 'g.snakeP': 'An AI walks your contribution graph and eats it, animated in an SVG.',
+      'g.games': 'Games', 'g.gamesP': 'Your contribution graph turned into a game, animated in an SVG. The snake sleeps after a week without contributions and shows off your streak once it passes 7 days.',
       'g.pair': 'Against another profile', 'g.pairP': 'Compare yourself with someone or challenge them to a duel. The duel links to a page to share.',
       'rival.label': 'Rival username', 'rival.cta': 'Compare', 'rival.placeholder': 'rival',
       'rival.needed': 'Type a rival above to see this piece.',
@@ -103,6 +105,8 @@
         activity: ['Activity', 'Contributions per week'],
         kit: ['All in one image', 'The five pieces in a single SVG'],
         snake: ['Snake', 'Eats your year of commits'],
+        life: ['Game of Life', 'Your contributions evolve with Conway\'s rules'],
+        pacman: ['Pac-Man', 'Eats your graph while two ghosts chase it'],
         versus: ['Versus', 'Your numbers next to another profile'],
         duel: ['Duel', 'Same AI on both graphs, 60 seconds']
       }
@@ -111,7 +115,7 @@
 
   const GROUPS = [
     { id: 'profile', pieces: ['header', 'stats', 'streak', 'langs', 'activity', 'kit'] },
-    { id: 'snake', pieces: ['snake'] },
+    { id: 'games', pieces: ['snake', 'life', 'pacman'] },
     { id: 'pair', pieces: ['versus', 'duel'] }
   ];
 

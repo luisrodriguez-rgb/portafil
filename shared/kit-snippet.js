@@ -15,7 +15,9 @@ const KitSnippet = {
     langs: { width: 'half' },
     activity: { width: 'half' },
     kit: { width: 'full' },
-    snake: { width: 'full' },
+    snake: { width: 'full', game: 'snake' },
+    life: { width: 'full', game: 'life' },
+    pacman: { width: 'full', game: 'pacman' },
     versus: { width: 'full', pair: true },
     duel: { width: 'full', pair: true }
   },
@@ -48,11 +50,15 @@ const KitSnippet = {
   url(kind, theme, ctx) {
     const params = new URLSearchParams({ theme });
     if (ctx.lang) params.set('lang', ctx.lang);
-    if (kind === 'snake') {
+    const game = this.PIECES[kind].game;
+    if (game === 'snake') {
       const s = ctx.snake;
       if (s.morph && s.morph !== 'matrix_viper') params.set('morph', s.morph);
       if (s.speed && s.speed !== 'normal') params.set('speed', s.speed);
       if (s.pause && s.pause !== 'fast') params.set('pause', s.pause);
+    }
+    if (game) {
+      if (game !== 'snake') params.set('game', game);
       return `${ctx.api}/api/${ctx.user}.svg?${params}`;
     }
     if (this.PIECES[kind].pair) return `${ctx.api}/api/${kind}/${ctx.user}-vs-${ctx.rival}.svg?${params}`;
@@ -69,6 +75,8 @@ const KitSnippet = {
       activity: `${u} weekly activity`,
       kit: `${u} GitHub profile by Perfila`,
       snake: `snake eating ${u} contributions by Perfila`,
+      life: `game of life from ${u} contributions by Perfila`,
+      pacman: `pac-man eating ${u} contributions by Perfila`,
       versus: `${u} vs @${ctx.rival}`,
       duel: `${u} vs @${ctx.rival} duel`
     }[kind];

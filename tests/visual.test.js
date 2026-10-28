@@ -49,3 +49,16 @@ test('el duelo y el versus no cambian por accidente', async () => {
   const { diff } = checkSnapshots('pairs', outputs);
   assert.deepStrictEqual(diff, [], 'Cambió el SVG del duelo o del versus. Si es intencionado: UPDATE_SNAPSHOTS=1 node --test tests/visual.test.js');
 });
+
+test('los modos de juego no cambian por accidente en ningún tema', () => {
+  const grid = SnakeCore.weeksToGrid(fixtureWeeks(2));
+  const exporter = new engine.ExporterEngine();
+  const outputs = {};
+  for (const theme of SnakeCore.OPTION_VALUES.theme) {
+    for (const game of ['life', 'pacman']) {
+      outputs[`${game}/${theme}`] = exporter.buildSvg(grid, { game, theme, user: 'octocat' });
+    }
+  }
+  const { diff } = checkSnapshots('games', outputs);
+  assert.deepStrictEqual(diff, [], 'Cambió el SVG de un modo de juego. Si es intencionado: UPDATE_SNAPSHOTS=1 node --test tests/visual.test.js');
+});

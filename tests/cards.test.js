@@ -215,6 +215,12 @@ test('el bloque README: cada pieza en claro y oscuro, solo las elegidas y las de
   assert.match(duel, /^<a href="https:\/\/x.dev\/duel\/octocat-vs-hubot">/);
   assert.match(duel, /\/api\/duel\/octocat-vs-hubot.svg\?theme=ink/);
 
+  // Los modos de juego van a la URL de la serpiente con ?game=; las opciones de la serpiente no se les aplican
+  const games = KitSnippet.build('octocat', { pieces: ['life', 'pacman'], adaptive: false, snake: { morph: 'retro' } });
+  assert.ok(games.includes('/api/octocat.svg?theme=ink&game=life'));
+  assert.ok(games.includes('/api/octocat.svg?theme=ink&game=pacman'));
+  assert.ok(!games.includes('morph='));
+
   const single = KitSnippet.build('octocat', { layout: 'single', adaptive: false });
   assert.ok(single.includes('/api/kit/octocat.svg?theme=ink'));
   assert.ok(!single.includes('<picture>'));

@@ -12,7 +12,9 @@ const V1 = {
     speed: ['normal', 'fast', 'relaxed'],
     morph: ['matrix_viper', 'capsule', 'retro'],
     pause: ['fast', 'medium', 'none'],
-    lang: ['en', 'es']
+    lang: ['en', 'es'],
+    game: ['snake', 'life', 'pacman'],
+    mood: ['auto', 'off']
   },
   cards: {
     theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],

@@ -27,11 +27,104 @@ class ExporterEngine {
     URL.revokeObjectURL(url);
   }
 
+  /** Punto de entrada: la serpiente o el modo de juego pedido con ?game= (shared/games.js) */
+  buildSvg(grid, options = {}) {
+    const game = options.game || 'snake';
+    if (game !== 'snake' && typeof GameModes !== 'undefined') {
+      if (game === 'life') return GameModes.buildLifeSvg(grid, options);
+      if (game === 'pacman') return GameModes.buildPacmanSvg(grid, options);
+    }
+    return this.buildAnimatedSvg(grid, options);
+  }
+
+  /**
+   * Estado según la actividad reciente (mood=auto): días seguidos sin contribuir antes de hoy y racha actual.
+   * Hoy no cuenta si aún está a cero: el día no ha terminado. null si la matriz no tiene fechas (aleatoria, Commit Art).
+   */
+  activityOf(grid) {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const days = [];
+    for (const col of grid) for (const c of col) if (c && c.date && c.date <= today) days.push(c);
+    if (days.length < 14) return null;
+    days.sort((a, b) => (a.date < b.date ? -1 : 1));
+    let i = days.length - 1;
+    if (!days[i].count) i--;
+    let idle = 0;
+    while (i - idle >= 0 && !days[i - idle].count) idle++;
+    let streak = 0;
+    while (i - streak >= 0 && days[i - streak].count > 0) streak++;
+    return { idle, streak, sleeping: idle >= 7 };
+  }
+
+  /** La serpiente duerme: tablero quieto, serpiente enroscada con los ojos cerrados y unas zetas que suben */
+  buildSleepingSvg(grid, options, activity) {
+    const palette = this.themePalettes[options.theme] || this.themePalettes.ink;
+    const lang = options.lang === 'es' ? 'es' : 'en';
+    const username = options.user ? String(options.user) : '';
+    const cols = 53;
+    const rows = 7;
+    const cellSize = 11;
+    const step = cellSize + 3.5;
+    const padding = 16;
+    const gridTop = padding + 30;
+    const width = cols * step + padding * 2 - 3.5;
+    const height = rows * step + padding * 2 - 3.5 + 30;
+    const colors = [palette.empty, palette.l1, palette.l2, palette.l3, palette.l4];
+    const at = (x, y) => [Math.round(padding + x * step), Math.round(gridTop + y * step)];
+
+    let cells = '';
+    for (let x = 0; x < cols; x++) {
+      for (let y = 0; y < rows; y++) {
+        const c = grid[x] && grid[x][y];
+        const [cx, cy] = at(x, y);
+        cells += `<rect x="${cx}" y="${cy}" width="${cellSize}" height="${cellSize}" rx="2.5" fill="${colors[c ? c.originalLevel || 0 : 0]}"/>`;
+      }
+    }
+    // Enroscada al final del gráfico, donde se detuvieron los commits, con la cabeza mirando hacia el año
+    const coil = [[49, 5], [49, 6], [50, 6], [51, 6], [51, 5]];
+    let outline = '';
+    let snake = '';
+    coil.forEach(([x, y], k) => {
+      const [sx, sy] = at(x, y);
+      outline += `<rect x="${sx - 1.7}" y="${sy - 1.7}" width="14.4" height="14.4" rx="4" fill="#000" opacity=".55"/>`;
+      snake += `<rect x="${sx - 0.5}" y="${sy - 0.5}" width="12" height="12" rx="3" fill="${palette.body}" opacity="${+(0.6 + 0.08 * k).toFixed(2)}"/>`;
+    });
+    const [hx, hy] = at(50, 5);
+    snake = outline + `<rect x="${hx - 2.7}" y="${hy - 2.7}" width="16.4" height="16.4" rx="4.5" fill="#000" opacity=".55"/>` + snake
+      + `<rect x="${hx - 1.5}" y="${hy - 1.5}" width="14" height="14" rx="3.5" fill="${palette.head}"/>`
+      + `<path d="M${hx + 1.9} ${hy + 3.6}h3.6M${hx + 1.9} ${hy + 7.6}h3.6" stroke="${palette.bg}" stroke-width="1.3" stroke-linecap="round"/>`;
+    const font = 'ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+    let zs = '';
+    [0, 1, 2].forEach(k => {
+      zs += `<text class="z z${k}" x="${hx - 12 - k * 8}" y="${hy - 4 - k * 6}" font-family="${font}" font-size="${9 + k * 2}" font-weight="700" fill="${palette.text}">z</text>`;
+    });
+    const zCss = '.z{animation:z 3.6s infinite ease-in-out;opacity:0}.z1{animation-delay:1.2s}.z2{animation-delay:2.4s}'
+      + '@keyframes z{0%{opacity:0;transform:translateY(4px)}30%{opacity:.85}100%{opacity:0;transform:translateY(-10px)}}'
+      + '@media (prefers-reduced-motion:reduce){.z{animation:none;opacity:.7}}';
+
+    const n = activity.idle;
+    const label = lang === 'es'
+      ? `durmiendo · ${n} ${n === 1 ? 'día' : 'días'} sin contribuciones`
+      : `asleep · ${n} ${n === 1 ? 'day' : 'days'} without contributions`;
+    const title = [username ? `@${username}` : '', label].filter(Boolean).join(' · ');
+    const credit = `sleeping snake on ${username ? `@${this.escapeXml(username)}` : 'a GitHub'} contribution graph by Perfila`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><title>${credit}</title>`
+      + `<style>svg{background:${palette.bg};border-radius:12px;border:1px solid ${palette.border}}${zCss}</style>`
+      + `<text x="${padding}" y="${padding + 10}" font-family="${font}" font-size="12" font-weight="700" fill="${palette.text}">${this.escapeXml(title)}</text>`
+      // Luces apagadas: el tablero se atenúa y la serpiente queda en primer plano
+      + `<g opacity=".4">${cells}</g><g>${snake}</g>${zs}</svg>`;
+  }
+
   /**
    * Construye el SVG animado como texto. Sin dependencias del DOM: lo usa también la GitHub Action.
    */
   buildAnimatedSvg(grid, options = {}) {
     if (!grid || grid.length === 0) return null;
+
+    // Estados según la actividad: el duelo trae su propia simulación y no los usa
+    const activity = options.mood === 'off' || options.simulation ? null : this.activityOf(grid);
+    if (activity && activity.sleeping) return this.buildSleepingSvg(grid, options, activity);
 
     const themeKey = options.theme || 'ink';
     const palette = this.themePalettes[themeKey] || this.themePalettes.ink;
@@ -230,9 +323,10 @@ class ExporterEngine {
     }
     const sep = lang === 'es' ? '.' : ',';
     const formatted = String(totalContributions).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+    const streak = activity && activity.streak >= 7 ? activity.streak : 0;
     const texts = lang === 'es'
-      ? { contributions: `${formatted} contribuciones en el último año`, cleared: '100% DEVORADO' }
-      : { contributions: `${formatted} contributions in the last year`, cleared: '100% DEVOURED' };
+      ? { contributions: streak ? `${formatted} contribuciones · racha de ${streak} días` : `${formatted} contribuciones en el último año`, cleared: '100% DEVORADO' }
+      : { contributions: streak ? `${formatted} contributions · ${streak}-day streak` : `${formatted} contributions in the last year`, cleared: '100% DEVOURED' };
     // options.headline sustituye el total del año (el duelo pone ahí la puntuación)
     const title = [username ? `@${username}` : '', options.headline || texts.contributions].filter(Boolean).join(' · ');
 

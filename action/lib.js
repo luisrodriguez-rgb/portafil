@@ -9,7 +9,7 @@ const path = require('path');
 const vm = require('vm');
 
 const ROOT = path.join(__dirname, '..');
-const ENGINE_FILES = ['shared/brand.js', 'shared/theme-tokens.js', 'js/calendar.js', 'js/github.js', 'js/pathfinding.js', 'js/snake.js', 'js/exporter.js', 'shared/snake-core.js', 'shared/kit-snippet.js', 'js/duel.js'];
+const ENGINE_FILES = ['shared/brand.js', 'shared/theme-tokens.js', 'js/calendar.js', 'js/github.js', 'js/pathfinding.js', 'js/snake.js', 'js/exporter.js', 'shared/snake-core.js', 'shared/kit-snippet.js', 'js/duel.js', 'shared/games.js'];
 
 /** Carga los scripts del navegador en un contexto aislado y devuelve sus clases */
 function loadEngine() {
@@ -86,7 +86,7 @@ async function run({ username, outputs, token, cwd = process.cwd(), log = consol
 
   const exporter = new engine.ExporterEngine();
   for (const { file, options } of targets) {
-    const svg = exporter.buildAnimatedSvg(grid, { ...options, user: username });
+    const svg = exporter.buildSvg(grid, { ...options, user: username });
     const fullPath = path.resolve(cwd, file);
     fs.mkdirSync(path.dirname(fullPath), { recursive: true });
     fs.writeFileSync(fullPath, svg);

@@ -71,7 +71,7 @@ async function renderSnakeSvg({ user, query = '', token, fetchImpl = fetch }) {
     return svgResponse(502, messageSvg('GitHub no respondió, inténtalo más tarde'), 'no-store');
   }
 
-  const svg = exporter.buildAnimatedSvg(engine.SnakeCore.weeksToGrid(weeks), { ...options, user });
+  const svg = exporter.buildSvg(engine.SnakeCore.weeksToGrid(weeks), { ...options, user });
   return svgResponse(200, svg, CACHE_OK);
 }
 

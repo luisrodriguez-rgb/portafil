@@ -21,10 +21,12 @@ Escribe tu usuario en la web, elige lo que quieras y copia el código. Sin YAML 
 | Actividad | `/api/activity/<usuario>.svg` | Contribuciones por semana, 53 semanas |
 | Todo en una | `/api/kit/<usuario>.svg` | Las cinco anteriores en una sola imagen |
 | Serpiente | `/api/<usuario>.svg` | Una IA (BFS + Flood Fill) se come tu gráfico de contribuciones |
+| Juego de la vida | `/api/<usuario>.svg?game=life` | Tus contribuciones evolucionan con las reglas de Conway |
+| Pac-Man | `/api/<usuario>.svg?game=pacman` | Pac-Man se come tu gráfico mientras dos fantasmas lo persiguen |
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Tus cifras frente a las de otro perfil |
 | Duelo | `/api/duel/<a>-vs-<b>.svg` | La misma IA en los dos gráficos, con marcador; la página `/duel/<a>-vs-<b>` sirve para compartir y retar |
 
-Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed` y `pause`. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
+Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed`, `pause` y `mood`: con `mood=auto` (por defecto) duerme si llevas una semana sin contribuir y presume de tu racha cuando pasa de 7 días. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
 ## Estudio
 
