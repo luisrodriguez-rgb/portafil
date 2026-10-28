@@ -48,6 +48,16 @@ Los anchos encajan con la serpiente (797 px): una pieza `half` de 390 px más 17
 
 Opciones: `theme` y `lang`, como las tarjetas. Si un usuario contiene `-vs-`, la pareja se pasa como `?a=<usuario>&b=<usuario>`.
 
+## Imágenes para redes
+
+| Ruta | Tamaño | Contenido |
+| --- | --- | --- |
+| `/api/og/<usuario>.png` | 1200×630 PNG | Tarjeta del perfil: avatar, nombre, bio, el año de contribuciones, contribuciones, rachas y lenguaje principal |
+| `/api/og/duel/<a>-vs-<b>.png` | 1200×630 PNG | Tarjeta del duelo: los dos usuarios, el marcador y cómo quedó cada gráfico |
+| `/u/<usuario>` | página HTML | Enlace para compartir un perfil: lleva la tarjeta como vista previa y redirige a la web con ese perfil (`?t=` tema) |
+
+Opciones: `theme` y `lang`. Con `.svg` en lugar de `.png` se obtiene el SVG antes de rasterizar (para depurar). La página del duelo usa su tarjeta como vista previa.
+
 ## Errores
 
 Todas las rutas responden con un SVG legible (no una imagen rota) y el código HTTP correspondiente: 400 opción o usuario no válido, 404 usuario inexistente, 500 configuración del servidor, 502 GitHub no respondió.

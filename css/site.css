@@ -139,7 +139,7 @@ select { font: inherit; font-size: 14px; color: var(--text); background: var(--s
 .group > p { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 
-.piece { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.piece, .share { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; min-width: 0; }
 .piece.full { grid-column: 1 / -1; }
 .piece.picked { border-color: var(--strong); }
 .piece-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
@@ -194,3 +194,29 @@ select { font: inherit; font-size: 14px; color: var(--text); background: var(--s
 @media (prefers-reduced-motion: no-preference) {
   .preview img { transition: opacity 0.2s ease; }
 }
+
+/* Tarjeta para compartir */
+.share .preview img { border-radius: 8px; }
+.piece-actions.wrap { flex-wrap: wrap; }
+.tpl { font-size: 14px; color: var(--muted); }
+.tpl select { flex: 1; min-width: 0; }
+
+/* Vista previa del README, con el aspecto de GitHub en claro y en oscuro */
+.preview-dialog { width: min(980px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--text); }
+.preview-dialog::backdrop { background: rgba(10, 11, 13, 0.55); backdrop-filter: blur(3px); }
+.preview-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.preview-head h2 { font-size: 16px; flex: 1; }
+.preview-note { margin: 12px 18px 0; font-size: 13px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 13px; border: 0; background: none; color: var(--muted); padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--strong); color: var(--on-strong); }
+.gh { margin: 14px 18px 18px; padding: 24px 28px; border: 1px solid #d1d9e0; border-radius: 6px; background: #ffffff; color: #1f2328; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+.gh[data-mode="dark"] { background: #0d1117; color: #f0f6fc; border-color: #3d444d; }
+.gh h1, .gh h2, .gh h3, .gh h4 { margin: 24px 0 16px; font-weight: 600; letter-spacing: 0; line-height: 1.25; }
+.gh h3 { font-size: 1.25em; }
+.gh p, .gh ul { margin: 0 0 16px; }
+.gh a { color: #0969da; }
+.gh[data-mode="dark"] a { color: #4493f8; }
+.gh img { max-width: 100%; vertical-align: middle; }
+.gh p[align="center"] { text-align: center; }
+.gh code { font-family: var(--mono); font-size: 85%; padding: 0.2em 0.4em; border-radius: 6px; background: rgba(129, 139, 152, 0.15); }

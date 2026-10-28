@@ -30,6 +30,10 @@ Type your username on the web, pick what you like and copy the code. No YAML, no
 
 All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`: with `mood=auto` (the default) it sleeps after a week without contributions and shows off your streak once it passes 7 days. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
+## Sharing outside GitHub
+
+`/api/og/<user>.png` is your 1200×630 card for LinkedIn or X, and `/u/<user>` is the link that shows it when shared. Duels have their own at `/api/og/duel/<a>-vs-<b>.png`. The web also has profile templates with text (developer, student, maintainer) and a preview of the README as it will look on GitHub.
+
 ## Studio
 
 `/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok.
@@ -49,7 +53,7 @@ If you would rather not depend on the server, the Action generates the snake in 
 
 ## Development
 
-No dependencies: Node 20 or later.
+Node 20 or later. A single dependency, `@resvg/resvg-js`, turns the social cards into PNG (`npm install`); their font, JetBrains Mono, is in `assets/fonts` with its OFL license.
 
 ```bash
 npm run dev

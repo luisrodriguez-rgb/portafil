@@ -220,7 +220,8 @@ function renderDuelPage({ users, duel, lang, origin }) {
   const pageUrl = `${origin}/duel/${a}-vs-${b}`;
   const svgUrl = `${origin}/api/duel/${a}-vs-${b}.svg${lang === 'es' ? '?lang=es' : ''}`;
   const webUrl = `${origin}/play.html?u=${encodeURIComponent(a)}&vs=${encodeURIComponent(b)}#duelSection`;
-  const previewImage = `${origin}/assets/brand/og.png`;
+  // La imagen para redes muestra el marcador del duelo (server/og.js)
+  const previewImage = `${origin}/api/og/duel/${a}-vs-${b}.png${lang === 'es' ? '?lang=es' : ''}`;
   const result = duel ? resultLine(duel, lang) : P.error;
   const title = users ? P.title(a, b) : Brand.name;
   const description = duel ? `${result}. ${P.description}` : P.description;
@@ -240,11 +241,13 @@ function renderDuelPage({ users, duel, lang, origin }) {
 <meta property="og:title" content="${e(title)}">
 <meta property="og:description" content="${e(description)}">
 <meta property="og:url" content="${e(pageUrl)}">
-<meta property="og:image" content="${previewImage}">
+<meta property="og:image" content="${e(previewImage)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${e(title)}">
 <meta name="twitter:description" content="${e(description)}">
-<meta name="twitter:image" content="${previewImage}">
+<meta name="twitter:image" content="${e(previewImage)}">
 <style>
 :root{color-scheme:dark;--bg:${tk.bg};--text:${tk.text};--muted:${tk.muted};--accent:${tk.body};--surface:${tk.empty};--border:${tk.border}}
 *{box-sizing:border-box}
@@ -337,8 +340,9 @@ async function handler(req, res) {
   // El host va a la página (enlaces y script): solo se acepta si parece un nombre de host
   const rawHost = String((req.headers && (req.headers['x-forwarded-host'] || req.headers.host)) || '').split(',')[0].trim();
   const host = /^[a-z0-9.-]+(:\d+)?$/i.test(rawHost) ? rawHost : SITE_HOST;
+  const proto = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host) ? 'http' : 'https';
   const result = format === 'page'
-    ? await renderDuelPageResponse({ pair, query: url.search, token, origin: `https://${host}`, acceptLanguage: (req.headers && req.headers['accept-language']) || '' })
+    ? await renderDuelPageResponse({ pair, query: url.search, token, origin: `${proto}://${host}`, acceptLanguage: (req.headers && req.headers['accept-language']) || '' })
     : await renderPairSvg({ kind: format === 'versus' ? 'versus' : 'duel', pair, query: url.search, token });
   sendCompressed(req, res, result);
   logRender({ endpoint: format === 'page' ? 'duel-page' : (format === 'versus' ? 'versus' : 'duel'), user: pair, theme: url.searchParams.get('theme'), status: result.status, start });

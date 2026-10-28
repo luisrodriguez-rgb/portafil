@@ -41,6 +41,13 @@
       'g.profile': 'Tu perfil', 'g.profileP': 'Las piezas básicas. La cabecera va a lo ancho y el resto de dos en dos.',
       'g.games': 'Juegos', 'g.gamesP': 'Tu gráfico de contribuciones convertido en partida, animada en un SVG. La serpiente duerme si llevas una semana sin contribuir y presume de tu racha si pasa de 7 días. Todos se pueden jugar en el estudio.',
       'g.pair': 'Frente a otro perfil', 'g.pairP': 'Compárate con alguien o rétalo a un duelo. El duelo enlaza a una página para compartir.',
+      'g.share': 'Para compartir fuera de GitHub', 'g.shareP': 'Tu tarjeta de 1200×630 para LinkedIn, X o WhatsApp, con el estilo que elegiste. El enlace muestra la tarjeta al compartirlo y lleva a tus piezas.',
+      'share.download': 'Descargar PNG', 'share.copy': 'Copiar enlace', 'share.x': 'Compartir en X', 'share.in': 'Compartir en LinkedIn',
+      'share.text': (u) => `Mi perfil de GitHub con un solo estilo, hecho con Perfila: @${u}`,
+      'readme.template': 'Plantilla', 'readme.preview': 'Vista previa',
+      tpl: { pieces: 'Solo las piezas que elijo', developer: 'Desarrollador', student: 'Estudiante', maintainer: 'Mantenedor open source', minimal: 'Mínima' },
+      'preview.title': 'Así se verá en GitHub', 'preview.light': 'Claro', 'preview.dark': 'Oscuro', 'preview.close': 'Cerrar',
+      'preview.note': 'Cambia los textos [entre corchetes] por los tuyos después de pegarlo.',
       'rival.label': 'Usuario rival', 'rival.cta': 'Comparar', 'rival.placeholder': 'rival',
       'rival.needed': 'Escribe un rival arriba para ver esta pieza.',
       'snake.morph': 'Forma', 'snake.speed': 'Velocidad',
@@ -93,6 +100,13 @@
       'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two.',
       'g.games': 'Games', 'g.gamesP': 'Your contribution graph turned into a game, animated in an SVG. The snake sleeps after a week without contributions and shows off your streak once it passes 7 days. You can play all of them in the studio.',
       'g.pair': 'Against another profile', 'g.pairP': 'Compare yourself with someone or challenge them to a duel. The duel links to a page to share.',
+      'g.share': 'For sharing outside GitHub', 'g.shareP': 'Your 1200×630 card for LinkedIn, X or WhatsApp, in the style you picked. The link shows the card when shared and leads to your pieces.',
+      'share.download': 'Download PNG', 'share.copy': 'Copy link', 'share.x': 'Share on X', 'share.in': 'Share on LinkedIn',
+      'share.text': (u) => `My GitHub profile in one style, made with Perfila: @${u}`,
+      'readme.template': 'Template', 'readme.preview': 'Preview',
+      tpl: { pieces: 'Only the pieces I pick', developer: 'Developer', student: 'Student', maintainer: 'Open source maintainer', minimal: 'Minimal' },
+      'preview.title': 'This is how it will look on GitHub', 'preview.light': 'Light', 'preview.dark': 'Dark', 'preview.close': 'Close',
+      'preview.note': 'Replace the texts [in brackets] with your own after pasting.',
       'rival.label': 'Rival username', 'rival.cta': 'Compare', 'rival.placeholder': 'rival',
       'rival.needed': 'Type a rival above to see this piece.',
       'snake.morph': 'Shape', 'snake.speed': 'Speed',
@@ -136,7 +150,9 @@
     rival: '',
     morph: params.get('m') || 'matrix_viper',
     speed: params.get('s') || 'normal',
-    picked: new Set((params.get('p') || KitSnippet.DEFAULT_SELECTION.join(',')).split(',').filter(k => KitSnippet.PIECES[k]))
+    template: KitSnippet.TEMPLATES[params.get('tpl')] ? params.get('tpl') : 'pieces',
+    previewMode: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    picked: new Set((params.get('p') || KitSnippet.templatePieces(params.get('tpl')) || KitSnippet.DEFAULT_SELECTION).toString().split(',').filter(k => KitSnippet.PIECES[k]))
   };
   if (!['es', 'en'].includes(state.ui)) state.ui = 'en';
   const T = (key, ...args) => {
@@ -202,6 +218,7 @@
     if (state.rival) p.set('r', state.rival);
     if (state.morph !== 'matrix_viper') p.set('m', state.morph);
     if (state.speed !== 'normal') p.set('s', state.speed);
+    if (state.template !== 'pieces') p.set('tpl', state.template);
     const picked = [...state.picked].join(',');
     if (picked !== KitSnippet.DEFAULT_SELECTION.join(',')) p.set('p', picked);
     const q = p.toString();
@@ -234,6 +251,18 @@
       section.appendChild(grid);
       gallery.appendChild(section);
     }
+    const share = document.createElement('section');
+    share.className = 'group';
+    share.innerHTML = `<h3>${T('g.share')}</h3><p>${T('g.shareP')}</p>
+      <article class="share"><div class="preview"><img id="ogImg" alt="" loading="lazy" decoding="async" width="1200" height="630"></div>
+      <div class="piece-foot"><div class="piece-actions wrap">
+        <a class="btn small" id="ogDownload">${T('share.download')}</a>
+        <button type="button" class="btn small" id="ogCopy">${T('share.copy')}</button>
+        <a class="btn small" id="ogX" target="_blank" rel="noopener noreferrer">${T('share.x')}</a>
+        <a class="btn small" id="ogIn" target="_blank" rel="noopener noreferrer">${T('share.in')}</a>
+      </div></div></article>`;
+    gallery.appendChild(share);
+    $('ogCopy').addEventListener('click', (e) => copy(e.currentTarget, shareUrl()));
     $('rivalForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const value = $('rival').value.trim().replace(/^@/, '').replace(/^https?:\/\/github\.com\//i, '').replace(/\/.*$/, '');
@@ -280,7 +309,29 @@
     return card;
   }
 
+  /** Enlace para compartir el perfil: la página /u/ muestra la tarjeta en redes y lleva a las piezas */
+  function shareUrl() {
+    const p = new URLSearchParams();
+    if (state.theme !== 'ink') p.set('t', state.theme);
+    if (state.ui === 'es') p.set('lang', 'es');
+    const q = p.toString();
+    return `${publicBase}/u/${state.user}${q ? `?${q}` : ''}`;
+  }
+
+  function updateShare() {
+    const img = $('ogImg');
+    if (!img) return;
+    const src = `${previewBase}/api/og/${state.user}.png?theme=${state.theme}${state.ui === 'es' ? '&lang=es' : ''}`;
+    if (img.getAttribute('src') !== src) img.src = src;
+    img.alt = `@${state.user} · Perfila`;
+    $('ogDownload').href = src;
+    $('ogDownload').setAttribute('download', `perfila-${state.user}.png`);
+    $('ogX').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(T('share.text', state.user))}&url=${encodeURIComponent(shareUrl())}`;
+    $('ogIn').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl())}`;
+  }
+
   function updatePreviews() {
+    updateShare();
     document.querySelectorAll('.piece').forEach(card => {
       const kind = card.dataset.kind;
       const box = card.querySelector('.preview');
@@ -315,7 +366,7 @@
 
   function updateReadme() {
     document.querySelectorAll('.piece').forEach(card => card.classList.toggle('picked', state.picked.has(card.dataset.kind)));
-    const code = KitSnippet.build(state.user, { ...snippetOptions(publicBase), pieces: [...state.picked] });
+    const code = KitSnippet.build(state.user, { ...snippetOptions(publicBase), pieces: [...state.picked], template: state.template });
     const included = [...state.picked].filter(k => KitSnippet.piece(k, state.user, snippetOptions(publicBase)));
     $('readmeCode').textContent = code || T('readme.empty');
     $('count').textContent = T('readme.count', included.length);
@@ -324,7 +375,26 @@
     $('dockCopy').disabled = !code;
     $('readmeHelp').textContent = T('readme.help', state.user);
     $('openProfile').href = `https://github.com/${state.user}/${state.user}`;
+    $('templateSelect').value = state.template;
+    if ($('previewDialog').open) renderPreview();
     syncUrl();
+  }
+
+  // --- Plantillas y vista previa ---
+  function buildTemplates() {
+    $('templateSelect').innerHTML = Object.keys(KitSnippet.TEMPLATES).map(k => `<option value="${k}">${T('tpl')[k]}</option>`).join('');
+    $('templateSelect').value = state.template;
+  }
+
+  /** El README tal como lo pintaría GitHub en el modo elegido: sin <picture>, con el tema de ese modo */
+  function renderPreview() {
+    const opts = snippetOptions(previewBase);
+    const theme = state.previewMode === 'dark' ? opts.dark : opts.light;
+    const md = KitSnippet.build(state.user, { ...opts, adaptive: false, dark: theme, pieces: [...state.picked], template: state.template });
+    const box = $('ghPreview');
+    box.dataset.mode = state.previewMode;
+    box.innerHTML = KitSnippet.previewHtml(md) || `<p>${T('readme.empty').replace(/[<>]/g, '')}</p>`;
+    document.querySelectorAll('[data-preview-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.previewMode === state.previewMode)));
   }
 
   // --- Estilo ---
@@ -444,10 +514,30 @@
   });
   $('copyAll').addEventListener('click', (e) => copy(e.currentTarget, $('readmeCode').textContent));
   $('dockCopy').addEventListener('click', (e) => copy(e.currentTarget, $('readmeCode').textContent));
+  $('templateSelect').addEventListener('change', (e) => {
+    state.template = e.target.value;
+    const pieces = KitSnippet.templatePieces(state.template);
+    if (pieces) {
+      state.picked = new Set(pieces);
+      document.querySelectorAll('.piece [data-pick]').forEach(box => { box.checked = state.picked.has(box.closest('.piece').dataset.kind); });
+    }
+    updateReadme();
+  });
+  $('previewBtn').addEventListener('click', () => {
+    renderPreview();
+    $('previewDialog').showModal();
+  });
+  $('previewClose').addEventListener('click', () => $('previewDialog').close());
+  $('previewDialog').addEventListener('click', (e) => { if (e.target === $('previewDialog')) $('previewDialog').close(); });
+  document.querySelectorAll('[data-preview-mode]').forEach(b => b.addEventListener('click', () => {
+    state.previewMode = b.dataset.previewMode;
+    renderPreview();
+  }));
   $('langBtn').addEventListener('click', () => {
     state.ui = state.ui === 'es' ? 'en' : 'es';
     try { localStorage.setItem('perfila.lang', state.ui); } catch (e) {}
     applyStaticText();
+    buildTemplates();
     if (state.user) {
       buildGallery();
       refresh();
@@ -455,6 +545,7 @@
   });
 
   applyStaticText();
+  buildTemplates();
   drawHeroCells();
   const rivalParam = cleanUser(params.get('r'));
   if (USER_RE.test(rivalParam)) state.rival = rivalParam;

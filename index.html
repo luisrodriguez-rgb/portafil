@@ -12,7 +12,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/site.css?v=1">
+  <link rel="stylesheet" href="css/site.css?v=2">
 </head>
 <body>
   <a class="skip" href="#main" data-i18n="skip">Ir al contenido</a>
@@ -79,10 +79,12 @@
             <h2 id="readmeTitle" data-i18n="readme.title">Tu README</h2>
             <span class="count" id="count"></span>
           </div>
+          <label class="inline tpl"><span data-i18n="readme.template">Plantilla</span> <select id="templateSelect"></select></label>
           <p class="muted" id="readmeHelp"></p>
           <pre class="code" id="readmeCode" tabindex="0"></pre>
           <div class="row">
             <button type="button" class="btn primary" id="copyAll" data-i18n="readme.copy">Copiar todo</button>
+            <button type="button" class="btn" id="previewBtn" data-i18n="readme.preview">Vista previa</button>
             <a class="btn" id="openProfile" target="_blank" rel="noopener noreferrer" data-i18n="readme.open">Abrir mi repositorio de perfil</a>
           </div>
         </aside>
@@ -95,14 +97,27 @@
     </section>
   </main>
 
+  <dialog class="preview-dialog" id="previewDialog" aria-labelledby="previewTitle">
+    <div class="preview-head">
+      <h2 id="previewTitle" data-i18n="preview.title">Así se verá en GitHub</h2>
+      <div class="seg" role="group">
+        <button type="button" data-preview-mode="light" data-i18n="preview.light">Claro</button>
+        <button type="button" data-preview-mode="dark" data-i18n="preview.dark">Oscuro</button>
+      </div>
+      <button type="button" class="btn small" id="previewClose" data-i18n="preview.close">Cerrar</button>
+    </div>
+    <p class="muted preview-note" data-i18n="preview.note">Cambia los textos [entre corchetes] por los tuyos después de pegarlo.</p>
+    <div class="gh" id="ghPreview"></div>
+  </dialog>
+
   <footer class="foot">
     <span class="brand small"><img src="assets/brand/mark.svg" alt="" width="18" height="18"> perfila</span>
     <span data-i18n="foot.note">Todo es SVG con CSS: tu perfil no ejecuta JavaScript.</span>
   </footer>
 
-  <script src="shared/brand.js?v=1"></script>
-  <script src="shared/theme-tokens.js?v=1"></script>
-  <script src="shared/kit-snippet.js?v=1"></script>
-  <script src="js/site.js?v=1"></script>
+  <script src="shared/brand.js?v=2"></script>
+  <script src="shared/theme-tokens.js?v=2"></script>
+  <script src="shared/kit-snippet.js?v=2"></script>
+  <script src="js/site.js?v=2"></script>
 </body>
 </html>

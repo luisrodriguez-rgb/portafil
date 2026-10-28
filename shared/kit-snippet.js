@@ -109,14 +109,72 @@ const KitSnippet = {
   },
 
   /**
+   * Plantillas de perfil: qué piezas lleva cada tipo de perfil y el texto que las acompaña.
+   * El texto es Markdown con huecos [entre corchetes] para que cada uno lo cambie por lo suyo.
+   */
+  TEMPLATES: {
+    pieces: { pieces: null },
+    developer: {
+      pieces: ['header', 'stats', 'langs', 'streak', 'activity', 'snake'],
+      intro: {
+        es: '### Hola, soy [tu nombre] 👋\n\nDesarrollo [qué haces: webs, APIs, apps...] con [tus tecnologías principales]. Ahora mismo estoy trabajando en [tu proyecto actual].',
+        en: '### Hi, I\'m [your name] 👋\n\nI build [what you do: websites, APIs, apps...] with [your main technologies]. Right now I\'m working on [your current project].'
+      },
+      outro: {
+        es: '### Contacto\n\n- [LinkedIn](https://linkedin.com/in/[tu-usuario])\n- [Tu web](https://[tu-web])\n- [tu@correo]',
+        en: '### Get in touch\n\n- [LinkedIn](https://linkedin.com/in/[your-user])\n- [Your website](https://[your-site])\n- [you@email]'
+      }
+    },
+    student: {
+      pieces: ['header', 'streak', 'activity', 'life'],
+      intro: {
+        es: '### Hola, soy [tu nombre] 👋\n\nEstudio [tu carrera o curso] en [tu centro]. Este año estoy aprendiendo [lo que aprendes].',
+        en: '### Hi, I\'m [your name] 👋\n\nI study [your degree or course] at [your school]. This year I\'m learning [what you are learning].'
+      },
+      outro: {
+        es: '### Proyectos\n\n- [Proyecto 1](https://github.com/[tu-usuario]/[repo]): [una frase sobre él]\n- [Proyecto 2](https://github.com/[tu-usuario]/[repo]): [una frase sobre él]',
+        en: '### Projects\n\n- [Project 1](https://github.com/[your-user]/[repo]): [one line about it]\n- [Project 2](https://github.com/[your-user]/[repo]): [one line about it]'
+      }
+    },
+    maintainer: {
+      pieces: ['header', 'stats', 'streak', 'langs', 'activity', 'pacman'],
+      intro: {
+        es: '### Hola, soy [tu nombre] 👋\n\nMantengo [tus proyectos de código abierto]. Me interesan [los temas que te importan].',
+        en: '### Hi, I\'m [your name] 👋\n\nI maintain [your open source projects]. I care about [the topics you care about].'
+      },
+      outro: {
+        es: '### Cómo ayudar\n\n- Revisa las issues marcadas como [good first issue](https://github.com/[tu-usuario]/[repo]/issues)\n- [Patrocina el proyecto](https://github.com/sponsors/[tu-usuario])',
+        en: '### How to help\n\n- Look at the issues labeled [good first issue](https://github.com/[your-user]/[repo]/issues)\n- [Sponsor the project](https://github.com/sponsors/[your-user])'
+      }
+    },
+    minimal: {
+      pieces: ['header', 'snake']
+    }
+  },
+
+  /** Piezas de una plantilla (null = las que elija cada uno) */
+  templatePieces(name) {
+    const tpl = this.TEMPLATES[name];
+    return tpl && tpl.pieces ? tpl.pieces.slice() : null;
+  },
+
+  /**
    * Bloque con las piezas elegidas, en el orden del catálogo. Las medias se agrupan de dos en dos
    * (en GitHub quedan lado a lado y en móvil se apilan). options.pieces: lista de piezas; por defecto el kit suelto.
+   * options.template: añade el texto de la plantilla (presentación tras la cabecera y cierre al final).
    */
   build(username, options = {}) {
     const ctx = this.context(username, options);
-    const chosen = new Set(options.pieces || (options.layout === 'single' ? ['kit', 'snake'] : this.DEFAULT_SELECTION));
+    const tpl = this.TEMPLATES[options.template] || null;
+    const chosen = new Set(options.pieces || (tpl && tpl.pieces) || (options.layout === 'single' ? ['kit', 'snake'] : this.DEFAULT_SELECTION));
+    const lang = options.lang === 'es' ? 'es' : 'en';
     const blocks = [];
     let halves = [];
+    let introDone = false;
+    const intro = () => {
+      if (!introDone && tpl && tpl.intro) blocks.push(tpl.intro[lang]);
+      introDone = true;
+    };
     const flush = () => {
       if (halves.length) blocks.push(`<p align="center">\n${halves.join('\n')}\n</p>`);
       halves = [];
@@ -125,6 +183,8 @@ const KitSnippet = {
       if (!chosen.has(kind)) continue;
       const html = this.pieceWithContext(kind, ctx);
       if (!html) continue;
+      // La presentación va justo después de la cabecera (o al principio si no hay cabecera)
+      if (kind !== 'header') intro();
       if (this.PIECES[kind].width === 'half') {
         halves.push(html);
         if (halves.length === 2) flush();
@@ -134,7 +194,29 @@ const KitSnippet = {
       }
     }
     flush();
+    intro();
+    if (tpl && tpl.outro) blocks.push(tpl.outro[lang]);
     return blocks.join('\n\n');
+  },
+
+  /**
+   * Vista previa del README: el Markdown justo que usan las plantillas (títulos, párrafos, listas,
+   * negrita, código y enlaces) y el HTML de las piezas tal cual. Escapa todo lo que no es marcado.
+   */
+  previewHtml(markdown) {
+    const esc = (t) => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const inline = (t) => esc(t)
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return markdown.split(/\n{2,}/).map(block => {
+      if (/^\s*</.test(block)) return block;
+      const lines = block.split('\n');
+      if (lines.every(l => /^- /.test(l))) return `<ul>${lines.map(l => `<li>${inline(l.slice(2))}</li>`).join('')}</ul>`;
+      const h = block.match(/^(#{1,4}) (.*)$/);
+      if (h && lines.length === 1) return `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`;
+      return `<p>${lines.map(inline).join('<br>')}</p>`;
+    }).join('\n');
   }
 };
 

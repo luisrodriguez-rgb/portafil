@@ -57,13 +57,17 @@ Pesos medidos con perfiles de prueba: juego de la vida 29-63 KB, Pac-Man 92-96 K
 
 ## Fase 4 · Imagen para redes y plantillas
 
-| Tarea | Notas |
-| --- | --- |
-| PNG 1200×630 por perfil y por duelo (tarjeta para LinkedIn/X y vista previa del enlace) | Exige rasterizar SVG en el servidor: primera dependencia (`@resvg/resvg-wasm`, ~2,5 MB). Decisión pendiente |
-| Plantillas de perfil completas (web, estudiante, mantenedor) con texto además de piezas | En la galería, como punto de partida |
-| Vista previa del README completo, tal como se verá en GitHub, antes de copiar | En la web |
+| Estado | Tarea | Dónde |
+| --- | --- | --- |
+| ✅ | Rasterizado en el servidor: primera dependencia, `@resvg/resvg-js` (binario nativo por plataforma, ~3 MB), con JetBrains Mono incluida (OFL) porque Vercel no trae fuentes; 15-30 ms por imagen | `server/social.js`, `assets/fonts/` |
+| ✅ | Tarjeta 1200×630 del perfil (avatar, nombre, bio, el año de contribuciones y cuatro cifras) y del duelo (marcador y cómo quedó cada gráfico), con el tema elegido | `/api/og/<usuario>.png`, `/api/og/duel/<a>-vs-<b>.png` |
+| ✅ | Página para compartir `/u/<usuario>` con la tarjeta como vista previa; la página del duelo usa la suya | `server/og.js`, `server/duel.js` |
+| ✅ | En la web, sección "Para compartir fuera de GitHub": tarjeta, descargar PNG, copiar enlace, X y LinkedIn | `js/site.js` |
+| ✅ | Plantillas de perfil con texto (desarrollador, estudiante, mantenedor, mínima): eligen piezas y añaden presentación y cierre con huecos [entre corchetes] | `KitSnippet.TEMPLATES` |
+| ✅ | Vista previa del README tal como se verá en GitHub, en claro y en oscuro, antes de copiar | `KitSnippet.previewHtml`, `index.html` |
+| ⬜ | Medir la puerta: tiempo desde abrir la web hasta publicar el perfil (requiere desplegar e instrumentar la web) | `docs/metrics.md` |
 
-**Puerta:** de abrir la web a tener el perfil publicado en menos de dos minutos.
+**Puerta:** de abrir la web a tener el perfil publicado en menos de dos minutos ⬜ (el recorrido ya es: usuario → plantilla o piezas → vista previa → copiar; falta medirlo con usuarios reales).
 
 ## Fase 5 · Lanzamiento y distribución
 

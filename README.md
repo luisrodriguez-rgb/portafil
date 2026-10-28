@@ -30,6 +30,10 @@ Escribe tu usuario en la web, elige lo que quieras y copia el código. Sin YAML 
 
 Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed`, `pause` y `mood`: con `mood=auto` (por defecto) duerme si llevas una semana sin contribuir y presume de tu racha cuando pasa de 7 días. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
+## Para compartir fuera de GitHub
+
+`/api/og/<usuario>.png` es tu tarjeta de 1200×630 para LinkedIn o X, y `/u/<usuario>` es el enlace que la muestra al compartirlo. Los duelos tienen la suya en `/api/og/duel/<a>-vs-<b>.png`. En la web también hay plantillas de perfil con texto (desarrollador, estudiante, mantenedor) y una vista previa del README tal como se verá en GitHub.
+
 ## Estudio
 
 En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y clips de video para X, LinkedIn, Reels o TikTok.
@@ -49,7 +53,7 @@ Si prefieres no depender del servidor, la Action genera la serpiente en tu propi
 
 ## Desarrollo
 
-Sin dependencias: Node 20 o superior.
+Node 20 o superior. Una sola dependencia, `@resvg/resvg-js`, para convertir las tarjetas para redes a PNG (`npm install`); la fuente que usan, JetBrains Mono, está en `assets/fonts` con su licencia OFL.
 
 ```bash
 npm run dev

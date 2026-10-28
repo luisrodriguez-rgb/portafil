@@ -1,6 +1,26 @@
 {
   "rewrites": [
     {
+      "source": "/u/:user",
+      "destination": "/api/og?kind=page&slug=:user"
+    },
+    {
+      "source": "/api/og/duel/:pair.png",
+      "destination": "/api/og?kind=duel&slug=:pair&format=png"
+    },
+    {
+      "source": "/api/og/duel/:pair.svg",
+      "destination": "/api/og?kind=duel&slug=:pair&format=svg"
+    },
+    {
+      "source": "/api/og/:user.png",
+      "destination": "/api/og?kind=profile&slug=:user&format=png"
+    },
+    {
+      "source": "/api/og/:user.svg",
+      "destination": "/api/og?kind=profile&slug=:user&format=svg"
+    },
+    {
       "source": "/duel/:pair",
       "destination": "/api/duel?pair=:pair&format=page"
     },
@@ -41,6 +61,10 @@
     "api/duel.js": {
       "maxDuration": 10,
       "includeFiles": "{js,shared,action,server}/**"
+    },
+    "api/og.js": {
+      "maxDuration": 10,
+      "includeFiles": "{js,shared,action,server,assets/fonts}/**"
     }
   }
 }

@@ -10,7 +10,7 @@ Cada petición a `/api/...` escribe una línea JSON en los Runtime Logs de Verce
 {"evt":"perfila.render","endpoint":"stats","user":"octocat","theme":"cyberpunk","status":200,"ms":41}
 ```
 
-`endpoint` es `snake`, `calendar`, la pieza del kit (`header`, `stats`, `streak`, `langs`, `activity`, `kit`) o del duelo (`duel`, `versus`, `duel-page`; ahí `user` es la pareja `a-vs-b`). Solo se registra el usuario de GitHub, que ya es público en la URL; ni IPs ni cookies.
+`endpoint` es `snake`, `calendar`, la pieza del kit (`header`, `stats`, `streak`, `langs`, `activity`, `kit`) o del duelo (`duel`, `versus`, `duel-page`; ahí `user` es la pareja `a-vs-b`), y las imágenes para redes (`og-profile`, `og-duel`, `share-page`). Solo se registra el usuario de GitHub, que ya es público en la URL; ni IPs ni cookies.
 
 Los Runtime Logs del plan gratuito duran poco, así que para medir semanas hay que exportarlos (Log Drain o descarga desde el panel) y contar:
 
@@ -20,6 +20,7 @@ Los Runtime Logs del plan gratuito duran poco, así que para medir semanas hay q
 | Perfiles que usan más de una pieza | `user` con 2 o más `endpoint` distintos |
 | Temas más usados | conteo por `theme` |
 | Duelos compartidos | visitas a `duel-page` frente a `duel` creados; usuarios nuevos que aparecen tras un `duel-page` |
+| Perfiles compartidos fuera de GitHub | peticiones a `og-profile` y `share-page` (las redes piden la imagen al mostrar el enlace) |
 | Coste | percentil 95 de `ms` por `endpoint` |
 
 La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 6 h), así que estas cifras cuentan **perfiles**, no visitas al perfil.

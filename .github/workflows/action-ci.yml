@@ -18,6 +18,10 @@ jobs:
         with:
           node-version: 24
 
+      # resvg (tarjetas PNG para redes) es la única dependencia
+      - name: Install dependencies
+        run: npm ci
+
       - name: Unit tests
         run: node --test tests/*.test.js
 
