@@ -9,6 +9,27 @@ const { engine } = require('./common');
 
 const EVENTS = ['user', 'copy', 'copy-piece', 'share', 'preview'];
 const MAX_BODY = 1024;
+// Una visita normal manda menos de diez eventos: por encima de esto por minuto e IP se descarta (429).
+// El contador vive en cada instancia de la función; basta para que nadie llene los logs desde un script.
+const RATE_LIMIT = 30;
+const RATE_WINDOW = 60 * 1000;
+const hits = new Map();
+
+function overLimit(ip, now = Date.now()) {
+  if (hits.size > 5000) hits.clear();
+  const entry = hits.get(ip);
+  if (!entry || now - entry.start > RATE_WINDOW) {
+    hits.set(ip, { start: now, count: 1 });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_LIMIT;
+}
+
+function clientIp(req) {
+  const forwarded = String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim();
+  return forwarded || (req.socket && req.socket.remoteAddress) || 'unknown';
+}
 
 function pick(value, allowed) {
   return allowed.includes(value) ? value : undefined;
@@ -63,6 +84,11 @@ async function handler(req, res) {
     res.setHeader('Allow', 'POST');
     return res.end();
   }
+  if (overLimit(clientIp(req))) {
+    res.statusCode = 429;
+    res.setHeader('Retry-After', '60');
+    return res.end();
+  }
   const event = parseEvent(await readBody(req));
   if (event && process.env.VERCEL) console.log(JSON.stringify({ evt: 'perfila.event', ...event }));
   res.statusCode = event ? 204 : 400;
@@ -70,4 +96,4 @@ async function handler(req, res) {
   res.end();
 }
 
-module.exports = { parseEvent, handler, EVENTS };
+module.exports = { parseEvent, overLimit, handler, EVENTS, RATE_LIMIT };

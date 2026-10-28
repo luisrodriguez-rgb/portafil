@@ -50,6 +50,9 @@ test('errores de las tarjetas con el código HTTP correcto', async () => {
   const { fetchImpl } = fakePairGitHub();
   assert.strictEqual((await renderSocialCard({ kind: 'profile', slug: '"><x', token: 't', fetchImpl })).status, 400);
   assert.strictEqual((await renderSocialCard({ kind: 'profile', slug: 'octocat', query: 'theme=pink', token: 't', fetchImpl })).status, 400);
+  // Una opción inventada no genera otro PNG (ni se salta la caché del CDN); las claves de la reescritura sí valen
+  assert.strictEqual((await renderSocialCard({ kind: 'profile', slug: 'octocat', query: 'cb=123', token: 't', fetchImpl })).status, 400);
+  assert.strictEqual((await renderSocialCard({ kind: 'profile', slug: 'octocat', query: 'kind=profile&slug=octocat&format=svg&theme=dark', format: 'svg', token: 't', fetchImpl })).status, 200);
   assert.strictEqual((await renderSocialCard({ kind: 'profile', slug: 'nadie', token: 't', fetchImpl })).status, 404);
   assert.strictEqual((await renderSocialCard({ kind: 'duel', slug: 'octocat-vs-octocat', token: 't', fetchImpl })).status, 400);
   const noToken = await renderSocialCard({ kind: 'profile', slug: 'octocat', token: '', fetchImpl });
@@ -122,4 +125,12 @@ test('eventos de la web: solo nombres y valores conocidos, nada personal', () =>
   assert.strictEqual(parseEvent('{"event":"hack"}'), null);
   assert.strictEqual(parseEvent('no json'), null);
   assert.strictEqual(parseEvent('{"event":"copy","x":"' + 'a'.repeat(2000) + '"}'), null);
+});
+
+test('eventos de la web: límite por IP y minuto', () => {
+  const { overLimit, RATE_LIMIT } = require('../server/event');
+  const sent = Array.from({ length: RATE_LIMIT + 2 }, () => overLimit('10.0.0.1', 1000));
+  assert.strictEqual(sent.filter(Boolean).length, 2);
+  assert.strictEqual(overLimit('10.0.0.2', 1000), false, 'otra IP tiene su propio contador');
+  assert.strictEqual(overLimit('10.0.0.1', 1000 + 61000), false, 'al pasar el minuto se reinicia');
 });

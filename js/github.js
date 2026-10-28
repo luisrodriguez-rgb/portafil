@@ -113,7 +113,8 @@ class GitHubFetcher {
         return {
           username: data.login,
           name: data.name || data.login,
-          avatar: data.avatar_url || `https://github.com/${cleanUser}.png?size=100`,
+          // El avatar original pesa cientos de KB: se pide al tamaño en que se muestra
+          avatar: data.avatar_url ? `${data.avatar_url}${data.avatar_url.includes("?") ? "&" : "?"}s=96` : `https://github.com/${cleanUser}.png?size=96`,
           bio: data.bio || (matched ? (isEnglish() ? matched.roleEn : matched.role) : trText('profile.defaultBio', 'Desarrollador de software')),
           location: data.location || (matched ? (isEnglish() ? matched.locationEn : matched.location) : trText('profile.defaultLocation', 'En la red')),
           repos: data.public_repos || 0,

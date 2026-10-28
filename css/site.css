@@ -142,9 +142,10 @@ a { color: inherit; }
 .hero-stage img.on { opacity: 1; }
 .hero > * { min-width: 0; }
 .hero-preview figcaption { flex-wrap: wrap; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 0 4px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
-.hero-dots { display: flex; gap: 6px; }
-.hero-dots button { width: 18px; height: 18px; padding: 0; border-radius: 50%; border: 1px solid rgba(127, 127, 127, 0.35); cursor: pointer; background: linear-gradient(135deg, var(--a) 0 50%, var(--b) 50% 100%); }
-.hero-dots button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--strong); }
+.hero-dots { display: flex; gap: 2px; }
+.hero-dots button { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; display: grid; place-items: center; }
+.hero-dots button::before { content: ""; width: 18px; height: 18px; box-sizing: border-box; border-radius: 50%; border: 1px solid rgba(127, 127, 127, 0.35); background: linear-gradient(135deg, var(--a) 0 50%, var(--b) 50% 100%); }
+.hero-dots button[aria-pressed="true"]::before { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--strong); }
 
 /* Pasos */
 .how { padding: 0 0 72px; }

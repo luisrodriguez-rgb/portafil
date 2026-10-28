@@ -12,15 +12,15 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <!-- ?v= obliga al navegador a descargar CSS/JS nuevos tras cada despliegue: cambiar el valor en cada release -->
-  <link rel="stylesheet" href="css/site.css?v=20261028-studio3">
-  <link rel="stylesheet" href="css/studio.css?v=20261028-studio3">
+  <link rel="stylesheet" href="css/site.css?v=20261028-studio4">
+  <link rel="stylesheet" href="css/studio.css?v=20261028-studio4">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <!-- URL base de la API de Perfila. Vacío = el mismo dominio que la web (despliegue en Vercel) -->
   <meta name="snake-api" content="">
 </head>
 <body data-theme="ink">
   <!-- Tooltip de las celdas del tablero -->
-  <div id="matrixTooltip" class="cyber-tooltip" role="tooltip">
+  <div id="matrixTooltip" class="cyber-tooltip" aria-hidden="true">
     <div class="tooltip-count" id="tooltipCount"></div>
     <div class="tooltip-date" id="tooltipDate"></div>
     <div class="tooltip-level-tag" id="tooltipLevel"></div>
@@ -208,7 +208,7 @@
       <div class="section-title-bar">
         <div>
           <h2>Duelo de Perfiles</h2>
-          <p>Dos perfiles reales, la misma IA y 60 segundos. Gana el GitHub que mas commits le da de comer a su serpiente.</p>
+          <p>Dos perfiles reales, la misma IA y 60 segundos. Gana el GitHub que más commits le da de comer a su serpiente.</p>
         </div>
       </div>
 
@@ -265,7 +265,7 @@
   <div id="modalRecordVideo" class="modal-backdrop">
     <div class="modal-card" style="max-width: 550px;">
       <div class="modal-header">
-        <h3>Grabacion de Video HD (Pantalla / Tablero)</h3>
+        <h3>Grabación de video HD (Pantalla / Tablero)</h3>
         <button id="closeRecordModalBtn" class="modal-close-btn">&times;</button>
       </div>
       <div class="modal-body">
@@ -282,7 +282,7 @@
 
           <div>
             <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Duracion de la Grabacion:
+              Duración de la grabación:
             </label>
             <select id="recordDurationSelect" class="cyber-select" style="width: 100%;">
               <option value="10" selected>10 segundos (Recomendado para X / Twitter)</option>
@@ -301,7 +301,7 @@
         </div>
 
         <button id="startRecordingActionBtn" class="btn btn-cyber-primary" style="width: 100%; margin-top: 1.4rem; padding: 0.85rem;">
-          Iniciar Grabacion
+          Iniciar grabación
         </button>
       </div>
     </div>
@@ -311,14 +311,14 @@
   <div id="modalExportSvg" class="modal-backdrop">
     <div class="modal-card" style="max-width: 580px;">
       <div class="modal-header">
-        <h3>Configuracion de Exportacion SVG Animado</h3>
+        <h3>Configuración de exportación del SVG animado</h3>
         <button id="closeExportSvgModalBtn" class="modal-close-btn">&times;</button>
       </div>
       <div class="modal-body">
         <div style="display: flex; flex-direction: column; gap: 1rem;">
           <div>
             <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Velocidad de Animacion (Pasos por segundo):
+              Velocidad de animación (pasos por segundo):
             </label>
             <select id="exportSpeedSelect" class="cyber-select" style="width: 100%;">
               <option value="fast">Rápida</option>
@@ -420,7 +420,7 @@
     </div>
     <div class="toast-content">
       <span class="toast-tag">LOGRO DESBLOQUEADO</span>
-      <h4 id="toastTitle">Primer Bocado</h4>
+      <strong id="toastTitle" class="toast-title">Primer Bocado</strong>
       <p id="toastDesc">Devora tu primer commit de la matriz.</p>
     </div>
   </div>
@@ -441,7 +441,7 @@
             Escribe cualquier palabra o frase (ej: tu nombre, tu lenguaje favorito o mensaje) y se convertira en pixeles de GitHub:
           </p>
           <div class="custom-input-row">
-            <input type="text" id="customWordInput" placeholder="Escribe aqui (ej: LUIS, DEV, REACT, HIRE ME, JS)..." value="DEV" maxlength="14" spellcheck="false" autocomplete="off">
+            <input type="text" id="customWordInput" placeholder="Escribe aquí (ej.: LUIS, DEV, REACT, HIRE ME, JS)..." value="DEV" maxlength="14" spellcheck="false" autocomplete="off">
             <button id="applyCustomWordBtn" class="btn btn-cyber-primary" style="padding: 0.65rem 1.1rem;">Pintar en Juego</button>
             <button id="scriptCustomWordBtn" class="btn btn-cyber-secondary" style="padding: 0.65rem 1.1rem;">Script Git (.sh)</button>
           </div>
@@ -455,7 +455,7 @@
         </div>
 
         <!-- Plantillas Rápidas Predefinidas -->
-        <h4 style="margin-top: 1.25rem; margin-bottom: 0.75rem; font-size: 0.95rem; font-family: var(--font-mono);">Plantillas Rapidas de Iconos y Simbolos:</h4>
+        <h4 style="margin-top: 1.25rem; margin-bottom: 0.75rem; font-size: 0.95rem; font-family: var(--font-mono);">Plantillas rápidas de iconos y símbolos:</h4>
         <div class="templates-list">
           <div class="template-item">
             <div>
@@ -470,7 +470,7 @@
           <div class="template-item">
             <div>
               <h4>&lt;CODE /&gt;</h4>
-              <p>Etiqueta clasica de codigo de programacion</p>
+              <p>Etiqueta clásica de código de programación</p>
             </div>
             <div style="display:flex; gap: 0.5rem;">
               <button class="btn btn-cyber-secondary tool-btn load-tpl-btn" data-tpl="code">Cargar</button>
@@ -490,7 +490,7 @@
           <div class="template-item">
             <div>
               <h4>Open Source Heart</h4>
-              <p>Corazones en cadena pixelada de codigo abierto</p>
+              <p>Corazones en cadena pixelada de código abierto</p>
             </div>
             <div style="display:flex; gap: 0.5rem;">
               <button class="btn btn-cyber-secondary tool-btn load-tpl-btn" data-tpl="heart">Cargar</button>
@@ -636,25 +636,25 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/i18n.js?v=20261028-studio3"></script>
-  <script src="js/calendar.js?v=20261028-studio3"></script>
-  <script src="js/analytics.js?v=20261028-studio3"></script>
-  <script src="js/audio.js?v=20261028-studio3"></script>
-  <script src="js/recorder.js?v=20261028-studio3"></script>
-  <script src="js/templates.js?v=20261028-studio3"></script>
-  <script src="js/achievements.js?v=20261028-studio3"></script>
-  <script src="shared/brand.js?v=20261028-studio3"></script>
-  <script src="shared/theme-tokens.js?v=20261028-studio3"></script>
-  <script src="js/exporter.js?v=20261028-studio3"></script>
-  <script src="js/github.js?v=20261028-studio3"></script>
-  <script src="js/pathfinding.js?v=20261028-studio3"></script>
-  <script src="js/snake.js?v=20261028-studio3"></script>
-  <script src="js/renderer.js?v=20261028-studio3"></script>
-  <script src="js/duel.js?v=20261028-studio3"></script>
-  <script src="shared/games.js?v=20261028-studio3"></script>
-  <script src="js/video-studio.js?v=20261028-studio3"></script>
-  <script src="js/app.js?v=20261028-studio3"></script>
-  <script src="js/arcade.js?v=20261028-studio3"></script>
+  <script src="js/i18n.js?v=20261028-studio4"></script>
+  <script src="js/calendar.js?v=20261028-studio4"></script>
+  <script src="js/analytics.js?v=20261028-studio4"></script>
+  <script src="js/audio.js?v=20261028-studio4"></script>
+  <script src="js/recorder.js?v=20261028-studio4"></script>
+  <script src="js/templates.js?v=20261028-studio4"></script>
+  <script src="js/achievements.js?v=20261028-studio4"></script>
+  <script src="shared/brand.js?v=20261028-studio4"></script>
+  <script src="shared/theme-tokens.js?v=20261028-studio4"></script>
+  <script src="js/exporter.js?v=20261028-studio4"></script>
+  <script src="js/github.js?v=20261028-studio4"></script>
+  <script src="js/pathfinding.js?v=20261028-studio4"></script>
+  <script src="js/snake.js?v=20261028-studio4"></script>
+  <script src="js/renderer.js?v=20261028-studio4"></script>
+  <script src="js/duel.js?v=20261028-studio4"></script>
+  <script src="shared/games.js?v=20261028-studio4"></script>
+  <script src="js/video-studio.js?v=20261028-studio4"></script>
+  <script src="js/app.js?v=20261028-studio4"></script>
+  <script src="js/arcade.js?v=20261028-studio4"></script>
   <!-- Cloudflare Web Analytics -->
   <!-- End Cloudflare Web Analytics -->
 </body>

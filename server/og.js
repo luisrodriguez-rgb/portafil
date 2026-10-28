@@ -17,9 +17,13 @@ const CACHE_OK = 'public, max-age=14400, s-maxage=21600, stale-while-revalidate=
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 const SITE_HOST = new URL(engine.Brand.site).host;
 
+// Las claves de la ruta las pone la reescritura de vercel.json; cualquier otra opción desconocida da 400:
+// generar el PNG es lo más caro de la API y una query inventada no debe saltarse la caché del CDN
+const ROUTE_KEYS = ['kind', 'slug', 'format', 'a', 'b'];
+
 function readOptions(params) {
-  const query = new URLSearchParams();
-  for (const key of ['theme', 'lang']) if (params.has(key)) query.set(key, params.get(key));
+  const query = new URLSearchParams(params);
+  for (const key of ROUTE_KEYS) query.delete(key);
   return { ...engine.SnakeCore.parseOptions(query.toString(), '', engine.SnakeCore.CARD_OPTION_VALUES) };
 }
 

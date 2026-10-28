@@ -1020,7 +1020,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Endpoint SVG desplegado (meta snake-api en index.html). Sin él solo se ofrece el workflow
   // Sin valor en la meta, la API está en el mismo dominio que la web (despliegue en Vercel)
   const snakeApiBase = ((document.querySelector('meta[name="snake-api"]')?.content || '').trim() || (location.protocol.startsWith('http') ? location.origin : '')).replace(/\/$/, '');
-  wfMethod.hidden = !snakeApiBase;
+  // La Action solo se ofrece cuando el repositorio público existe (shared/brand.js): antes, su referencia no lleva a ningún sitio
+  const actionReady = Boolean(window.Brand && Brand.repo);
+  wfMethod.hidden = !snakeApiBase || !actionReady;
 
   // Las opciones salen de los selectores del exportador SVG para no duplicar listas
   wfDarkTheme.innerHTML = exportThemeSelect.innerHTML;
@@ -1066,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setPreview(wfPreviewDark, 'dark', { ...common, theme: style.darkTheme });
     if (style.adaptive) setPreview(wfPreviewLight, 'light', { ...common, theme: style.lightTheme });
 
-    const useEndpoint = Boolean(snakeApiBase) && document.querySelector('input[name="wfMethodChoice"]:checked').value === 'endpoint';
+    const useEndpoint = Boolean(snakeApiBase) && (!actionReady || document.querySelector('input[name="wfMethodChoice"]:checked').value === 'endpoint');
     wfActionSteps.hidden = useEndpoint;
     wfEndpointStep.hidden = !useEndpoint;
 

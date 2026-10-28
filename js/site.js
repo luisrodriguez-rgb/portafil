@@ -46,6 +46,7 @@
       'msg.checking': (u) => `Buscando a @${u}…`,
       'msg.invalid': 'Ese no parece un usuario de GitHub: letras, números y guiones, hasta 39.',
       'msg.notFound': (u) => `No encontramos a @${u} en GitHub.`,
+      'msg.org': (u) => `@${u} es una organización: Perfila funciona con cuentas personales.`,
       'msg.down': 'GitHub no responde ahora mismo. Inténtalo en un momento.',
       'piece.add': 'Añadir al README', 'piece.copy': 'Copiar código', 'piece.copied': 'Copiado', 'piece.open': 'Abrir SVG',
       'g.profile': 'Tu perfil', 'g.profileP': 'Las piezas básicas. La cabecera va a lo ancho y el resto de dos en dos.',
@@ -115,6 +116,7 @@
       'msg.checking': (u) => `Looking for @${u}…`,
       'msg.invalid': 'That does not look like a GitHub username: letters, numbers and dashes, up to 39.',
       'msg.notFound': (u) => `We could not find @${u} on GitHub.`,
+      'msg.org': (u) => `@${u} is an organization: Perfila works with personal accounts.`,
       'msg.down': 'GitHub is not answering right now. Try again in a moment.',
       'piece.add': 'Add to README', 'piece.copy': 'Copy code', 'piece.copied': 'Copied', 'piece.open': 'Open SVG',
       'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two.',
@@ -220,12 +222,13 @@
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = T(el.dataset.i18nPlaceholder); });
     $('langBtn').textContent = state.ui === 'es' ? 'EN' : 'ES';
-    $('langBtn').setAttribute('aria-label', state.ui === 'es' ? 'English' : 'Español');
+    $('langBtn').setAttribute('aria-label', state.ui === 'es' ? 'EN · English' : 'ES · Español');
   }
 
   // --- Portada: el perfil de demostración cambiando de estilo, como vista de lo que obtienes ---
   let heroTimer = null;
   let heroIndex = 0;
+  let heroPaused = false;
   function showHero(i) {
     heroIndex = (i + THEMES.length) % THEMES.length;
     $('heroStage').querySelectorAll('img').forEach((img, k) => img.classList.toggle('on', k === heroIndex));
@@ -262,7 +265,7 @@
   function restartHero() {
     clearInterval(heroTimer);
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    heroTimer = setInterval(() => { if (!document.hidden && $('results').hidden) showHero(heroIndex + 1); }, 3200);
+    heroTimer = setInterval(() => { if (!document.hidden && !heroPaused && $('results').hidden) showHero(heroIndex + 1); }, 3200);
   }
 
   function buildSwatches() {
@@ -335,6 +338,9 @@
   }
 
   // --- Galería ---
+// Alto de cada pieza (el ancho sale de ThemeTokens): reservar el hueco evita que la página salte al cargar
+  const PIECE_HEIGHT = { header: 120, kit: 474, versus: 278, duel: 442 };
+
   function pieceUrl(kind, base = previewBase) {
     const opts = snippetOptions(base);
     const ctx = KitSnippet.context(state.user, { ...opts, adaptive: false });
@@ -365,10 +371,10 @@
     share.innerHTML = `<h3>${T('g.share')}</h3><p>${T('g.shareP')}</p>
       <article class="share"><div class="preview"><img id="ogImg" alt="" loading="lazy" decoding="async" width="1200" height="630"></div>
       <div class="piece-foot"><div class="piece-actions wrap">
-        <a class="btn small" id="ogDownload">${T('share.download')}</a>
+        <a class="btn small" id="ogDownload" href="#">${T('share.download')}</a>
         <button type="button" class="btn small" id="ogCopy">${T('share.copy')}</button>
-        <a class="btn small" id="ogX" target="_blank" rel="noopener noreferrer">${T('share.x')}</a>
-        <a class="btn small" id="ogIn" target="_blank" rel="noopener noreferrer">${T('share.in')}</a>
+        <a class="btn small" id="ogX" href="#" target="_blank" rel="noopener noreferrer">${T('share.x')}</a>
+        <a class="btn small" id="ogIn" href="#" target="_blank" rel="noopener noreferrer">${T('share.in')}</a>
       </div></div></article>`;
     gallery.appendChild(share);
     $('ogCopy').addEventListener('click', (e) => {
@@ -405,7 +411,7 @@
       <div class="preview"></div>
       <div class="piece-foot">
         <label class="check"><input type="checkbox" data-pick${state.picked.has(kind) ? ' checked' : ''}> ${T('piece.add')}</label>
-        <div class="piece-actions"><a target="_blank" rel="noopener noreferrer" data-open>${T('piece.open')}</a>${meta.game ? `<a class="btn small" data-play>${T('piece.play')}</a>` : ''}<button type="button" class="btn small" data-copy>${T('piece.copy')}</button></div>
+        <div class="piece-actions"><a target="_blank" rel="noopener noreferrer" data-open>${T('piece.open')}</a>${meta.game ? `<a class="btn small" href="play.html" data-play>${T('piece.play')}</a>` : ''}<button type="button" class="btn small" data-copy>${T('piece.copy')}</button></div>
       </div>`;
     card.querySelector('[data-pick]').addEventListener('change', (e) => {
       if (e.target.checked) state.picked.add(kind); else state.picked.delete(kind);
@@ -460,6 +466,7 @@
       if (!ready) {
         box.innerHTML = `<p class="placeholder">${T('rival.needed')}</p>`;
         open.hidden = true;
+        open.href = '#rivalForm';
         return;
       }
       const src = pieceUrl(kind);
@@ -471,6 +478,8 @@
         img = document.createElement('img');
         img.loading = 'lazy';
         img.decoding = 'async';
+        img.width = ThemeTokens.size[KitSnippet.PIECES[kind].width];
+        img.height = PIECE_HEIGHT[kind] || 160;
         img.addEventListener('load', () => box.classList.remove('loading'));
         img.addEventListener('error', () => box.classList.remove('loading'));
         box.appendChild(img);
@@ -556,6 +565,16 @@
     return String(raw || '').trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/[/?#].*$/, '');
   }
 
+  /** La API de Perfila solo conoce usuarios: ante un 404, GitHub dice si el nombre es de una organización */
+  async function isOrganization(user) {
+    try {
+      const res = await fetch(`https://api.github.com/users/${user}`);
+      return res.ok && (await res.json()).type === 'Organization';
+    } catch (e) {
+      return false;
+    }
+  }
+
   async function loadUser(raw) {
     const user = cleanUser(raw);
     const msg = $('formMsg');
@@ -581,7 +600,7 @@
     }
     $('userBtn').disabled = false;
     if (status === 404) {
-      msg.textContent = T('msg.notFound', user);
+      msg.textContent = T(await isOrganization(user) ? 'msg.org' : 'msg.notFound', user);
       msg.classList.add('error');
       return;
     }
@@ -691,6 +710,12 @@
   buildTemplates();
   buildExamples();
   buildHero();
+  // El carrusel se detiene mientras alguien lo mira con el puntero o recorre sus puntos con el teclado
+  const heroBox = $('heroStage').parentElement;
+  heroBox.addEventListener('pointerenter', () => { heroPaused = true; });
+  heroBox.addEventListener('pointerleave', () => { heroPaused = false; });
+  heroBox.addEventListener('focusin', () => { heroPaused = true; });
+  heroBox.addEventListener('focusout', () => { heroPaused = false; });
   buildSwatches();
   $('playPreview').src = `${previewBase}/api/${Brand.demoUser}.svg?game=pacman`;
   updateStudioLinks();

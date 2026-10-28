@@ -64,7 +64,7 @@ const STATIC_EN = {
 
   // Duelo de perfiles
   'Duelo de Perfiles': 'Profile Duel',
-  'Dos perfiles reales, la misma IA y 60 segundos. Gana el GitHub que mas commits le da de comer a su serpiente.':
+  'Dos perfiles reales, la misma IA y 60 segundos. Gana el GitHub que más commits le da de comer a su serpiente.':
     'Two real profiles, the same AI and 60 seconds. The GitHub that feeds its snake the most commits wins.',
   'A pelear': 'Fight',
   'datos simulados': 'simulated data',
@@ -76,11 +76,11 @@ const STATIC_EN = {
   // Perfiles destacados y documentación
 
   // Modal de video
-  'Grabacion de Video HD (Pantalla / Tablero)': 'HD Video Recording (Screen / Board)',
+  'Grabación de video HD (Pantalla / Tablero)': 'HD Video Recording (Screen / Board)',
   'Que deseas capturar en el video?': 'What do you want to capture?',
   'Pantalla o Pestana Completa (Perfil, avatar, velocidad y juego)': 'Full Screen or Tab (Profile, avatar, speed and game)',
   'Solo el Tablero de Juego (Canvas aislado)': 'Game Board Only (isolated canvas)',
-  'Duracion de la Grabacion:': 'Recording Length:',
+  'Duración de la grabación:': 'Recording Length:',
   '10 segundos (Recomendado para X / Twitter)': '10 seconds (Recommended for X / Twitter)',
   '15 segundos': '15 seconds',
   '20 segundos': '20 seconds',
@@ -90,11 +90,11 @@ const STATIC_EN = {
   'Pantalla o Pestana Completa': 'Full Screen or Tab',
   ', tu navegador te mostrara una ventana para seleccionar que pestana compartir. Elige esta misma pestana y grabara con maxima fluidez a 60 FPS mostrando el usuario activo, avatar, controles de velocidad, estilo y el juego.':
     ', your browser will ask which tab to share. Pick this tab to record a smooth 60 FPS clip with the active user, avatar, speed controls, style and the game.',
-  'Iniciar Grabacion': 'Start Recording',
+  'Iniciar grabación': 'Start Recording',
 
   // Modal de exportar SVG
-  'Configuracion de Exportacion SVG Animado': 'Animated SVG Export Settings',
-  'Velocidad de Animacion (Pasos por segundo):': 'Animation Speed (steps per second):',
+  'Configuración de exportación del SVG animado': 'Animated SVG Export Settings',
+  'Velocidad de animación (pasos por segundo):': 'Animation Speed (steps per second):',
   'Tema / Paleta de Colores:': 'Theme / Color Palette:',
   'Morfologia de la Serpiente:': 'Snake Shape:',
   'Pausa de Reinicio (Loop):': 'Loop Pause:',
@@ -125,12 +125,12 @@ const STATIC_EN = {
   'Al descargar el script': 'Download the',
   ', puedes ejecutarlo en una carpeta vacia de tu computadora para crear esos commits con fechas reales y subirlos a tu cuenta de GitHub, dejando esa palabra pintada en tu perfil real.':
     ' script and run it in an empty folder to create backdated commits; push them to a GitHub repository and the word is painted on your real profile.',
-  'Plantillas Rapidas de Iconos y Simbolos:': 'Quick Icon & Symbol Templates:',
+  'Plantillas rápidas de iconos y símbolos:': 'Quick Icon & Symbol Templates:',
   'Texto grande para captar atencion de reclutadores': 'Big text to catch recruiters’ attention',
   'Cargar': 'Load',
-  'Etiqueta clasica de codigo de programacion': 'The classic code tag',
+  'Etiqueta clásica de código de programación': 'The classic code tag',
   'Icono clasico alienigena retro de 8 bits': 'Classic 8-bit retro alien',
-  'Corazones en cadena pixelada de codigo abierto': 'A chain of pixel open source hearts',
+  'Corazones en cadena pixelada de código abierto': 'A chain of pixel open source hearts',
 
   // Modal del workflow
   'Pon la serpiente en tu perfil de GitHub': 'Put the snake on your GitHub profile',
@@ -188,7 +188,7 @@ const STATIC_EN = {
   'Tu usuario de GitHub': 'Your GitHub username',
   'rival (ej: midudev)': 'rival (e.g. midudev)',
   'Usuario rival de GitHub': 'Rival GitHub username',
-  'Escribe aqui (ej: LUIS, DEV, REACT, HIRE ME, JS)...': 'Type here (e.g. LUIS, DEV, REACT, HIRE ME, JS)...',
+  'Escribe aquí (ej.: LUIS, DEV, REACT, HIRE ME, JS)...': 'Type here (e.g. LUIS, DEV, REACT, HIRE ME, JS)...',
   'Modo de color': 'Color mode',
   'Vista previa del SVG en modo oscuro': 'SVG preview in dark mode',
   'Vista previa del SVG en modo claro': 'SVG preview in light mode'
@@ -284,7 +284,7 @@ const MESSAGES = {
     'duel.winner': 'Gana {winner}: {score} pts ({percent}% de su GitHub devorado) contra {loserScore} pts.',
     'duel.tie': 'Empate: {score} pts cada uno.',
     'duel.shareDisabled': 'No se pudieron leer los datos reales de algún perfil',
-    'duel.shareText': 'Duelo de GitHubs en Perfila: {a} ({aScore} pts) vs {b} ({bScore} pts). Gana {winner} con el {percent}% de su grafico devorado por la IA.\n¿Tu GitHub le gana?',
+    'duel.shareText': 'Duelo de GitHubs en Perfila: {a} ({aScore} pts) vs {b} ({bScore} pts). Gana {winner} con el {percent}% de su gráfico devorado por la IA.\n¿Tu GitHub le gana?',
     'duel.shareTie': 'Duelo de GitHubs en Perfila: {a} vs {b} terminó en empate ({score} pts).\n¿Tu GitHub les gana?',
     'video.generating': 'Generando video...',
     'video.ready': 'Listo: MP4 de {mb} MB. Compártelo o descárgalo.',

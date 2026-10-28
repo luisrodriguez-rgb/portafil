@@ -111,7 +111,8 @@ const CARD_CSS = 'text{font-family:' + FONT + '}'
 function framed({ width, height, tokens, title, subtitle = '', right = '', body }) {
   const p = T.space.padding;
   const titleY = p + 10; // misma línea base que el título de la serpiente
-  const sub = subtitle ? `<tspan fill="${tokens.muted}" font-weight="${T.font.weight.regular}"> · ${escapeXml(subtitle)}</tspan>` : '';
+  // Espacio duro delante del punto: resvg (PNG) descarta el espacio normal al principio de un <tspan>
+  const sub = subtitle ? `<tspan fill="${tokens.muted}" font-weight="${T.font.weight.regular}">\u00a0· ${escapeXml(subtitle)}</tspan>` : '';
   return `<rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="${T.radius.card - 0.5}" fill="${tokens.bg}" stroke="${tokens.border}"/>`
     + (title ? text(p, titleY, escapeXml(title) + sub, { weight: T.font.weight.bold, fill: tokens.text }) : '')
     + (right ? text(width - p, titleY, escapeXml(right), { size: T.font.size.label + 1, fill: tokens.muted, anchor: 'end' }) : '')

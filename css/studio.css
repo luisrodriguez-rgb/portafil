@@ -85,7 +85,8 @@ body[data-theme="amber_terminal"] {
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* --- Tablero --- */
-.board { display: grid; gap: 16px; }
+.board { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.board > * { min-width: 0; }
 .mode-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .mode-tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--soft); overflow-x: auto; scrollbar-width: none; max-width: 100%; }
 .mode-tabs::-webkit-scrollbar { display: none; }
@@ -226,7 +227,7 @@ body[data-theme="amber_terminal"] {
 .achievement-toast.show { transform: none; opacity: 1; pointer-events: auto; }
 .toast-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: var(--soft); flex: none; }
 .toast-tag { font-size: 11px; font-family: var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.toast-content h4 { margin: 0; font-size: 14px; }
+.toast-content .toast-title { display: block; margin: 0; font-size: 14px; }
 .toast-content p { margin: 0; font-size: 13px; color: var(--muted); }
 
 /* Estudio de video */

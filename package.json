@@ -1,6 +1,7 @@
 {
   "name": "perfila",
   "private": true,
+  "license": "MIT",
   "description": "Un solo estilo para todo tu perfil de GitHub: cabecera, estadísticas, racha, lenguajes, actividad, serpiente, versus y duelo.",
   "scripts": {
     "dev": "node scripts/dev-server.js",

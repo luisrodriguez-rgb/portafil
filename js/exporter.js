@@ -361,7 +361,9 @@ class ExporterEngine {
     // Con prefijo (tablero dentro de otro SVG) el fondo es un rect: el fondo CSS solo se pinta en el <svg> raíz
     const frameCss = n ? '' : `svg{background:${palette.bg};border-radius:12px;border:1px solid ${palette.border}}`;
     const frameRect = n ? `<rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="11.5" fill="${palette.bg}" stroke="${palette.border}"/>` : '';
-    const svgFinal = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><title>${credit}</title><defs><filter id="${n}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><style>${frameCss}${headerCss}${cellKeyframes}${snakeKeyframes}</style>${frameRect}${headerSvg}<g>${gridSvg}</g><g class="${n}sn" filter="url(#${n}g)">${snakeElements}</g><g filter="url(#${n}g)">${ringElements}</g></svg>`;
+    // Con movimiento reducido queda el gráfico completo, sin serpiente ni barra de progreso a medias
+    const reducedCss = `@media (prefers-reduced-motion:reduce){*{animation:none!important}.${n}sn,.${n}pb,.${n}dn{display:none}}`;
+    const svgFinal = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><title>${credit}</title><defs><filter id="${n}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><style>${frameCss}${headerCss}${cellKeyframes}${snakeKeyframes}${reducedCss}</style>${frameRect}${headerSvg}<g>${gridSvg}</g><g class="${n}sn" filter="url(#${n}g)">${snakeElements}</g><g filter="url(#${n}g)">${ringElements}</g></svg>`;
 
     return svgFinal;
   }
