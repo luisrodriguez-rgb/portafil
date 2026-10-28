@@ -36,6 +36,12 @@
       'res.adaptive': 'Cambiar con el modo claro u oscuro de GitHub',
       'res.inLight': 'En modo claro:', 'res.inDark': 'En modo oscuro:',
       'dock.see': 'Ver código',
+      'gh.create': 'Crear mi repositorio de perfil',
+      'gh.createHelp': (u) => `Aún no tienes el repositorio ${u}/${u}. Créalo público con ese nombre y vuelve: este botón te llevará a crear el README con el código ya escrito.`,
+      'gh.newReadme': 'Crear mi README en GitHub',
+      'gh.newReadmeHelp': 'Abre GitHub con el README ya escrito: solo falta pulsar «Commit changes».',
+      'gh.edit': 'Abrir mi README en GitHub',
+      'gh.editHelp': 'Al pulsarlo se copia el código y se abre tu README en el editor de GitHub: pégalo donde quieras que aparezca y pulsa «Commit changes».',
       'readme.title': 'Tu README', 'readme.copy': 'Copiar todo', 'readme.open': 'Abrir mi repositorio de perfil',
       'readme.help': (u) => `Pégalo en el README.md del repositorio ${u}/${u}. Si no existe, créalo con ese nombre: GitHub lo muestra en tu perfil.`,
       'readme.count': (n) => (n === 1 ? '1 pieza' : `${n} piezas`),
@@ -107,6 +113,12 @@
       'res.adaptive': 'Follow GitHub light or dark mode',
       'res.inLight': 'In light mode:', 'res.inDark': 'In dark mode:',
       'dock.see': 'See code',
+      'gh.create': 'Create my profile repository',
+      'gh.createHelp': (u) => `You don't have the ${u}/${u} repository yet. Create it as public with that name and come back: this button will take you to create the README with the code already in it.`,
+      'gh.newReadme': 'Create my README on GitHub',
+      'gh.newReadmeHelp': 'Opens GitHub with the README already written: just press «Commit changes».',
+      'gh.edit': 'Open my README on GitHub',
+      'gh.editHelp': 'Clicking it copies the code and opens your README in the GitHub editor: paste it where you want it and press «Commit changes».',
       'readme.title': 'Your README', 'readme.copy': 'Copy all', 'readme.open': 'Open my profile repository',
       'readme.help': (u) => `Paste it into README.md in the ${u}/${u} repository. If it does not exist, create it with that name: GitHub shows it on your profile.`,
       'readme.count': (n) => (n === 1 ? '1 piece' : `${n} pieces`),
@@ -528,6 +540,54 @@
     });
   }
 
+  // --- Repositorio de perfil: el botón lleva al paso que le falta a cada uno (crear el repositorio, crear el
+  // README con el código ya escrito o abrir el README en el editor). La API pública de GitHub admite 60 consultas
+  // por hora y por IP: se comprueba al cargar el usuario y al volver a la pestaña, como mucho cada 15 s.
+  const profileRepo = { user: '', status: 'unknown', checked: 0 };
+
+  async function checkProfileRepo(user) {
+    try {
+      const repo = await fetch(`https://api.github.com/repos/${user}/${user}`);
+      if (repo.status === 404) return { status: 'none' };
+      if (!repo.ok) return { status: 'unknown' };
+      const branch = (await repo.json()).default_branch || 'main';
+      const readme = await fetch(`https://api.github.com/repos/${user}/${user}/readme`);
+      if (readme.status === 404) return { status: 'noReadme', branch };
+      if (!readme.ok) return { status: 'unknown' };
+      return { status: 'readme', branch, path: (await readme.json()).path || 'README.md' };
+    } catch (e) {
+      return { status: 'unknown' };
+    }
+  }
+
+  async function refreshProfileRepo() {
+    const user = state.user;
+    if (!user || (profileRepo.user === user && Date.now() - profileRepo.checked < 15000)) return;
+    profileRepo.checked = Date.now();
+    const info = await checkProfileRepo(user);
+    if (state.user !== user) return;
+    Object.assign(profileRepo, { user, branch: undefined, path: undefined, ...info });
+    updateReadme();
+  }
+
+  function githubTarget(code) {
+    const u = state.user;
+    const repo = profileRepo.user === u ? profileRepo : { status: 'unknown' };
+    if (repo.status === 'none') {
+      return { href: `https://github.com/new?name=${u}&visibility=public`, label: T('gh.create'), help: T('gh.createHelp', u) };
+    }
+    if (repo.status === 'noReadme') {
+      const base = `https://github.com/${u}/${u}/new/${encodeURIComponent(repo.branch)}?filename=README.md`;
+      // El código va en la URL; si es muy largo se abre vacío y se pega (se copia al pulsar)
+      const filled = `${base}&value=${encodeURIComponent(code)}`;
+      return { href: filled.length < 8000 ? filled : base, label: T('gh.newReadme'), help: T('gh.newReadmeHelp') };
+    }
+    if (repo.status === 'readme') {
+      return { href: `https://github.com/${u}/${u}/edit/${encodeURIComponent(repo.branch)}/${repo.path}`, label: T('gh.edit'), help: T('gh.editHelp') };
+    }
+    return { href: `https://github.com/${u}/${u}`, label: T('readme.open'), help: T('readme.help', u) };
+  }
+
   function updateReadme() {
     document.querySelectorAll('.piece').forEach(card => card.classList.toggle('picked', state.picked.has(card.dataset.kind)));
     const code = KitSnippet.build(state.user, { ...snippetOptions(publicBase), pieces: [...state.picked], template: state.template });
@@ -537,8 +597,10 @@
     $('dockCount').textContent = T('readme.count', included.length);
     $('copyAll').disabled = !code;
     $('dockCopy').disabled = !code;
-    $('readmeHelp').textContent = T('readme.help', state.user);
-    $('openProfile').href = `https://github.com/${state.user}/${state.user}`;
+    const target = githubTarget(code);
+    $('readmeHelp').textContent = target.help;
+    $('openProfile').href = target.href;
+    $('openProfile').textContent = target.label;
     $('templateSelect').value = state.template;
     if ($('previewDialog').open) renderPreview();
     syncUrl();
@@ -655,6 +717,7 @@
     $('dataNote').innerHTML = note;
     $('dataNote').hidden = !note;
     track('user');
+    refreshProfileRepo();
     $('results').hidden = false;
     $('how').hidden = true;
     $('examples').hidden = true;
@@ -704,6 +767,13 @@
     track('copy', { pieces: state.picked.size });
   };
   $('copyAll').addEventListener('click', copyAll);
+  // Al ir a GitHub el código va copiado: en el editor solo hay que pegarlo
+  $('openProfile').addEventListener('click', () => {
+    try { navigator.clipboard.writeText($('readmeCode').textContent); } catch (e) {}
+    track('open-readme', { pieces: state.picked.size });
+  });
+  // Quien crea el repositorio o el README en otra pestaña ve el siguiente paso al volver
+  addEventListener('focus', () => { if (!$('results').hidden) refreshProfileRepo(); });
   $('dockCopy').addEventListener('click', copyAll);
   $('templateSelect').addEventListener('change', (e) => {
     state.template = e.target.value;

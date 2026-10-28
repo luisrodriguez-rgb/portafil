@@ -10,6 +10,33 @@
 
 Type your username on the web, pick what you like and copy the code. No YAML, nothing to configure. GitHub runs no JavaScript in a README, so every piece is an SVG with CSS animation served from a URL.
 
+<p align="center"><a href="https://portafil.vercel.app"><b>Try it with your username →</b></a> · <a href="https://portafil.vercel.app/play.html">Studio</a> · <a href="#github-action">GitHub Action</a></p>
+
+## What it looks like
+
+<p align="center">
+  <a href="https://portafil.vercel.app/?u=luisrodriguez-rgb">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/kit/luisrodriguez-rgb.svg?theme=ink">
+      <img alt="@luisrodriguez-rgb dashboard made with Portafil" src="https://portafil.vercel.app/api/kit/luisrodriguez-rgb.svg?theme=paper" width="100%">
+    </picture>
+  </a>
+</p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=ink">
+    <img alt="Pac-Man eating @luisrodriguez-rgb contribution graph" src="https://portafil.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=paper" width="100%">
+  </picture>
+</p>
+
+That is @luisrodriguez-rgb real data served live, light or dark to match your GitHub: exactly what your profile will show.
+
+### In three steps
+
+1. Open [portafil.vercel.app](https://portafil.vercel.app) and type your GitHub username.
+2. Pick the style and the pieces (or a profile template).
+3. Press **«Open my README on GitHub»**: the code is copied, or already written if you have no README yet. Press «Commit changes» and you are done.
+
 ## Pieces
 
 | Piece | URL | Shows |

@@ -7,7 +7,7 @@
 
 const { engine } = require('./common');
 
-const EVENTS = ['user', 'copy', 'copy-piece', 'share', 'preview'];
+const EVENTS = ['user', 'copy', 'copy-piece', 'share', 'preview', 'open-readme'];
 const MAX_BODY = 1024;
 // Una visita normal manda menos de diez eventos: por encima de esto por minuto e IP se descarta (429).
 // El contador vive en cada instancia de la función; basta para que nadie llene los logs desde un script.

@@ -4,27 +4,30 @@ Orden de trabajo para sacar Portafil al público. Lo que depende del autor (cuen
 
 ## 1. Antes de anunciar nada
 
+Estado al 28-10-2026: el repositorio luisrodriguez-rgb/portafil es público y tiene la etiqueta `v1`; la web está desplegada en https://perfila-mauve.vercel.app sin `GITHUB_TOKEN` (todas las piezas dan 500).
+
 | | Tarea | Cómo comprobarlo |
 | --- | --- | --- |
-| 👤 | Desplegar en Vercel con la variable `GITHUB_TOKEN` (un token *fine-grained* sin permisos basta: solo lee datos públicos) | `GET /api/<usuario>.svg` devuelve 200 |
-| 👤 | Elegir dominio y ponerlo en `shared/brand.js` (`site`), con el repositorio en `repo` y la Action en `actionRef`; después `node scripts/build-examples.js` para regenerar `examples/` | `npm test` en verde |
-| 👤 | Comprobar que el nombre "Portafil" y el dominio están libres (ver `docs/BRAND.md`) | — |
-| | Prueba de humo en producción con estas URL, en claro y en oscuro | todas responden 200 y se ven bien en un README de prueba |
-| 👤 | Poner el perfil del autor con Portafil: es el ejemplo de la portada y de `examples/` (`demoUser`) | se ve en `github.com/<autor>` |
-| 👤 | Medir la línea base: `GITHUB_TOKEN=... node scripts/baseline.js <owner/repo>` | `docs/metrics/baseline-<fecha>.json` |
+| 👤 | En Vercel, *Settings → Environment Variables*: `GITHUB_TOKEN` con un token *fine-grained* sin ningún permiso (solo lee datos públicos), en Production y Preview. Después *Deployments → Redeploy* | `npm run check:deploy -- https://perfila-mauve.vercel.app` |
+| 👤 | En Vercel, *Settings → Domains → Add*: `portafil.vercel.app` (es gratis y está libre). Es el dominio de `Brand.site`, de los README y de `examples/`: sin él, sus imágenes no cargan. Con dominio propio más adelante, cambiar `site` en `shared/brand.js` y `node scripts/build-examples.js` | `npm run check:deploy` (sin URL usa `Brand.site`) |
+| 👤 | Opcional, para tráfico alto: en Vercel, *Storage → Upstash (Redis)* y conectarlo al proyecto; crea `KV_REST_API_URL` y `KV_REST_API_TOKEN` y la caché se comparte entre instancias (`server/cache.js`) | en los logs, menos consultas a GitHub |
+| 👤 | Datos del repositorio en GitHub (descripción, web y temas), con el comando de abajo o desde la rueda de *About* | se ven en la portada del repositorio |
+| 👤 | Poner el perfil del autor con Portafil: hay una propuesta en `docs/launch/perfil-autor.md` | se ve en `github.com/luisrodriguez-rgb` |
+| 👤 | Probar en GitHub de verdad: las piezas de media anchura (390 px) en escritorio y en móvil, el modo claro y oscuro en la app de GitHub y el botón «Crear mi README en GitHub» con una cuenta sin README de perfil | — |
+| 👤 | Medir la línea base: `GITHUB_TOKEN=ghp_xxx node scripts/baseline.js luisrodriguez-rgb/portafil` | `docs/metrics/baseline-<fecha>.json` |
 
-URL para la prueba de humo (cambia `DOMINIO` y `USUARIO`):
+Datos del repositorio (con `gh auth login` hecho):
+
+```bash
+gh repo edit luisrodriguez-rgb/portafil --description "Tu perfil de GitHub con un solo estilo: cabecera, estadísticas, racha, lenguajes, juegos sobre tu gráfico de contribuciones y duelos. SVG animado, sin JavaScript." --homepage https://portafil.vercel.app --add-topic github-profile,profile-readme,readme,github-stats,github-readme-stats,svg,contribution-graph,github-actions
+```
+
+`npm run check:deploy` recorre la web y cada ruta de `vercel.json` con un usuario real, y comprueba código 200, tipo de contenido, cabeceras de seguridad y que los datos vienen de la API oficial. Además, a ojo:
 
 ```text
-https://DOMINIO/?u=USUARIO
-https://DOMINIO/api/header/USUARIO.svg
-https://DOMINIO/api/kit/USUARIO.svg?theme=cyberpunk
-https://DOMINIO/api/USUARIO.svg?game=pacman
-https://DOMINIO/api/versus/USUARIO-vs-torvalds.svg
-https://DOMINIO/duel/USUARIO-vs-torvalds
-https://DOMINIO/api/og/USUARIO.png
-https://DOMINIO/u/USUARIO
-https://DOMINIO/play.html?u=USUARIO
+https://portafil.vercel.app/?u=USUARIO
+https://portafil.vercel.app/play.html?u=USUARIO
+https://portafil.vercel.app/duel/USUARIO-vs-torvalds
 ```
 
 Comprobar también la vista previa del enlace `/u/USUARIO` y `/duel/...` con el inspector de tarjetas de X o LinkedIn (Post Inspector).

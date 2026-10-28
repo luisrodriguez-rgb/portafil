@@ -36,6 +36,7 @@ La web envía a `POST /api/event` (`server/event.js`) unos pocos eventos, sin co
 | `user` | se cargan las piezas de un usuario |
 | `copy` | se copia el bloque README completo (`pieces`: cuántas piezas) |
 | `copy-piece` | se copia una pieza suelta (`kind`) |
+| `open-readme` | se pulsa el botón que abre (o crea) el README en GitHub, con el código ya copiado |
 | `preview` | se abre la vista previa del README |
 | `share` | se copia el enlace o se descarga la tarjeta para redes |
 

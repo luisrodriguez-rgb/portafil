@@ -49,12 +49,14 @@ const rewrites = vercel.rewrites.map(r => ({ re: toRegExp(r.source), destination
 // Cabeceras de seguridad de vercel.json: en local también, para que un recurso bloqueado se vea antes de desplegar
 const headerRules = (vercel.headers || []).map(r => ({ re: toRegExp(r.source), headers: r.headers }));
 
-/** Aplica la primera reescritura que encaje; como en Vercel, la query original se conserva */
+/** Aplica la primera reescritura que encaje; como en Vercel, la query original y los parámetros de la ruta se conservan */
 function rewrite(url) {
   for (const { re, destination } of rewrites) {
     const m = url.pathname.match(re);
     if (!m) continue;
     const target = new URL(destination.replace(/:(\w+)/g, (_, k) => encodeURIComponent(m.groups[k])), 'http://localhost');
+    // Como Vercel: los parámetros con nombre de la ruta también llegan en la query (/api/og/:user.png -> ?user=)
+    for (const [k, v] of Object.entries(m.groups || {})) if (!target.searchParams.has(k)) target.searchParams.set(k, v);
     for (const [k, v] of url.searchParams) if (!target.searchParams.has(k)) target.searchParams.set(k, v);
     return target;
   }

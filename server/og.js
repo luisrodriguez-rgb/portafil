@@ -17,9 +17,10 @@ const CACHE_OK = 'public, max-age=14400, s-maxage=21600, stale-while-revalidate=
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 const SITE_HOST = new URL(engine.Brand.site).host;
 
-// Las claves de la ruta las pone la reescritura de vercel.json; cualquier otra opción desconocida da 400:
+// Las claves de la ruta las pone la reescritura de vercel.json (Vercel añade también los parámetros con nombre de
+// la ruta, user y pair); cualquier otra opción desconocida da 400:
 // generar el PNG es lo más caro de la API y una query inventada no debe saltarse la caché del CDN
-const ROUTE_KEYS = ['kind', 'slug', 'format', 'a', 'b'];
+const ROUTE_KEYS = ['kind', 'slug', 'format', 'a', 'b', 'user', 'pair'];
 
 function readOptions(params) {
   const query = new URLSearchParams(params);
