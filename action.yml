@@ -1,6 +1,6 @@
-name: Perfila snake
-description: Genera el SVG animado de Perfila, una serpiente con IA (BFS + Flood Fill) que se come tu gráfico de contribuciones.
-author: Perfila
+name: Portafil snake
+description: Genera el SVG animado de Portafil, una serpiente con IA (BFS + Flood Fill) que se come tu gráfico de contribuciones.
+author: Portafil
 branding:
   icon: grid
   color: gray-dark
@@ -12,8 +12,8 @@ inputs:
   outputs:
     description: |
       Una ruta .svg por linea, con opciones en formato query string. Ejemplo:
-        dist/perfila-snake.svg?theme=paper
-        dist/perfila-snake-dark.svg?theme=ink&speed=fast
+        dist/portafil-snake.svg?theme=paper
+        dist/portafil-snake-dark.svg?theme=ink&speed=fast
       Opciones: theme (ink, paper, dark, light, cyberpunk, neon_cyan, amber_terminal),
       speed (normal, fast, relaxed), morph (matrix_viper, capsule, retro), pause (fast, medium, none), lang (en, es).
     required: true

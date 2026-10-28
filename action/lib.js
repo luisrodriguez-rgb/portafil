@@ -1,5 +1,5 @@
 /**
- * Perfila · GitHub Action
+ * Portafil · GitHub Action
  * Ejecuta el mismo motor del navegador (pathfinding, serpiente y exportador SVG) en Node.js,
  * sin dependencias, y escribe los SVG animados en las rutas pedidas.
  */

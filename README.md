@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="assets/brand/og.png" alt="Perfila: tu perfil de GitHub, con un solo estilo" width="100%">
+  <img src="assets/brand/og.png" alt="Portafil: tu perfil de GitHub, con un solo estilo" width="100%">
 </p>
 
 <p align="center"><a href="README.en.md">English</a> · <b>Español</b></p>
 
-# Perfila
+# Portafil
 
 **Tu perfil de GitHub, con un solo estilo.** Cabecera, estadísticas, racha, lenguajes, actividad, la serpiente que se come tus commits, versus y duelos contra otros perfiles: todas las piezas comparten tema, tipografía y medidas, así que tu perfil parece un solo diseño y no un collage de widgets.
 
@@ -43,12 +43,12 @@ En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo 
 Si prefieres no depender del servidor, la Action genera la serpiente en tu propio repositorio:
 
 ```yaml
-- uses: perfila/perfila@v1   # referencia provisional, ver shared/brand.js
+- uses: portafil/portafil@v1   # referencia provisional, ver shared/brand.js
   with:
     github_user_name: tu-usuario
     outputs: |
-      dist/perfila-snake.svg?theme=paper
-      dist/perfila-snake-dark.svg?theme=ink
+      dist/portafil-snake.svg?theme=paper
+      dist/portafil-snake-dark.svg?theme=ink
 ```
 
 ## Desarrollo
@@ -100,4 +100,4 @@ Para aguantar mucho tráfico (`server/cache.js`):
 - [Perfiles de ejemplo por estilo](examples/README.md)
 - [Lanzamiento: listas, Marketplace, artículo y publicaciones](docs/launch/README.md)
 
-Perfila nace del motor de GITHUB_SNAKE.EXE, del mismo autor.
+Portafil nace del motor de GITHUB_SNAKE.EXE, del mismo autor.

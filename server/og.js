@@ -28,7 +28,7 @@ function readOptions(params) {
 }
 
 function errorResponse(status, message, cache) {
-  return { status, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': cache }, body: `Perfila: ${message}` };
+  return { status, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': cache }, body: `Portafil: ${message}` };
 }
 
 function githubError(err) {
@@ -81,8 +81,8 @@ async function renderSocialCard({ kind, slug, query = '', format = 'png', token,
 }
 
 const PAGE_TEXT = {
-  en: { title: (u) => `@${u}'s GitHub profile · Perfila`, description: 'Header, stats, streak, languages, activity and games for a GitHub profile, all in one style.', go: (u) => `See @${u}'s pieces` },
-  es: { title: (u) => `Perfil de GitHub de @${u} · Perfila`, description: 'Cabecera, estadísticas, racha, lenguajes, actividad y juegos para un perfil de GitHub, todo con un solo estilo.', go: (u) => `Ver las piezas de @${u}` }
+  en: { title: (u) => `@${u}'s GitHub profile · Portafil`, description: 'Header, stats, streak, languages, activity and games for a GitHub profile, all in one style.', go: (u) => `See @${u}'s pieces` },
+  es: { title: (u) => `Perfil de GitHub de @${u} · Portafil`, description: 'Cabecera, estadísticas, racha, lenguajes, actividad y juegos para un perfil de GitHub, todo con un solo estilo.', go: (u) => `Ver las piezas de @${u}` }
 };
 
 /** Página para compartir un perfil: metadatos para redes y redirección a la web */

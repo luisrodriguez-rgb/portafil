@@ -1,8 +1,8 @@
-# Perfila · plan
+# Portafil · plan
 
-Perfila es un proyecto propio. Nace del motor de GITHUB_SNAKE.EXE (serpiente, pathfinding, exportador SVG, duelo, video), pero tiene su repositorio, su nombre y su marca (`docs/BRAND.md`). Lo que no sirve del proyecto anterior se quitó.
+Portafil es un proyecto propio. Nace del motor de GITHUB_SNAKE.EXE (serpiente, pathfinding, exportador SVG, duelo, video), pero tiene su repositorio, su nombre y su marca (`docs/BRAND.md`). Lo que no sirve del proyecto anterior se quitó.
 
-**Experiencia objetivo:** una sola entrada, tu usuario de GitHub. Con eso ves todo lo que Perfila puede generar y eliges pieza por pieza qué usar, sin YAML ni configuración.
+**Experiencia objetivo:** una sola entrada, tu usuario de GitHub. Con eso ves todo lo que Portafil puede generar y eliges pieza por pieza qué usar, sin YAML ni configuración.
 
 Criterio que filtra todo: cada pieza mejora cómo se ve un perfil y sobrevive al proxy de imágenes de GitHub (SVG + CSS, sin JavaScript).
 

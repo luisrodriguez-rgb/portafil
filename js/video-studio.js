@@ -302,7 +302,7 @@ class VideoStudio {
     ctx.fillStyle = P.text;
     ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
-    const title = scene.user ? `@${scene.user}` : 'perfila';
+    const title = scene.user ? `@${scene.user}` : 'portafil';
     this.fitFont(ctx, title, 800, bigFont, W - textX - L.margin, font);
     ctx.fillText(title, textX, titleY - bigFont * 0.1);
     const counter = Math.round(scene.stats.total * this.ease((t - 0.2) / (T.intro + 0.8)));
@@ -443,7 +443,7 @@ class VideoStudio {
     ctx.fillStyle = P.text;
     ctx.globalAlpha = 0.55;
     ctx.textAlign = 'right';
-    ctx.fillText('perfila', W - L.margin, L.margin * 0.7);
+    ctx.fillText('portafil', W - L.margin, L.margin * 0.7);
     ctx.textAlign = 'left';
     ctx.globalAlpha = 1;
   }
@@ -683,7 +683,7 @@ class VideoStudio {
     ctx.fillStyle = P.text;
     ctx.globalAlpha = 0.55;
     ctx.textAlign = 'right';
-    ctx.fillText('perfila', W - scene.margin, scene.margin * 0.7);
+    ctx.fillText('portafil', W - scene.margin, scene.margin * 0.7);
     ctx.textAlign = 'left';
     ctx.globalAlpha = 1;
   }

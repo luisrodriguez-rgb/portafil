@@ -8,7 +8,7 @@
 const arcadeLinkParams = new URLSearchParams(location.search);
 
 document.addEventListener('DOMContentLoaded', () => {
-  const studio = window.PerfilaStudio;
+  const studio = window.PortafilStudio;
   if (!studio || typeof GameModes === 'undefined') return;
 
   const $ = (id) => document.getElementById(id);

@@ -10,21 +10,21 @@ Textos listos para X y LinkedIn, en español e inglés. Cambia `DOMINIO`, `OWNER
 **X (es)**
 > Todos los perfiles de GitHub se ven iguales: una tarjeta de un estilo, otra de otro, la serpiente verde y muchas insignias.
 >
-> Hice Perfila: escribes tu usuario y todas las piezas salen con un solo estilo, en claro y oscuro. Y tu gráfico de contribuciones se vuelve Pac-Man, Tetris o el juego de la vida.
+> Hice Portafil: escribes tu usuario y todas las piezas salen con un solo estilo, en claro y oscuro. Y tu gráfico de contribuciones se vuelve Pac-Man, Tetris o el juego de la vida.
 >
 > https://DOMINIO
 
 **X (en)**
 > Every GitHub profile looks the same: one card in one style, another in another, the green snake and a pile of badges.
 >
-> I built Perfila: type your username and every piece comes out in one style, light and dark. Your contribution graph also becomes Pac-Man, Tetris or the Game of Life.
+> I built Portafil: type your username and every piece comes out in one style, light and dark. Your contribution graph also becomes Pac-Man, Tetris or the Game of Life.
 >
 > https://DOMINIO
 
 **LinkedIn (es)**
 > Un perfil de GitHub es, a menudo, lo primero que mira alguien antes de una entrevista. Y casi todos se ven igual: piezas sueltas de herramientas distintas, cada una con su estilo.
 >
-> Estas semanas construí Perfila, un generador que crea todas las piezas del perfil (cabecera, estadísticas, racha, lenguajes, actividad, juegos sobre tu gráfico de contribuciones y duelos) con un mismo sistema visual. Solo pide tu usuario. Cambia solo entre modo claro y oscuro y no ejecuta JavaScript: es SVG con animación CSS.
+> Estas semanas construí Portafil, un generador que crea todas las piezas del perfil (cabecera, estadísticas, racha, lenguajes, actividad, juegos sobre tu gráfico de contribuciones y duelos) con un mismo sistema visual. Solo pide tu usuario. Cambia solo entre modo claro y oscuro y no ejecuta JavaScript: es SVG con animación CSS.
 >
 > Lo más interesante de construirlo fue meter juegos completos (Pac-Man, invasores, Tetris, el juego de la vida) en SVG de menos de 120 KB, simulados en el servidor y convertidos en fotogramas CSS.
 >
@@ -33,7 +33,7 @@ Textos listos para X y LinkedIn, en español e inglés. Cambia `DOMINIO`, `OWNER
 **LinkedIn (en)**
 > A GitHub profile is often the first thing someone checks before an interview. And most look alike: separate pieces from different tools, each in its own style.
 >
-> Over the last few weeks I built Perfila, a generator that creates every piece of the profile (header, stats, streak, languages, activity, games on your contribution graph and duels) with one visual system. It only asks for your username. It switches between light and dark mode on its own and runs no JavaScript: it's SVG with CSS animation.
+> Over the last few weeks I built Portafil, a generator that creates every piece of the profile (header, stats, streak, languages, activity, games on your contribution graph and duels) with one visual system. It only asks for your username. It switches between light and dark mode on its own and runs no JavaScript: it's SVG with CSS animation.
 >
 > The most interesting part was fitting full games (Pac-Man, invaders, Tetris, Game of Life) into SVGs under 120 KB, simulated on the server and turned into CSS keyframes.
 >

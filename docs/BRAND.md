@@ -1,16 +1,18 @@
-# Perfila · marca
+# Portafil · marca
 
 ## Nombre
 
-**Perfila**: de *perfil* y *perfilar* (dar forma, definir el contorno). Se lee igual en español y en inglés y dice lo que hace: darle forma a tu perfil de GitHub.
+**Portafil**: de *portada* y *perfil*, con un guiño a *portfolio*. Es la portada de tu perfil de GitHub: lo primero que ve quien lo visita. Se pronuncia igual en español y en inglés y empieza por P, así que conserva el símbolo de celdas.
 
-Alternativas que se descartaron: *Facet* (genérico y ocupado en muchas herramientas), *Lienzo* (difícil en inglés), *Readmi* (demasiado atado al archivo README). No se ha comprobado aún la disponibilidad del dominio ni de la marca: hacerlo antes del lanzamiento.
+Se llamó *Perfila* hasta el 28-10-2026: el nombre y perfila.vercel.app ya los usaba otro producto (un diagnóstico de Instagram con IA). Comprobado ese día para *Portafil*: libres portafil.vercel.app, la cuenta github.com/portafil, el paquete de npm y los dominios portafil.com, .dev y .app; ningún producto con ese nombre. El riesgo conocido: en inglés recuerda a *portafilter* (la pieza de la cafetera espresso), de otro sector.
+
+Otros candidatos que se valoraron: *Celdafy*, *Perfilux* (se parece a *Profilux* y a *Perfila*), *Cellfolio*. Antes ya se habían descartado *Facet* (genérico y ocupado), *Lienzo* (difícil en inglés) y *Readmi* (demasiado atado al archivo README).
 
 No usar "GitHub" ni "Octo" en el nombre ni en el logo: son marcas de GitHub.
 
 ## Idea
 
-GitHub no deja ejecutar nada en un README, así que la mayoría de perfiles terminan siendo un collage de widgets que no se parecen entre sí. Perfila genera todas las piezas (cabecera, estadísticas, racha, lenguajes, actividad, serpiente, versus, duelo) con un mismo sistema visual, desde un solo dato: tu usuario.
+GitHub no deja ejecutar nada en un README, así que la mayoría de perfiles terminan siendo un collage de widgets que no se parecen entre sí. Portafil genera todas las piezas (cabecera, estadísticas, racha, lenguajes, actividad, serpiente, versus, duelo) con un mismo sistema visual, desde un solo dato: tu usuario.
 
 **Promesa:** escribe tu usuario, elige lo que quieras, copia y pega.
 

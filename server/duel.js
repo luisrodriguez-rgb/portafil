@@ -137,7 +137,7 @@ function renderDuel(duel, tokens, lang, theme) {
   });
 
   const [a, b] = duel.players;
-  return toSvg({ width, height, title: `@${a.login} vs @${b.login} duel by Perfila`, content: `<style>${css}</style>${scoreboard}${boards.join('')}` });
+  return toSvg({ width, height, title: `@${a.login} vs @${b.login} duel by Portafil`, content: `<style>${css}</style>${scoreboard}${boards.join('')}` });
 }
 
 function svgResponse(status, body, cacheControl) {

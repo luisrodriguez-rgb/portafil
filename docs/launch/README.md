@@ -1,6 +1,6 @@
 # Lanzamiento
 
-Orden de trabajo para sacar Perfila al público. Lo que depende del autor (cuentas, publicar, enviar PR) está marcado con 👤; el resto ya está hecho en el repositorio.
+Orden de trabajo para sacar Portafil al público. Lo que depende del autor (cuentas, publicar, enviar PR) está marcado con 👤; el resto ya está hecho en el repositorio.
 
 ## 1. Antes de anunciar nada
 
@@ -8,9 +8,9 @@ Orden de trabajo para sacar Perfila al público. Lo que depende del autor (cuent
 | --- | --- | --- |
 | 👤 | Desplegar en Vercel con la variable `GITHUB_TOKEN` (un token *fine-grained* sin permisos basta: solo lee datos públicos) | `GET /api/<usuario>.svg` devuelve 200 |
 | 👤 | Elegir dominio y ponerlo en `shared/brand.js` (`site`), con el repositorio en `repo` y la Action en `actionRef`; después `node scripts/build-examples.js` para regenerar `examples/` | `npm test` en verde |
-| 👤 | Comprobar que el nombre "Perfila" y el dominio están libres (ver `docs/BRAND.md`) | — |
+| 👤 | Comprobar que el nombre "Portafil" y el dominio están libres (ver `docs/BRAND.md`) | — |
 | | Prueba de humo en producción con estas URL, en claro y en oscuro | todas responden 200 y se ven bien en un README de prueba |
-| 👤 | Poner el perfil del autor con Perfila: es el ejemplo de la portada y de `examples/` (`demoUser`) | se ve en `github.com/<autor>` |
+| 👤 | Poner el perfil del autor con Portafil: es el ejemplo de la portada y de `examples/` (`demoUser`) | se ve en `github.com/<autor>` |
 | 👤 | Medir la línea base: `GITHUB_TOKEN=... node scripts/baseline.js <owner/repo>` | `docs/metrics/baseline-<fecha>.json` |
 
 URL para la prueba de humo (cambia `DOMINIO` y `USUARIO`):
@@ -42,7 +42,7 @@ Comprobar también la vista previa del enlace `/u/USUARIO` y `/duel/...` con el 
 | --- | --- | --- |
 | 1 | Duelo del autor contra un perfil conocido de la comunidad hispana, con su clip vertical | cada duelo involucra a dos personas y su enlace trae a más |
 | 2 | Un modo de juego por publicación: Pac-Man, invasores, Tetris, juego de la vida | cada modo es un contenido aparte (Fase 3) |
-| 3 | "Antes y después" de un perfil con widgets sueltos frente al mismo perfil con Perfila | el ángulo de coherencia es la propuesta principal |
+| 3 | "Antes y después" de un perfil con widgets sueltos frente al mismo perfil con Portafil | el ángulo de coherencia es la propuesta principal |
 | 4 | Revisar métricas y decidir la siguiente fase | ver abajo |
 
 ## 4. Cómo saber si funciona
@@ -66,4 +66,4 @@ Se mide con los logs de la función y los eventos de la web (`docs/metrics.md`):
 | DenverCoder1/github-readme-streak-stats | 7.185 | tarjeta de racha |
 | Platane/snk | 6.163 | serpiente sobre el gráfico de contribuciones (GitHub Action) |
 
-En la lista de herramientas de awesome-github-profile-readme ya aparecen proyectos con varios temas y constructor visual (GitCard Studio, gitglance). La diferencia de Perfila no es tener temas, sino que **todas** las piezas (tarjetas, juegos, versus, duelos y tarjetas para redes) son un mismo sistema visual, se configuran con un solo dato y cambian juntas entre modo claro y oscuro. Ese es el mensaje en cada texto.
+En la lista de herramientas de awesome-github-profile-readme ya aparecen proyectos con varios temas y constructor visual (GitCard Studio, gitglance). La diferencia de Portafil no es tener temas, sino que **todas** las piezas (tarjetas, juegos, versus, duelos y tarjetas para redes) son un mismo sistema visual, se configuran con un solo dato y cambian juntas entre modo claro y oscuro. Ese es el mensaje en cada texto.

@@ -76,7 +76,7 @@ function render({ pair, tokens, lang }) {
   return {
     width: WIDTH,
     height,
-    title: `@${loginA} vs @${loginB} by Perfila`,
+    title: `@${loginA} vs @${loginB} by Portafil`,
     content: framed({ width: WIDTH, height, tokens, title: '', body })
   };
 }

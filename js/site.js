@@ -1,5 +1,5 @@
 /**
- * Web de Perfila: un solo campo (el usuario) y, con eso, la galería de todas las piezas.
+ * Web de Portafil: un solo campo (el usuario) y, con eso, la galería de todas las piezas.
  * Cada pieza se puede copiar sola o añadir al bloque README. El estado vive en la URL (?u=&t=&r=...)
  * para que cualquier configuración se pueda compartir o recuperar.
  */
@@ -46,7 +46,7 @@
       'msg.checking': (u) => `Buscando a @${u}…`,
       'msg.invalid': 'Ese no parece un usuario de GitHub: letras, números y guiones, hasta 39.',
       'msg.notFound': (u) => `No encontramos a @${u} en GitHub.`,
-      'msg.org': (u) => `@${u} es una organización: Perfila funciona con cuentas personales.`,
+      'msg.org': (u) => `@${u} es una organización: Portafil funciona con cuentas personales.`,
       'msg.down': 'GitHub no responde ahora mismo. Inténtalo en un momento.',
       'piece.add': 'Añadir al README', 'piece.copy': 'Copiar código', 'piece.copied': 'Copiado', 'piece.open': 'Abrir SVG',
       'tab.profile': 'Perfil', 'tab.games': 'Juegos', 'tab.pair': 'Frente a otro', 'tab.share': 'Compartir', 'tabs.label': 'Grupos de piezas',
@@ -55,7 +55,7 @@
       'g.pair': 'Frente a otro perfil', 'g.pairP': 'Compárate con alguien o rétalo a un duelo. El duelo enlaza a una página para compartir.',
       'g.share': 'Para compartir fuera de GitHub', 'g.shareP': 'Tu tarjeta de 1200×630 para LinkedIn, X o WhatsApp, con el estilo que elegiste. El enlace muestra la tarjeta al compartirlo y lleva a tus piezas.',
       'share.download': 'Descargar PNG', 'share.copy': 'Copiar enlace', 'share.x': 'Compartir en X', 'share.in': 'Compartir en LinkedIn',
-      'share.text': (u) => `Mi perfil de GitHub con un solo estilo, hecho con Perfila: @${u}`,
+      'share.text': (u) => `Mi perfil de GitHub con un solo estilo, hecho con Portafil: @${u}`,
       'readme.template': 'Plantilla', 'readme.preview': 'Vista previa',
       tpl: { pieces: 'Solo las piezas que elijo', developer: 'Desarrollador', student: 'Estudiante', maintainer: 'Mantenedor open source', minimal: 'Mínima' },
       'preview.title': 'Así se verá en GitHub', 'preview.light': 'Claro', 'preview.dark': 'Oscuro', 'preview.close': 'Cerrar',
@@ -117,7 +117,7 @@
       'msg.checking': (u) => `Looking for @${u}…`,
       'msg.invalid': 'That does not look like a GitHub username: letters, numbers and dashes, up to 39.',
       'msg.notFound': (u) => `We could not find @${u} on GitHub.`,
-      'msg.org': (u) => `@${u} is an organization: Perfila works with personal accounts.`,
+      'msg.org': (u) => `@${u} is an organization: Portafil works with personal accounts.`,
       'msg.down': 'GitHub is not answering right now. Try again in a moment.',
       'piece.add': 'Add to README', 'piece.copy': 'Copy code', 'piece.copied': 'Copied', 'piece.open': 'Open SVG',
       'tab.profile': 'Profile', 'tab.games': 'Games', 'tab.pair': 'Versus', 'tab.share': 'Share', 'tabs.label': 'Piece groups',
@@ -126,7 +126,7 @@
       'g.pair': 'Against another profile', 'g.pairP': 'Compare yourself with someone or challenge them to a duel. The duel links to a page to share.',
       'g.share': 'For sharing outside GitHub', 'g.shareP': 'Your 1200×630 card for LinkedIn, X or WhatsApp, in the style you picked. The link shows the card when shared and leads to your pieces.',
       'share.download': 'Download PNG', 'share.copy': 'Copy link', 'share.x': 'Share on X', 'share.in': 'Share on LinkedIn',
-      'share.text': (u) => `My GitHub profile in one style, made with Perfila: @${u}`,
+      'share.text': (u) => `My GitHub profile in one style, made with Portafil: @${u}`,
       'readme.template': 'Template', 'readme.preview': 'Preview',
       tpl: { pieces: 'Only the pieces I pick', developer: 'Developer', student: 'Student', maintainer: 'Open source maintainer', minimal: 'Minimal' },
       'preview.title': 'This is how it will look on GitHub', 'preview.light': 'Light', 'preview.dark': 'Dark', 'preview.close': 'Close',
@@ -163,7 +163,7 @@
 
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const storedLang = (() => { try { return localStorage.getItem('perfila.lang'); } catch (e) { return null; } })();
+  const storedLang = (() => { try { return localStorage.getItem('portafil.lang'); } catch (e) { return null; } })();
 
   const state = {
     ui: params.get('lang') || storedLang || (/^es\b/i.test(navigator.language) ? 'es' : 'en'),
@@ -481,9 +481,9 @@
     if (!img) return;
     const src = `${previewBase}/api/og/${state.user}.png?theme=${state.theme}${state.ui === 'es' ? '&lang=es' : ''}`;
     if (img.getAttribute('src') !== src) img.src = src;
-    img.alt = `@${state.user} · Perfila`;
+    img.alt = `@${state.user} · Portafil`;
     $('ogDownload').href = src;
-    $('ogDownload').setAttribute('download', `perfila-${state.user}.png`);
+    $('ogDownload').setAttribute('download', `portafil-${state.user}.png`);
     $('ogX').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(T('share.text', state.user))}&url=${encodeURIComponent(shareUrl())}`;
     $('ogIn').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl())}`;
   }
@@ -601,7 +601,7 @@
     return String(raw || '').trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/[/?#].*$/, '');
   }
 
-  /** La API de Perfila solo conoce usuarios: ante un 404, GitHub dice si el nombre es de una organización */
+  /** La API de Portafil solo conoce usuarios: ante un 404, GitHub dice si el nombre es de una organización */
   async function isOrganization(user) {
     try {
       const res = await fetch(`https://api.github.com/users/${user}`);
@@ -630,7 +630,7 @@
       // La cabecera necesita perfil y calendario: si responde, todas las piezas tienen sus datos en caché
       const res = await fetch(`${previewBase}/api/header/${user}.svg`, { method: 'HEAD' });
       status = res.status;
-      dataSource = res.headers.get('X-Perfila-Data') || '';
+      dataSource = res.headers.get('X-Portafil-Data') || '';
     } catch (e) {
       status = 0;
     }
@@ -730,7 +730,7 @@
   }));
   $('langBtn').addEventListener('click', () => {
     state.ui = state.ui === 'es' ? 'en' : 'es';
-    try { localStorage.setItem('perfila.lang', state.ui); } catch (e) {}
+    try { localStorage.setItem('portafil.lang', state.ui); } catch (e) {}
     applyStaticText();
     buildTemplates();
     buildExamples();

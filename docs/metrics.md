@@ -7,7 +7,7 @@ La señal principal es **cuántos perfiles reales usan el endpoint**, no las est
 Cada petición a `/api/...` escribe una línea JSON en los Runtime Logs de Vercel (`server/metrics.js`):
 
 ```json
-{"evt":"perfila.render","endpoint":"stats","user":"octocat","theme":"cyberpunk","status":200,"ms":41}
+{"evt":"portafil.render","endpoint":"stats","user":"octocat","theme":"cyberpunk","status":200,"ms":41}
 ```
 
 `endpoint` es `snake`, `calendar`, la pieza del kit (`header`, `stats`, `streak`, `langs`, `activity`, `kit`) o del duelo (`duel`, `versus`, `duel-page`; ahí `user` es la pareja `a-vs-b`), y las imágenes para redes (`og-profile`, `og-duel`, `share-page`). Solo se registra el usuario de GitHub, que ya es público en la URL; ni IPs ni cookies.
@@ -28,7 +28,7 @@ Los Runtime Logs del plan gratuito duran poco, así que para medir semanas hay q
 La web envía a `POST /api/event` (`server/event.js`) unos pocos eventos, sin cookies ni usuario de GitHub, y nunca si el navegador pide Do Not Track o Global Privacy Control:
 
 ```json
-{"evt":"perfila.event","event":"copy","ms":74213,"pieces":6,"theme":"cyberpunk","template":"developer","lang":"es"}
+{"evt":"portafil.event","event":"copy","ms":74213,"pieces":6,"theme":"cyberpunk","template":"developer","lang":"es"}
 ```
 
 | Evento | Cuándo |

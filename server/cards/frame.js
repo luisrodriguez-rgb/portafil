@@ -128,7 +128,7 @@ function toSvg({ width, height, title, content }) {
 /** Tarjeta de error legible, con el tema pedido si se pudo leer */
 function messageCard(message, tokens = T.get('ink'), width = T.size.half) {
   const height = 60;
-  const lines = wrap(`Perfila: ${message}`, Math.floor((width - 32) / (12 * T.font.charWidth)), 2);
+  const lines = wrap(`Portafil: ${message}`, Math.floor((width - 32) / (12 * T.font.charWidth)), 2);
   const y0 = lines.length === 1 ? 35 : 27;
   const body = lines.map((l, i) => text(width / 2, y0 + i * 16, escapeXml(l), { anchor: 'middle', fill: tokens.text })).join('');
   return toSvg({

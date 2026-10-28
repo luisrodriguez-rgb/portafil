@@ -56,7 +56,7 @@ function render({ weeks, tokens, lang, login }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${login} weekly activity by Perfila`,
+    title: `@${login} weekly activity by Portafil`,
     content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.activity, subtitle: L.perWeek, right, body })
   };
 }

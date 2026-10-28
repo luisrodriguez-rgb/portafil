@@ -49,7 +49,7 @@ function trackingFetch(token, fetchImpl) {
       const wasLow = remaining.has(token) && remaining.get(token) < LOW_REMAINING;
       remaining.set(token, left);
       if (left < LOW_REMAINING && !wasLow && process.env.VERCEL) {
-        console.log(JSON.stringify({ evt: 'perfila.ratelimit', remaining: left, reset: res.headers.get('x-ratelimit-reset') }));
+        console.log(JSON.stringify({ evt: 'portafil.ratelimit', remaining: left, reset: res.headers.get('x-ratelimit-reset') }));
       }
     }
     return res;
@@ -111,7 +111,7 @@ function cached(memory, name, user, rawToken, fetchImpl, load) {
   const hit = memory.get(key);
   if (hit && Date.now() - hit.time < fresh) return hit.promise;
 
-  const storeKey = `perfila:${name}:${key}`;
+  const storeKey = `portafil:${name}:${key}`;
   const promise = (async () => {
     const stored = await storeGet(storeKey, fetchImpl);
     if (stored && Date.now() - stored.time < fresh) {

@@ -283,7 +283,7 @@ const GameModes = {
     return this.frame({
       grid, tokens,
       title: [user ? `@${user}` : '', T.life, T.generations(sim.generations)].filter(Boolean).join(' · '),
-      credit: `game of life from ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
+      credit: `game of life from ${user ? `@${user}` : 'a GitHub'} contributions by Portafil`,
       // Las partidas cortas (se estabiliza enseguida) van más despacio para que se puedan seguir
       steps: sim.steps, stepDuration: sim.generations < 12 ? 0.8 : 0.4, pauseDuration: 2.5,
       cellChanges: sim.cellChanges, restoreWave: false, progress
@@ -562,7 +562,7 @@ const GameModes = {
     return this.frame({
       grid, tokens,
       title: [user ? `@${user}` : '', T.pacman, `${this.fmt(sim.score, lang)} ${T.pts}`].filter(Boolean).join(' · '),
-      credit: `pac-man eating ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
+      credit: `pac-man eating ${user ? `@${user}` : 'a GitHub'} contributions by Portafil`,
       steps: sim.steps, stepDuration: 0.1, pauseDuration: 2,
       cellChanges: sim.cellChanges, restoreWave: true, progress: sim.progress,
       css,
@@ -721,7 +721,7 @@ const GameModes = {
     const svg = this.frame({
       grid, tokens,
       title: [user ? `@${user}` : '', T.invaders, T.hits(this.fmt(sim.hits, lang))].filter(Boolean).join(' · '),
-      credit: `invaders on ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
+      credit: `invaders on ${user ? `@${user}` : 'a GitHub'} contributions by Portafil`,
       steps: sim.steps, stepDuration: 0.08, pauseDuration: 2,
       cellChanges: sim.cellChanges, restoreWave: true, progress: sim.progress,
       gridClass: 'sw', css, body: `<g class="ac">${ship}${bullets}</g>`
@@ -988,7 +988,7 @@ const GameModes = {
     return this.frame({
       grid, tokens,
       title: [user ? `@${user}` : '', T.tetris, T.weeks(sim.lines), T.pieces(sim.placed)].filter(Boolean).join(' · '),
-      credit: `tetris on ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
+      credit: `tetris on ${user ? `@${user}` : 'a GitHub'} contributions by Portafil`,
       steps: sim.steps, stepDuration: 0.06, pauseDuration: 2.5,
       cellChanges: sim.cellChanges, restoreWave: true, progress: sim.progress,
       css, body

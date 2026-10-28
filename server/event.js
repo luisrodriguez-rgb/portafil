@@ -90,7 +90,7 @@ async function handler(req, res) {
     return res.end();
   }
   const event = parseEvent(await readBody(req));
-  if (event && process.env.VERCEL) console.log(JSON.stringify({ evt: 'perfila.event', ...event }));
+  if (event && process.env.VERCEL) console.log(JSON.stringify({ evt: 'portafil.event', ...event }));
   res.statusCode = event ? 204 : 400;
   res.setHeader('Cache-Control', 'no-store');
   res.end();

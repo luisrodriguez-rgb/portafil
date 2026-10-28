@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let grid = [];
   // Modos de juego del estudio (js/arcade.js): toman el tablero, el teclado y la cruceta mientras están activos
   let arcadeActive = false;
-  window.PerfilaStudio = {
+  window.PortafilStudio = {
     grid: () => grid,
     setArcade(on) { arcadeActive = Boolean(on); }
   };
@@ -892,7 +892,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const recordingOptions = {
       duration: duration,
-      filenamePrefix: `perfila-${currentUsername}`
+      filenamePrefix: `portafil-${currentUsername}`
     };
 
     const onProgress = (time) => {
@@ -1491,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         out = await videoStudio.render({ grid, user: gridOwner, lang: I18n.lang, theme: vsTheme.value, format, shareUrl: link, avatar, onProgress });
       }
       if (vsVideo) URL.revokeObjectURL(vsVideo.url);
-      const name = `perfila-${fileOwner}-${format}.${out.extension}`;
+      const name = `portafil-${fileOwner}-${format}.${out.extension}`;
       vsVideo = { ...out, url: URL.createObjectURL(out.blob), file: new File([out.blob], name, { type: out.mimeType.split(';')[0] }) };
       vsPreview.src = vsVideo.url;
       vsPreview.play().catch(() => {});

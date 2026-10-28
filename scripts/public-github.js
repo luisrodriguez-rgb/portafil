@@ -10,7 +10,7 @@
  */
 
 const LEVEL_NAMES = ['NONE', 'FIRST_QUARTILE', 'SECOND_QUARTILE', 'THIRD_QUARTILE', 'FOURTH_QUARTILE'];
-const HEADERS = { Accept: 'application/vnd.github+json', 'User-Agent': 'perfila-dev' };
+const HEADERS = { Accept: 'application/vnd.github+json', 'User-Agent': 'portafil-dev' };
 
 function graphqlError(type, message) {
   return { ok: true, json: async () => ({ data: { user: null }, errors: [{ type, message }] }) };

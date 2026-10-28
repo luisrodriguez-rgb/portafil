@@ -71,14 +71,14 @@ function text(x, y, content, { size, weight = 400, fill, anchor } = {}) {
 function brand(tokens, rightX, baseY) {
   const cell = 6;
   const gap = 1.6;
-  const wordWidth = 'perfila'.length * 26 * T.font.charWidth;
+  const wordWidth = 'portafil'.length * 26 * T.font.charWidth;
   const x0 = rightX - wordWidth - 14 - (3 * cell + 2 * gap);
   const y0 = baseY - 5 * (cell + gap) + gap - 1;
   let out = '';
   for (const [x, y, o] of MARK) {
     out += `<rect x="${+(x0 + x * (cell + gap)).toFixed(1)}" y="${+(y0 + y * (cell + gap)).toFixed(1)}" width="${cell}" height="${cell}" rx="1.5" fill="${tokens.text}" fill-opacity="${o}"/>`;
   }
-  return out + text(rightX, baseY - 6, 'perfila', { size: 26, weight: 700, fill: tokens.text, anchor: 'end' });
+  return out + text(rightX, baseY - 6, 'portafil', { size: 26, weight: 700, fill: tokens.text, anchor: 'end' });
 }
 
 /** Calendario estático: 53×7 celdas en el ancho dado */

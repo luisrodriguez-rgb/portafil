@@ -68,7 +68,7 @@ function render({ profile, tokens, lang }) {
   return {
     width: WIDTH,
     height: HEIGHT,
-    title: `@${profile.login} languages by Perfila`,
+    title: `@${profile.login} languages by Portafil`,
     content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.languages, subtitle: L.bySize, right: `${fmtNumber(profile.publicRepos, lang, false)} ${L.repos}`, body })
   };
 }

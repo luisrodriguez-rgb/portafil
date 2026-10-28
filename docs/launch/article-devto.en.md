@@ -11,7 +11,7 @@ Nobody did anything wrong. Every tool solves one problem and picks its own style
 
 ## The idea: a system, not widgets
 
-[Perfila](https://DOMINIO) starts from a different question: what if every piece of the profile came from the same visual system?
+[Portafil](https://DOMINIO) starts from a different question: what if every piece of the profile came from the same visual system?
 
 - **One input:** type your GitHub username. No YAML, no token of your own.
 - **Seven styles**, and every piece changes together: header, stats, streak, languages, weekly activity, versus, duels.

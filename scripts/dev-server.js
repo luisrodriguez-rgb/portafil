@@ -4,7 +4,7 @@
  *   GITHUB_TOKEN=... node scripts/dev-server.js   datos reales con la API oficial, como en producción
  *   node scripts/dev-server.js                    sin token: datos reales públicos (algunas cifras aproximadas)
  *   node scripts/dev-server.js --fixture          datos de prueba inventados, sin red (para las pruebas visuales)
- * Aplica las reescrituras y las cabeceras de seguridad de vercel.json. Opción --port <n> (por defecto 3000). Cada respuesta de la API lleva X-Perfila-Data con el origen de los datos,
+ * Aplica las reescrituras y las cabeceras de seguridad de vercel.json. Opción --port <n> (por defecto 3000). Cada respuesta de la API lleva X-Portafil-Data con el origen de los datos,
  * y la web avisa cuando no son los oficiales.
  */
 
@@ -100,7 +100,7 @@ http.createServer(async (req, res) => {
       return res.end('404');
     }
     req.url = url.pathname + url.search;
-    if (dataSource !== 'github') res.setHeader('X-Perfila-Data', dataSource);
+    if (dataSource !== 'github') res.setHeader('X-Portafil-Data', dataSource);
     try {
       await handler(req, res);
     } catch (err) {
@@ -113,5 +113,5 @@ http.createServer(async (req, res) => {
   serveStatic(url.pathname, res);
 }).listen(port, () => {
   const notes = { github: 'datos reales (API oficial)', public: 'datos reales públicos sin token: commits, PRs y lenguajes aproximados', fixture: 'DATOS DE PRUEBA inventados' };
-  console.log(`Perfila en http://localhost:${port} · ${notes[dataSource]}`);
+  console.log(`Portafil en http://localhost:${port} · ${notes[dataSource]}`);
 });

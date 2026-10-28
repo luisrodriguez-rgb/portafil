@@ -66,7 +66,7 @@ test('caché: con almacén compartido, una instancia nueva usa lo que guardó ot
     const load = async () => { calls++; return { login: 'octocat' }; };
     assert.deepStrictEqual(await cached(new Map(), 'profile', 'octocat', 'x', kvFetch, load), { login: 'octocat' });
     await new Promise(r => setImmediate(r));
-    assert.ok(store.has('perfila:profile:octocat'));
+    assert.ok(store.has('portafil:profile:octocat'));
     // Otra instancia (memoria vacía): no consulta a GitHub
     assert.deepStrictEqual(await cached(new Map(), 'profile', 'octocat', 'x', kvFetch, load), { login: 'octocat' });
     assert.strictEqual(calls, 1);

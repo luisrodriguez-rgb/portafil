@@ -30,7 +30,7 @@ test('tarjeta de perfil: PNG de 1200×630 con el tema pedido', async () => {
   assert.match(svg.body, /#090614/);
   assert.match(svg.body, /@octocat/);
   assert.match(svg.body, /contribuciones/);
-  assert.match(svg.body, />perfila</);
+  assert.match(svg.body, />portafil</);
 });
 
 test('tarjeta de duelo: los dos usuarios, el marcador y el enlace al duelo', async () => {

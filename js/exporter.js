@@ -26,7 +26,7 @@ class ExporterEngine {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `perfila-snake-${username}-${options.theme || 'ink'}-${options.speed || 'normal'}.svg`;
+    a.download = `portafil-snake-${username}-${options.theme || 'ink'}-${options.speed || 'normal'}.svg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -113,7 +113,7 @@ class ExporterEngine {
       ? `durmiendo · ${n} ${n === 1 ? 'día' : 'días'} sin contribuciones`
       : `asleep · ${n} ${n === 1 ? 'day' : 'days'} without contributions`;
     const title = [username ? `@${username}` : '', label].filter(Boolean).join(' · ');
-    const credit = `sleeping snake on ${username ? `@${this.escapeXml(username)}` : 'a GitHub'} contribution graph by Perfila`;
+    const credit = `sleeping snake on ${username ? `@${this.escapeXml(username)}` : 'a GitHub'} contribution graph by Portafil`;
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><title>${credit}</title>`
       + `<style>svg{background:${palette.bg};border-radius:12px;border:1px solid ${palette.border}}${zCss}</style>`
       + `<text x="${padding}" y="${padding + 10}" font-family="${font}" font-size="12" font-weight="700" fill="${palette.text}">${this.escapeXml(title)}</text>`
@@ -378,8 +378,8 @@ class ExporterEngine {
 
     // 6. SVG Minificado Final
     const credit = username
-      ? `snake eating @${this.escapeXml(username)} contributions by Perfila`
-      : 'snake eating a GitHub contribution graph by Perfila';
+      ? `snake eating @${this.escapeXml(username)} contributions by Portafil`
+      : 'snake eating a GitHub contribution graph by Portafil';
     // Con prefijo (tablero dentro de otro SVG) el fondo es un rect: el fondo CSS solo se pinta en el <svg> raíz
     const frameCss = n ? '' : `svg{background:${palette.bg};border-radius:12px;border:1px solid ${palette.border}}`;
     const frameRect = n ? `<rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="11.5" fill="${palette.bg}" stroke="${palette.border}"/>` : '';
@@ -419,11 +419,11 @@ class ExporterEngine {
     const darkTheme = style.darkTheme || 'ink';
 
     if (style.adaptive === false) {
-      return [{ file: 'perfila-snake.svg', query: query(darkTheme) }];
+      return [{ file: 'portafil-snake.svg', query: query(darkTheme) }];
     }
     return [
-      { file: 'perfila-snake.svg', query: query(style.lightTheme || 'paper') },
-      { file: 'perfila-snake-dark.svg', query: query(darkTheme) }
+      { file: 'portafil-snake.svg', query: query(style.lightTheme || 'paper') },
+      { file: 'portafil-snake-dark.svg', query: query(darkTheme) }
     ];
   }
 
@@ -513,7 +513,7 @@ class ExporterEngine {
       .map(o => `            dist/${o.file}?${o.query}`)
       .join('\n');
 
-    return `name: Perfila snake
+    return `name: Portafil snake
 
 on:
   # Se regenera cada dia a medianoche (UTC)
@@ -556,7 +556,7 @@ ${outputs}
   generateReadmeSnippet(username = 'USUARIO', style = {}, apiBase = '') {
     const safeUser = String(username).replace(/[^A-Za-z0-9-]/g, '') || 'user';
     const base = `https://raw.githubusercontent.com/${safeUser}/${safeUser}/output`;
-    const alt = `snake eating @${safeUser} contributions by Perfila`;
+    const alt = `snake eating @${safeUser} contributions by Portafil`;
     const urlFor = (output) => (apiBase ? `${apiBase}/api/${safeUser}.svg?${output.query}` : `${base}/${output.file}`);
     const [light, dark] = this.workflowOutputs(style);
 

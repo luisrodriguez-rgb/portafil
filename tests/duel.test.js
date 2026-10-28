@@ -129,7 +129,7 @@ test('el adaptador HTTP elige formato y no confía en un Host raro', async () =>
   assert.strictEqual(page.statusCode, 200);
   const html = page.body.toString();
   assert.ok(!html.includes('alert(1)'));
-  assert.match(html, /https:\/\/perfila.vercel.app\/duel\/octocat-vs-hubot/);
+  assert.match(html, /https:\/\/portafil.vercel.app\/duel\/octocat-vs-hubot/);
   assert.strictEqual(svg.statusCode, 200);
   assert.match(svg.body.toString(), /#0f0a02/);
 });

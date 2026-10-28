@@ -30,17 +30,17 @@ jobs:
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
-            dist/perfila-snake.svg?theme=paper
-            dist/perfila-snake-dark.svg?theme=ink
+            dist/portafil-snake.svg?theme=paper
+            dist/portafil-snake-dark.svg?theme=ink
 
       - name: Check generated files
         run: |
-          for f in dist/perfila-snake.svg dist/perfila-snake-dark.svg; do
+          for f in dist/portafil-snake.svg dist/portafil-snake-dark.svg; do
             test -s "$f" || { echo "::error::$f missing or empty"; exit 1; }
             head -c 60 "$f"; echo
           done
 
       - uses: actions/upload-artifact@v4
         with:
-          name: perfila-snake-svg
+          name: portafil-snake-svg
           path: dist/

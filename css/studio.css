@@ -1,5 +1,5 @@
 /*
- * Perfila · estudio. Se apoya en css/site.css (tokens, cabecera, botones, campos) para que la portada
+ * Portafil · estudio. Se apoya en css/site.css (tokens, cabecera, botones, campos) para que la portada
  * y el estudio sean el mismo producto. La página es neutra y sigue el modo del sistema; el tema elegido
  * (body[data-theme]) solo colorea el tablero (el renderer lee --cell-*, --snake-* y --matrix-green)
  * y un acento de progreso.

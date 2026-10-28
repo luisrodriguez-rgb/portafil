@@ -11,7 +11,7 @@ No es culpa de nadie. Cada herramienta resuelve un problema y elige su propio es
 
 ## La idea: un sistema, no widgets
 
-[Perfila](https://DOMINIO) parte de otra pregunta: ¿y si todas las piezas del perfil salieran del mismo sistema visual?
+[Portafil](https://DOMINIO) parte de otra pregunta: ¿y si todas las piezas del perfil salieran del mismo sistema visual?
 
 - **Un solo dato:** escribes tu usuario de GitHub y ya está. Sin YAML ni token propio.
 - **Siete estilos**, y todas las piezas cambian juntas: cabecera, estadísticas, racha, lenguajes, actividad semanal, versus, duelos.

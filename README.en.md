@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="assets/brand/og.png" alt="Perfila: one style for your whole GitHub profile" width="100%">
+  <img src="assets/brand/og.png" alt="Portafil: one style for your whole GitHub profile" width="100%">
 </p>
 
 <p align="center"><b>English</b> · <a href="README.md">Español</a></p>
 
-# Perfila
+# Portafil
 
 **One style for your whole GitHub profile.** Header, stats, streak, languages, activity, the snake that eats your commits, versus and duels against other profiles: every piece shares theme, type and sizes, so your profile looks like one design instead of a collage of widgets.
 
@@ -43,12 +43,12 @@ All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cy
 If you would rather not depend on the server, the Action generates the snake in your own repository:
 
 ```yaml
-- uses: perfila/perfila@v1   # provisional reference, see shared/brand.js
+- uses: portafil/portafil@v1   # provisional reference, see shared/brand.js
   with:
     github_user_name: your-user
     outputs: |
-      dist/perfila-snake.svg?theme=paper
-      dist/perfila-snake-dark.svg?theme=ink
+      dist/portafil-snake.svg?theme=paper
+      dist/portafil-snake-dark.svg?theme=ink
 ```
 
 ## Development
@@ -90,4 +90,4 @@ For heavy traffic (`server/cache.js`):
 - [Example profiles by style](examples/README.md)
 - [Launch: lists, Marketplace, article and posts](docs/launch/README.md)
 
-Perfila grows out of the GITHUB_SNAKE.EXE engine, by the same author.
+Portafil grows out of the GITHUB_SNAKE.EXE engine, by the same author.

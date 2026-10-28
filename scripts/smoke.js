@@ -45,9 +45,9 @@ const CHECKS = [
   },
   {
     name: 'portada con un usuario que no existe: mensaje y sin resultados',
-    url: '/?u=ghost-perfila-smoke',
+    url: '/?u=ghost-portafil-smoke',
     expect: (dom) => [
-      [/id="formMsg"[^>]*class="[^"]*error|class="[^"]*error[^"]*"[^>]*id="formMsg"/.test(dom) || /ghost-perfila-smoke/.test(dom.match(/id="formMsg"[^>]*>([^<]*)</)?.[1] || ''), 'se avisa del error'],
+      [/id="formMsg"[^>]*class="[^"]*error|class="[^"]*error[^"]*"[^>]*id="formMsg"/.test(dom) || /ghost-portafil-smoke/.test(dom.match(/id="formMsg"[^>]*>([^<]*)</)?.[1] || ''), 'se avisa del error'],
       [/id="results"[^>]*\shidden/.test(dom), 'los resultados siguen ocultos']
     ]
   },
@@ -67,7 +67,7 @@ async function main() {
     process.exit(2);
   }
   const server = spawn(process.execPath, [path.join(__dirname, 'dev-server.js'), '--fixture', '--port', String(PORT)], { stdio: 'ignore' });
-  const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'perfila-smoke-'));
+  const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'portafil-smoke-'));
   let failed = 0;
   try {
     // Espera a que el servidor responda

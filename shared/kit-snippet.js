@@ -70,17 +70,17 @@ const KitSnippet = {
   alt(kind, ctx) {
     const u = `@${ctx.user}`;
     return {
-      header: `${u} by Perfila`,
+      header: `${u} by Portafil`,
       stats: `${u} stats`,
       streak: `${u} streak`,
       langs: `${u} languages`,
       activity: `${u} weekly activity`,
-      kit: `${u} GitHub profile by Perfila`,
-      snake: `snake eating ${u} contributions by Perfila`,
-      life: `game of life from ${u} contributions by Perfila`,
-      pacman: `pac-man eating ${u} contributions by Perfila`,
-      invaders: `invaders on ${u} contributions by Perfila`,
-      tetris: `tetris on ${u} contributions by Perfila`,
+      kit: `${u} GitHub profile by Portafil`,
+      snake: `snake eating ${u} contributions by Portafil`,
+      life: `game of life from ${u} contributions by Portafil`,
+      pacman: `pac-man eating ${u} contributions by Portafil`,
+      invaders: `invaders on ${u} contributions by Portafil`,
+      tetris: `tetris on ${u} contributions by Portafil`,
       versus: `${u} vs @${ctx.rival}`,
       duel: `${u} vs @${ctx.rival} duel`
     }[kind];

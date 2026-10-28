@@ -5,16 +5,16 @@
  */
 
 const Brand = {
-  name: 'Perfila',
+  name: 'Portafil',
   // Dominio público de la web y la API (provisional hasta elegir dominio)
-  site: 'https://perfila.vercel.app',
+  site: 'https://portafil.vercel.app',
   // Repositorio público (vacío hasta crearlo): la web enlaza a él si existe
   repo: '',
   // Perfil público que se usa en los ejemplos de la web y de examples/ (el del autor)
   demoUser: 'luisrodriguez-rgb',
   // Referencia de la GitHub Action para el workflow generado
-  actionRef: 'perfila/perfila@v1',
-  userAgent: 'perfila'
+  actionRef: 'portafil/portafil@v1',
+  userAgent: 'portafil'
 };
 
 window.Brand = Brand;
