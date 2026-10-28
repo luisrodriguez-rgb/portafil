@@ -3,7 +3,7 @@
  * Renderiza todas las piezas del kit de un usuario en una carpeta, en todos los temas.
  *   GITHUB_TOKEN=... node scripts/render-kit.js <usuario> [carpeta]   datos reales (API GraphQL)
  *   node scripts/render-kit.js --fixture [carpeta]                    datos fijos de las pruebas, sin red
- * Sirve para las capturas del README (assets/showcase/kit) y para revisar cambios visuales a ojo.
+ * Sirve para revisar cambios visuales a ojo y preparar capturas.
  */
 
 const fs = require('fs');

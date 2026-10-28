@@ -1,770 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GITHUB_SNAKE.EXE | Interactive GitHub Contribution Engine & Game</title>
-  <meta name="description" content="Simulador y juego interactivo a 60 FPS sobre el historial de GitHub. Pathfinding BFS, Flood Fill, Modo Duelo y generador de Commit Art.">
-  <meta property="og:title" content="GITHUB_SNAKE.EXE — Interactive GitHub Contribution Engine">
-  <meta property="og:description" content="Convierte cualquier perfil de GitHub en una simulación a 60 FPS con IA, modo versus y generador de Commit Art.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/luisrodriguez-rgb/GITHUB_SNAKE.EXE/main/assets/hero_preview.png">
-  <meta property="og:url" content="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perfila · Tu perfil de GitHub, con un solo estilo</title>
+  <meta name="description" content="Cabecera, estadísticas, racha, lenguajes, actividad, serpiente, versus y duelo para tu README de GitHub, todo con el mismo estilo. Escribe tu usuario, elige y copia.">
+  <meta property="og:title" content="Perfila · Tu perfil de GitHub, con un solo estilo">
+  <meta property="og:description" content="Escribe tu usuario, elige las piezas que quieras y copia el código para tu README.">
+  <meta property="og:image" content="/assets/brand/og.png">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="GITHUB_SNAKE.EXE — Interactive GitHub Contribution Engine">
-  <meta name="twitter:description" content="Simulación jugable en Canvas 2D a 60 FPS con IA (BFS + Flood Fill) y generador de Commit Art.">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/luisrodriguez-rgb/GITHUB_SNAKE.EXE/main/assets/hero_preview.png">
-  <!-- ?v= obliga al navegador a descargar CSS/JS nuevos tras cada despliegue: cambiar el valor en cada release -->
-  <link rel="stylesheet" href="style.css?v=20261028-clip">
+  <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="apple-touch-icon" href="favicon.svg">
-  <!-- URL base del endpoint SVG (server/snake-svg.js desplegado en Vercel), p. ej. https://github-snake.vercel.app. Vacío = no se ofrece -->
-  <meta name="snake-api" content="https://github-snake-ebon.vercel.app">
+  <link rel="stylesheet" href="css/site.css?v=1">
 </head>
-<body data-theme="dark">
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Ir al contenido</a>
+  <header class="top">
+    <a class="brand" href="./" aria-label="Perfila">
+      <img src="assets/brand/mark.svg" alt="" width="28" height="28">
+      <span>perfila</span>
+    </a>
+    <nav class="nav">
+      <a href="play.html" data-i18n="nav.play">Estudio</a>
+      <button type="button" class="lang" id="langBtn" aria-label="English">EN</button>
+    </nav>
+  </header>
 
-  <!-- Ambient Matrix Digital Rain Canvas -->
-  <canvas id="matrixCanvas"></canvas>
-
-  <!-- Interactive Floating Tooltip for Contribution Grid -->
-  <div id="matrixTooltip" class="cyber-tooltip">
-    <div class="tooltip-count" id="tooltipCount"></div>
-    <div class="tooltip-date" id="tooltipDate"></div>
-    <div class="tooltip-level-tag" id="tooltipLevel"></div>
-  </div>
-
-  <div class="app-container">
-    <!-- Cyber Terminal Header -->
-    <header>
-      <div class="logo-group">
-        <div class="logo-badge" style="padding: 2px; display: flex; align-items: center; justify-content: center;">
-          <img src="assets/logo.svg" alt="GitHub Snake Matrix Logo" width="48" height="48" style="display: block; border-radius: 10px;">
-        </div>
-        <div class="title-area">
-          <h1>
-            GITHUB_SNAKE.EXE
-            <span class="glitch-tag">v2.0 PRO</span>
-          </h1>
-          <p>Zero-Flicker 60 FPS Sub-pixel Contribution Engine & Game</p>
-        </div>
-      </div>
-      
-      <div class="header-status">
-        <a href="https://github.com/luisrodriguez-rgb/GITHUB_SNAKE.EXE" target="_blank" rel="noopener noreferrer" class="github-star-btn" title="Ver repositorio y dar estrella en GitHub">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-          <span>GitHub</span>
-          <span class="star-badge">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            Star
-          </span>
-        </a>
-        <button id="achievementsBtn" class="terminal-status-pill tool-btn" style="cursor: pointer; border: 1px solid var(--border-color);">
-          <span class="status-dot"></span>
-          <span id="achievementsLabel">Logros: 0/7</span>
-        </button>
-        <div class="lang-switch" role="group" aria-label="Idioma / Language">
-          <button type="button" class="lang-btn" data-lang-btn="es" aria-pressed="true">ES</button>
-          <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false">EN</button>
-        </div>
-        <div class="theme-selector">
-          <select id="themeSelect" class="cyber-select">
-            <option value="dark" selected>Matrix Phosphor (Oscuro)</option>
-            <option value="light">Modo Claro (GitHub Light)</option>
-            <option value="cyberpunk">Cyberpunk Neon (Fucsia)</option>
-            <option value="neon_cyan">Cyber Cyan (Azul)</option>
-            <option value="amber_terminal">Amber CRT (Terminal)</option>
-          </select>
-        </div>
-      </div>
-    </header>
-
-    <!-- Terminal Command Toolbar & Input -->
-    <section class="glass-panel">
-      <div class="input-header-label">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span>Ingresa un nombre de usuario o pega el enlace completo de GitHub:</span>
-      </div>
-
-      <div class="toolbar-grid">
-        <div class="cyber-input-wrapper">
-          <div class="terminal-prefix">
-            <span>github.com/</span>
+  <main id="main">
+    <section class="hero">
+      <div class="hero-text">
+        <h1 data-i18n="hero.title">Tu perfil de GitHub, con un solo estilo.</h1>
+        <p class="lead" data-i18n="hero.lead">Cabecera, estadísticas, racha, lenguajes, actividad, la serpiente que se come tus commits y duelos contra otros perfiles. Escribe tu usuario y elige lo que quieras: sin YAML y sin configurar nada.</p>
+        <form id="userForm" class="user-form" novalidate>
+          <label for="user" class="sr-only" data-i18n="form.label">Tu usuario de GitHub</label>
+          <div class="field">
+            <span class="prefix" aria-hidden="true">github.com/</span>
+            <input id="user" name="user" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="tu-usuario" data-i18n-placeholder="form.placeholder" required>
           </div>
-          <input type="text" id="usernameInput" placeholder="usuario o enlace (ej: midudev, torvalds, https://github.com/antfu)..." autocomplete="off" value="torvalds" spellcheck="false">
-        </div>
-        
-        <button id="fetchBtn" class="btn btn-cyber-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
-          Ejecutar Caza
-        </button>
-        
-        <button id="randomGridBtn" class="btn btn-cyber-secondary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          Matriz Aleatoria
-        </button>
+          <button type="submit" class="btn primary" id="userBtn" data-i18n="form.cta">Ver mis piezas</button>
+        </form>
+        <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
+        <p class="hint"><span data-i18n="form.try">¿Sin ideas? Prueba con</span> <button type="button" class="link" data-try="torvalds">torvalds</button> · <button type="button" class="link" data-try="gaearon">gaearon</button> · <button type="button" class="link" data-try="midudev">midudev</button></p>
       </div>
-
-      <div class="presets-container">
-        <span class="presets-label">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Accesos directos:
-        </span>
-        <button class="preset-pill active" data-user="torvalds">Linus Torvalds</button>
-        <button class="preset-pill" data-user="midudev">Midudev</button>
-        <button class="preset-pill" data-user="antfu">Anthony Fu</button>
-        <button class="preset-pill" data-user="gaearon">Dan Abramov</button>
-        <button class="preset-pill" data-user="sindresorhus">Sindre Sorhus</button>
-        <button class="preset-pill" data-user="dense_matrix">Matriz Densa</button>
-      </div>
+      <div class="hero-cells" id="heroCells" aria-hidden="true"></div>
     </section>
 
-    <!-- Active Profile Info Card -->
-    <section id="activeProfileCard" class="glass-panel profile-banner">
-      <div class="profile-banner-content">
-        <div class="profile-avatar-wrap">
-          <img id="activeAvatar" src="https://github.com/torvalds.png?size=100" alt="Avatar" class="active-avatar-img">
-          <span class="avatar-ring-pulse"></span>
-        </div>
-        <div class="profile-details">
-          <div class="profile-name-row">
-            <h3 id="activeDevName">Linus Torvalds</h3>
-            <a id="activeDevLink" href="https://github.com/torvalds" target="_blank" rel="noopener noreferrer" class="profile-gh-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-              <span id="activeDevUsername">@torvalds</span>
-            </a>
-          </div>
-          <p id="activeDevBio" class="profile-bio-text">Creador de Linux & Git</p>
-          <div class="profile-meta-tags">
-            <span id="activeDevLocation" class="meta-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Portland, EE.UU.
-            </span>
-            <span id="activeDevRepos" class="meta-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              Repos: 42
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live Consumption Progress Bar -->
-      <div class="consumption-progress-container">
-        <div class="progress-info-row">
-          <span id="progressLabelText">Progreso de Devoracion del Mapa:</span>
-          <span id="progressPercentText">0%</span>
-        </div>
-        <div class="progress-track" id="singleProgressTrack">
-          <div id="progressBarFill" class="progress-bar-fill"></div>
-        </div>
-
-        <!-- Barra Dual de Progreso para Modo Duelo -->
-        <div class="dual-progress-track" id="dualProgressTrack" style="display: none;">
-          <div id="p1ProgressFill" class="p1-progress-fill" style="width: 50%;">IA: 0%</div>
-          <div id="p2ProgressFill" class="p2-progress-fill" style="width: 50%;">P2: 0%</div>
-        </div>
-      </div>
+    <section class="how" id="how" aria-labelledby="howTitle">
+      <h2 id="howTitle" class="sr-only" data-i18n="how.title">Cómo funciona</h2>
+      <ol class="steps">
+        <li><strong data-i18n="how.1t">Escribe tu usuario</strong><span data-i18n="how.1">Es lo único que te pedimos. Leemos tus datos públicos de GitHub.</span></li>
+        <li><strong data-i18n="how.2t">Elige estilo y piezas</strong><span data-i18n="how.2">Siete estilos. Todas las piezas cambian juntas para que tu perfil parezca un solo diseño.</span></li>
+        <li><strong data-i18n="how.3t">Copia y pega</strong><span data-i18n="how.3">Una pieza o todas. Se actualizan solas y cambian con el modo claro u oscuro de GitHub.</span></li>
+      </ol>
     </section>
 
-    <!-- Canvas Visualization Stage -->
-    <section class="glass-panel stage-container">
-      <div class="canvas-wrapper">
-        <canvas id="snakeCanvas" width="920" height="145"></canvas>
-      </div>
-      <!-- D-Pad Virtual Tactil para Moviles -->
-      <div class="mobile-dpad-container" id="mobileDpad">
-        <button class="dpad-btn dpad-up" data-dir="up" aria-label="Arriba">▲</button>
-        <div class="dpad-row">
-          <button class="dpad-btn dpad-left" data-dir="left" aria-label="Izquierda">◀</button>
-          <button class="dpad-btn dpad-action" id="dpadActionBtn">MODO</button>
-          <button class="dpad-btn dpad-right" data-dir="right" aria-label="Derecha">▶</button>
+    <section class="results" id="results" hidden aria-labelledby="whoTitle">
+      <div class="toolbar">
+        <div class="who">
+          <h2 id="whoTitle"><span data-i18n="res.for">Piezas de</span> <span id="who"></span></h2>
+          <button type="button" class="link" id="changeUser" data-i18n="res.change">Cambiar usuario</button>
         </div>
-        <button class="dpad-btn dpad-down" data-dir="down" aria-label="Abajo">▼</button>
+        <div class="style-row">
+          <span class="label" id="themesLabel" data-i18n="res.style">Estilo</span>
+          <div class="themes" id="themes" role="radiogroup" aria-labelledby="themesLabel"></div>
+        </div>
+        <div class="style-row opts">
+          <label class="check"><input type="checkbox" id="adaptive" checked> <span data-i18n="res.adaptive">Cambiar con el modo claro u oscuro de GitHub</span></label>
+          <label class="inline" id="otherWrap"><span id="otherLabel"></span> <select id="otherTheme"></select></label>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div class="gallery" id="gallery"></div>
+
+        <aside class="readme" aria-labelledby="readmeTitle">
+          <div class="readme-head">
+            <h2 id="readmeTitle" data-i18n="readme.title">Tu README</h2>
+            <span class="count" id="count"></span>
+          </div>
+          <p class="muted" id="readmeHelp"></p>
+          <pre class="code" id="readmeCode" tabindex="0"></pre>
+          <div class="row">
+            <button type="button" class="btn primary" id="copyAll" data-i18n="readme.copy">Copiar todo</button>
+            <a class="btn" id="openProfile" target="_blank" rel="noopener noreferrer" data-i18n="readme.open">Abrir mi repositorio de perfil</a>
+          </div>
+        </aside>
+      </div>
+      <div class="dock" id="dock">
+        <span id="dockCount"></span>
+        <a class="btn small" href="#readmeTitle" data-i18n="dock.see">Ver código</a>
+        <button type="button" class="btn small primary" id="dockCopy" data-i18n="readme.copy">Copiar todo</button>
       </div>
     </section>
+  </main>
 
-    <!-- Pro Interaction Tools Bar -->
-    <section class="tools-bar">
-      <div class="tools-group">
-        <button id="modeBtn" class="btn btn-cyber-secondary tool-btn">
-          Control: IA Autonoma
-        </button>
-        <button id="duelBtn" class="btn btn-cyber-secondary tool-btn">
-          Modo Duelo (IA vs Jugador)
-        </button>
-        <button id="paintBtn" class="btn btn-cyber-secondary tool-btn">
-          Pintar: Inactivo
-        </button>
-        <button id="templateBtn" class="btn btn-cyber-secondary tool-btn">
-          Plantillas Art
-        </button>
-        <button id="audioBtn" class="btn btn-cyber-secondary tool-btn">
-          Audio: OFF
-        </button>
-      </div>
+  <footer class="foot">
+    <span class="brand small"><img src="assets/brand/mark.svg" alt="" width="18" height="18"> perfila</span>
+    <span data-i18n="foot.note">Todo es SVG con CSS: tu perfil no ejecuta JavaScript.</span>
+  </footer>
 
-      <div class="tools-group">
-        <button id="recordBtn" class="btn btn-cyber-secondary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-          <span id="recordBtnText">Grabar Video (Pantalla / Tablero)</span>
-        </button>
-        <button id="videoStudioBtn" class="btn btn-cyber-primary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3z"/></svg>
-          Video para redes
-        </button>
-        <button id="exportSvgBtn" class="btn btn-cyber-secondary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Exportar SVG Pro
-        </button>
-        <button id="exportYamlBtn" class="btn btn-cyber-primary tool-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          Poner en mi perfil
-        </button>
-      </div>
-    </section>
-
-    <!-- Real-time HUD Stats -->
-    <section class="hud-grid">
-      <div class="stat-card">
-        <span class="stat-label">Commits Restantes</span>
-        <div class="stat-value highlight" id="statRemaining">0</div>
-      </div>
-      <div class="stat-card" id="cardP1">
-        <span class="stat-label" id="labelP1">P1 (IA Verde) Puntos</span>
-        <div class="stat-value" id="statP1Score">0 pts</div>
-      </div>
-      <div class="stat-card" id="cardP2">
-        <span class="stat-label" id="labelP2">P2 (Jugador Cian) Puntos</span>
-        <div class="stat-value" style="color: #00f2fe;" id="statP2Score">0 pts</div>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Estado de la Partida</span>
-        <div class="stat-value" style="font-size: 0.90rem;" id="statState">Escaneando red...</div>
-      </div>
-    </section>
-
-    <!-- Playback & Simulation Controls -->
-    <section class="control-bar">
-      <div class="playback-controls">
-        <button id="playPauseBtn" class="btn btn-cyber-primary" style="padding: 0.65rem 1.2rem;">
-          <span id="playIcon">Pausar</span>
-        </button>
-        <button id="stepBtn" class="btn btn-cyber-secondary" style="padding: 0.65rem 1rem;">
-          Paso
-        </button>
-        <button id="resetBtn" class="btn btn-cyber-secondary" style="padding: 0.65rem 1rem;">
-          Reiniciar
-        </button>
-      </div>
-
-      <div class="slider-group">
-        <span>Frecuencia:</span>
-        <input type="range" id="speedSlider" min="1" max="9" value="5" step="1">
-        <span id="speedValue" style="color: var(--matrix-green); font-weight: 700; width: auto; white-space: nowrap;">5 t/s (Optimo)</span>
-      </div>
-
-      <div class="slider-group">
-        <span>Morfologia:</span>
-        <select id="snakeStyleSelect" class="cyber-select">
-          <option value="matrix_viper" selected>Cyber Matrix Viper</option>
-          <option value="capsule">Neon Capsule</option>
-          <option value="smooth">Laser Continuo</option>
-          <option value="retro">Pixel Block</option>
-        </select>
-      </div>
-    </section>
-
-    <!-- Duelo de Perfiles -->
-    <section id="duelSection" class="glass-panel">
-      <div class="section-title-bar">
-        <div>
-          <h2>Duelo de Perfiles</h2>
-          <p>Dos perfiles reales, la misma IA y 60 segundos. Gana el GitHub que mas commits le da de comer a su serpiente.</p>
-        </div>
-      </div>
-
-      <form id="duelForm" class="duel-form">
-        <input type="text" id="duelUserA" class="duel-input" placeholder="tu usuario" autocomplete="off" spellcheck="false" aria-label="Tu usuario de GitHub">
-        <span class="duel-vs">VS</span>
-        <input type="text" id="duelUserB" class="duel-input" placeholder="rival (ej: midudev)" autocomplete="off" spellcheck="false" aria-label="Usuario rival de GitHub">
-        <button type="submit" id="duelStartBtn" class="btn btn-cyber-primary">A pelear</button>
-      </form>
-      <p id="duelStatus" class="duel-status" role="status"></p>
-
-      <div id="duelArena" class="duel-arena" hidden>
-        <div class="duel-player" data-player="0">
-          <div class="duel-player-head">
-            <img class="duel-avatar" src="assets/logo.svg" alt="">
-            <span class="duel-name"></span>
-            <span class="duel-sim" hidden>datos simulados</span>
-            <span class="duel-score">0 pts</span>
-          </div>
-          <div class="duel-bar"><div class="duel-bar-fill"></div></div>
-          <div class="canvas-wrapper"><canvas class="duel-canvas"></canvas></div>
-        </div>
-
-        <div class="duel-timer"><span id="duelTimer">60</span>s</div>
-
-        <div class="duel-player" data-player="1">
-          <div class="duel-player-head">
-            <img class="duel-avatar" src="assets/logo.svg" alt="">
-            <span class="duel-name"></span>
-            <span class="duel-sim" hidden>datos simulados</span>
-            <span class="duel-score">0 pts</span>
-          </div>
-          <div class="duel-bar"><div class="duel-bar-fill"></div></div>
-          <div class="canvas-wrapper"><canvas class="duel-canvas"></canvas></div>
-        </div>
-
-        <div class="duel-actions">
-          <button type="button" id="duelSkipBtn" class="btn btn-cyber-secondary">Ver resultado ya</button>
-          <button type="button" id="duelRematchBtn" class="btn btn-cyber-secondary" hidden>Revancha</button>
-          <button type="button" id="duelShareBtn" class="btn btn-cyber-primary" hidden>Compartir en X</button>
-          <button type="button" id="duelCopyBtn" class="btn btn-cyber-secondary" hidden>Copiar enlace</button>
-          <button type="button" id="duelVideoBtn" class="btn btn-cyber-primary" hidden>Video del duelo</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Leaderboard / Ranking Section -->
-    <section class="glass-panel">
-      <div class="section-title-bar">
-        <div>
-          <h2>Perfiles Destacados</h2>
-          <p>Carga y devora la matriz de contribuciones real de algunos referentes del Open Source.</p>
-        </div>
-      </div>
-
-      <div id="leaderboardGrid" class="leaderboard-grid">
-        <!-- Renderizado dinamicamente desde JavaScript con Avatares -->
-      </div>
-    </section>
-
-    <!-- Technical Architecture / Documentation -->
-    <section class="docs-grid">
-      <div class="doc-card">
-        <h3>Renderizado Zero-Flicker a 60 FPS</h3>
-        <p>
-          Calcula la posicion de sub-pixel mediante <span class="code-badge">interpolacion lineal continua (LERP)</span> entre ticks discretos, eliminando cualquier vibracion o salto abrupto en la pantalla.
-        </p>
-      </div>
-      <div class="doc-card">
-        <h3>Pathfinding BFS + Lookahead</h3>
-        <p>
-          Ejecuta un arbol de busqueda en anchura que localiza los commits mas ricos energeticamente mientras utiliza un algoritmo de <span class="code-badge">Flood Fill de seguridad</span> para jamas quedar atrapada.
-        </p>
-      </div>
-      <div class="doc-card">
-        <h3>Sincronizacion con GitHub API</h3>
-        <p>
-          Parsea la matriz de 53 semanas x 7 dias en tiempo real y reacciona dinamicamente disipando la intensidad de cada commit devorado con particulas cuanticas.
-        </p>
-      </div>
-    </section>
-
-    <footer>
-      <p>&copy; GITHUB_SNAKE_MATRIX // CONSTRUIDO CON CANVAS 2D, LERP SUB-PIXEL & VANILLA JS</p>
-    </footer>
-  </div>
-
-  <!-- Modal Grabar Video HD / Pantalla Completa -->
-  <div id="modalRecordVideo" class="modal-backdrop">
-    <div class="modal-card" style="max-width: 550px;">
-      <div class="modal-header">
-        <h3>Grabacion de Video HD (Pantalla / Tablero)</h3>
-        <button id="closeRecordModalBtn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div style="display: flex; flex-direction: column; gap: 1.1rem;">
-          <div>
-            <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Que deseas capturar en el video?
-            </label>
-            <select id="recordSourceSelect" class="cyber-select" style="width: 100%;">
-              <option value="screen" selected>Pantalla o Pestana Completa (Perfil, avatar, velocidad y juego)</option>
-              <option value="canvas">Solo el Tablero de Juego (Canvas aislado)</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Duracion de la Grabacion:
-            </label>
-            <select id="recordDurationSelect" class="cyber-select" style="width: 100%;">
-              <option value="10" selected>10 segundos (Recomendado para X / Twitter)</option>
-              <option value="15">15 segundos</option>
-              <option value="20">20 segundos</option>
-              <option value="0">Manual (Hasta que presiones Detener)</option>
-            </select>
-          </div>
-
-          <div class="info-alert-box" style="margin-top: 0.35rem;">
-            <strong>Ideal para compartir en redes sociales:</strong>
-            <p style="margin-top: 0.25rem; font-size: 0.82rem;">
-              Al elegir <code>Pantalla o Pestana Completa</code>, tu navegador te mostrara una ventana para seleccionar que pestana compartir. Elige esta misma pestana y grabara con maxima fluidez a 60 FPS mostrando el usuario activo, avatar, controles de velocidad, estilo y el juego.
-            </p>
-          </div>
-        </div>
-
-        <button id="startRecordingActionBtn" class="btn btn-cyber-primary" style="width: 100%; margin-top: 1.4rem; padding: 0.85rem;">
-          Iniciar Grabacion
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Exportar SVG Personalizado -->
-  <div id="modalExportSvg" class="modal-backdrop">
-    <div class="modal-card" style="max-width: 580px;">
-      <div class="modal-header">
-        <h3>Configuracion de Exportacion SVG Animado</h3>
-        <button id="closeExportSvgModalBtn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-          <div>
-            <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Velocidad de Animacion (Pasos por segundo):
-            </label>
-            <select id="exportSpeedSelect" class="cyber-select" style="width: 100%;">
-              <option value="fast">Rapida (8 t/s - Animacion agil)</option>
-              <option value="normal" selected>Normal (5 t/s - Velocidad recomendada)</option>
-              <option value="relaxed">Relajada (3 t/s - Recorrido pausado)</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Tema / Paleta de Colores:
-            </label>
-            <select id="exportThemeSelect" class="cyber-select" style="width: 100%;">
-              <option value="dark" selected>Matrix Phosphor (Oscuro / Verde)</option>
-              <option value="light">Modo Claro (GitHub Light)</option>
-              <option value="cyberpunk">Cyberpunk Neon (Fucsia / Neón)</option>
-              <option value="neon_cyan">Cyber Cyan (Azul Eléctrico)</option>
-              <option value="amber_terminal">Amber CRT (Ámbar Retro)</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Morfologia de la Serpiente:
-            </label>
-            <select id="exportMorphSelect" class="cyber-select" style="width: 100%;">
-              <option value="matrix_viper" selected>Cyber Matrix Viper (Alto contraste con núcleo láser)</option>
-              <option value="capsule">Neon Capsule</option>
-              <option value="retro">Pixel Block (Retro 8-bit)</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; display: block;">
-              Pausa de Reinicio (Loop):
-            </label>
-            <select id="exportPauseSelect" class="cyber-select" style="width: 100%;">
-              <option value="fast" selected>Corta (1.5s de celebracion)</option>
-              <option value="medium">Larga (2.5s de celebracion)</option>
-              <option value="none">Sin pausa (bucle continuo, sin celebracion)</option>
-            </select>
-          </div>
-        </div>
-
-        <button id="confirmExportSvgBtn" class="btn btn-cyber-primary" style="width: 100%; margin-top: 1.5rem; padding: 0.85rem;">
-          Descargar Archivo SVG
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Fin de Partida / Victoria -->
-  <div id="modalGameOver" class="modal-backdrop">
-    <div class="modal-card victory-card">
-      <div class="modal-header">
-        <h3 id="victoryTitle">PARTIDA FINALIZADA // MATRIZ 100% PURIFICADA</h3>
-        <button id="closeGameOverBtn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="winner-announcement" id="winnerAnnouncement">
-          <div class="winner-badge" id="winnerBadge">VICTORIA DEL JUGADOR</div>
-          <p id="winnerSummary">Se han devorado todos los commits del perfil.</p>
-        </div>
-
-        <div class="duel-results-grid">
-          <div class="result-player-box p1-box">
-            <div class="player-tag">SERPIENTE 1 (IA VERDE)</div>
-            <div class="result-score" id="resP1Score">0 pts</div>
-            <div class="result-stat">Commits devorados: <span id="resP1Eaten">0</span></div>
-            <div class="result-stat">Porcentaje del mapa: <span id="resP1Percent">0%</span></div>
-          </div>
-          <div class="result-player-box p2-box" id="resP2Box">
-            <div class="player-tag" style="color: #00f2fe;">SERPIENTE 2 (JUGADOR CIAN)</div>
-            <div class="result-score" style="color: #00f2fe;" id="resP2Score">0 pts</div>
-            <div class="result-stat">Commits devorados: <span id="resP2Eaten">0</span></div>
-            <div class="result-stat">Porcentaje del mapa: <span id="resP2Percent">0%</span></div>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
-          <button id="rematchBtn" class="btn btn-cyber-primary" style="flex: 1.2;">Nueva Partida / Revancha</button>
-          <button id="shareTwitterBtn" class="btn btn-cyber-secondary" style="flex: 1; border-color: #1da1f2; color: #1da1f2; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Compartir en X
-          </button>
-          <button id="victoryExportSvgBtn" class="btn btn-cyber-secondary" style="flex: 1;">Exportar SVG</button>
-        </div>
-
-        <div class="star-cta-box" style="margin-top: 1.25rem; padding: 0.85rem 1rem; background: rgba(0, 255, 102, 0.05); border: 1px dashed var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-          <span style="font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono);">
-            ¿Te ha gustado el proyecto? Apóyalo con una estrella:
-          </span>
-          <a href="https://github.com/luisrodriguez-rgb/GITHUB_SNAKE.EXE" target="_blank" rel="noopener noreferrer" class="btn btn-cyber-primary tool-btn" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; white-space: nowrap;">
-            Star en GitHub ★
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast de Logros Desbloqueados -->
-  <div id="achievementToast" class="achievement-toast">
-    <div class="toast-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-    </div>
-    <div class="toast-content">
-      <span class="toast-tag">LOGRO DESBLOQUEADO</span>
-      <h4 id="toastTitle">Primer Bocado</h4>
-      <p id="toastDesc">Devora tu primer commit de la matriz.</p>
-    </div>
-  </div>
-
-  <!-- Modal Plantillas Commit Art y Generador de Texto -->
-  <div id="modalTemplates" class="modal-backdrop">
-    <div class="modal-card" style="max-width: 720px;">
-      <div class="modal-header">
-        <h3>Galeria y Creador de Commit Art</h3>
-        <button id="closeTemplatesModalBtn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        
-        <!-- Creador de Texto Personalizado -->
-        <div class="custom-word-card">
-          <h4>Escribe tu Propio Texto o Palabra</h4>
-          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.85rem;">
-            Escribe cualquier palabra o frase (ej: tu nombre, tu lenguaje favorito o mensaje) y se convertira en pixeles de GitHub:
-          </p>
-          <div class="custom-input-row">
-            <input type="text" id="customWordInput" placeholder="Escribe aqui (ej: LUIS, DEV, REACT, HIRE ME, JS)..." value="DEV" maxlength="14" spellcheck="false" autocomplete="off">
-            <button id="applyCustomWordBtn" class="btn btn-cyber-primary" style="padding: 0.65rem 1.1rem;">Pintar en Juego</button>
-            <button id="scriptCustomWordBtn" class="btn btn-cyber-secondary" style="padding: 0.65rem 1.1rem;">Script Git (.sh)</button>
-          </div>
-        </div>
-
-        <div class="info-alert-box" style="margin-top: 1rem;">
-          <strong>¿Para que sirve el Script Git (.sh)?</strong>
-          <p>
-            Al descargar el script <code>.sh</code>, puedes ejecutarlo en una carpeta vacia de tu computadora para crear esos commits con fechas reales y subirlos a tu cuenta de GitHub, dejando esa palabra pintada en tu perfil real.
-          </p>
-        </div>
-
-        <!-- Plantillas Rápidas Predefinidas -->
-        <h4 style="margin-top: 1.25rem; margin-bottom: 0.75rem; font-size: 0.95rem; font-family: var(--font-mono);">Plantillas Rapidas de Iconos y Simbolos:</h4>
-        <div class="templates-list">
-          <div class="template-item">
-            <div>
-              <h4>HIRE ME</h4>
-              <p>Texto grande para captar atencion de reclutadores</p>
-            </div>
-            <div style="display:flex; gap: 0.5rem;">
-              <button class="btn btn-cyber-secondary tool-btn load-tpl-btn" data-tpl="hire_me">Cargar</button>
-              <button class="btn btn-cyber-primary tool-btn script-tpl-btn" data-tpl="hire_me">Script Git</button>
-            </div>
-          </div>
-          <div class="template-item">
-            <div>
-              <h4>&lt;CODE /&gt;</h4>
-              <p>Etiqueta clasica de codigo de programacion</p>
-            </div>
-            <div style="display:flex; gap: 0.5rem;">
-              <button class="btn btn-cyber-secondary tool-btn load-tpl-btn" data-tpl="code">Cargar</button>
-              <button class="btn btn-cyber-primary tool-btn script-tpl-btn" data-tpl="code">Script Git</button>
-            </div>
-          </div>
-          <div class="template-item">
-            <div>
-              <h4>Space Invader</h4>
-              <p>Icono clasico alienigena retro de 8 bits</p>
-            </div>
-            <div style="display:flex; gap: 0.5rem;">
-              <button class="btn btn-cyber-secondary tool-btn load-tpl-btn" data-tpl="invader">Cargar</button>
-              <button class="btn btn-cyber-primary tool-btn script-tpl-btn" data-tpl="invader">Script Git</button>
-            </div>
-          </div>
-          <div class="template-item">
-            <div>
-              <h4>Open Source Heart</h4>
-              <p>Corazones en cadena pixelada de codigo abierto</p>
-            </div>
-            <div style="display:flex; gap: 0.5rem;">
-              <button class="btn btn-cyber-secondary tool-btn load-tpl-btn" data-tpl="heart">Cargar</button>
-              <button class="btn btn-cyber-primary tool-btn script-tpl-btn" data-tpl="heart">Script Git</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Logros / Medallas -->
-  <div id="modalAchievements" class="modal-backdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Panel de Logros y Medallas</h3>
-        <button id="closeAchModalBtn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div id="achievementsListContainer" class="achievements-modal-list">
-          <!-- Renderizado dinámicamente -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Estudio de Video para redes -->
-  <div id="modalVideoStudio" class="modal-backdrop">
-    <div class="modal-card wf-card">
-      <div class="modal-header">
-        <h3>Video para redes</h3>
-        <button id="closeVideoStudioBtn" class="modal-close-btn" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="wf-step">MP4 listo para X, LinkedIn, Instagram, TikTok o YouTube Shorts. Se genera en tu navegador.</p>
-
-        <p id="vsDirectNote" class="wf-step" hidden>Clip vertical 9:16. Empieza a comer en el primer segundo.</p>
-        <div id="vsChooser">
-        <div class="wf-mode" role="radiogroup" aria-label="Contenido">
-          <label><input type="radio" name="vsContent" value="profile" checked> Mi perfil</label>
-          <label><input type="radio" name="vsContent" value="duel" id="vsContentDuel" disabled> Último duelo</label>
-        </div>
-
-        <div class="vs-formats" role="radiogroup" aria-label="Formato">
-          <label class="vs-format"><input type="radio" name="vsFormat" value="landscape" checked><span class="vs-shape vs-shape-landscape"></span><strong>Horizontal 16:9</strong><small>X, LinkedIn</small></label>
-          <label class="vs-format"><input type="radio" name="vsFormat" value="square"><span class="vs-shape vs-shape-square"></span><strong>Cuadrado 1:1</strong><small>X, LinkedIn, Instagram</small></label>
-          <label class="vs-format"><input type="radio" name="vsFormat" value="vertical"><span class="vs-shape vs-shape-vertical"></span><strong>Vertical 9:16</strong><small>Reels, TikTok, Shorts</small></label>
-        </div>
-
-        <div class="wf-grid">
-          <div>
-            <label class="wf-label" for="vsTheme">Tema</label>
-            <select id="vsTheme" class="cyber-select"></select>
-          </div>
-        </div>
-        </div>
-
-        <button id="vsGenerateBtn" class="btn btn-cyber-primary" style="width: 100%;">Generar video</button>
-        <div id="vsProgress" class="vs-progress" hidden><div id="vsProgressFill" class="vs-progress-fill"></div></div>
-        <p id="vsStatus" class="duel-status" role="status"></p>
-
-        <div id="vsResult" hidden>
-          <video id="vsPreview" class="vs-preview" controls loop muted playsinline></video>
-          <div class="duel-actions">
-            <button type="button" id="vsShareBtn" class="btn btn-cyber-primary">Compartir</button>
-            <button type="button" id="vsDownloadBtn" class="btn btn-cyber-secondary">Descargar MP4</button>
-            <button type="button" id="vsOpenXBtn" class="btn btn-cyber-secondary">Abrir X con el texto</button>
-          </div>
-          <p class="wf-step" style="margin-top: 1rem;">Texto sugerido para el post:</p>
-          <textarea id="vsPostText" class="code-box" style="height: 90px;"></textarea>
-          <button type="button" id="vsCopyTextBtn" class="btn btn-cyber-secondary" style="width: 100%;">Copiar texto</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal GitHub Actions Workflow -->
-  <div id="modalWorkflow" class="modal-backdrop">
-    <div class="modal-card wf-card">
-      <div class="modal-header">
-        <h3>Pon la serpiente en tu perfil de GitHub</h3>
-        <button id="closeModalBtn" class="modal-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div id="wfMethod" class="wf-mode" role="radiogroup" aria-label="Metodo" hidden>
-          <label><input type="radio" name="wfMethodChoice" value="endpoint" checked> Enlace directo (sin configurar nada)</label>
-          <label><input type="radio" name="wfMethodChoice" value="action"> Workflow en tu repositorio</label>
-        </div>
-
-        <p class="wf-step">1. Elige el estilo:</p>
-
-        <div class="wf-mode" role="radiogroup" aria-label="Modo de color">
-          <label><input type="radio" name="wfMode" value="adaptive" checked> Automatico (claro / oscuro segun el visitante)</label>
-          <label><input type="radio" name="wfMode" value="single"> Siempre el mismo estilo</label>
-        </div>
-
-        <div class="wf-grid">
-          <div id="wfDarkField">
-            <label class="wf-label" for="wfDarkTheme" id="wfDarkLabel">Tema en modo oscuro</label>
-            <select id="wfDarkTheme" class="cyber-select"></select>
-          </div>
-          <div id="wfLightField">
-            <label class="wf-label" for="wfLightTheme">Tema en modo claro</label>
-            <select id="wfLightTheme" class="cyber-select"></select>
-          </div>
-          <div>
-            <label class="wf-label" for="wfMorph">Serpiente</label>
-            <select id="wfMorph" class="cyber-select"></select>
-          </div>
-          <div>
-            <label class="wf-label" for="wfSpeed">Velocidad</label>
-            <select id="wfSpeed" class="cyber-select"></select>
-          </div>
-          <div>
-            <label class="wf-label" for="wfPause">Pausa del bucle</label>
-            <select id="wfPause" class="cyber-select"></select>
-          </div>
-        </div>
-
-        <div class="wf-preview">
-          <figure id="wfPreviewDarkBox">
-            <img id="wfPreviewDark" src="assets/logo.svg" alt="Vista previa del SVG en modo oscuro">
-            <figcaption id="wfPreviewDarkCaption">Modo oscuro</figcaption>
-          </figure>
-          <figure id="wfPreviewLightBox">
-            <img id="wfPreviewLight" src="assets/logo.svg" alt="Vista previa del SVG en modo claro">
-            <figcaption>Modo claro</figcaption>
-          </figure>
-        </div>
-
-        <div id="wfActionSteps">
-          <p class="wf-step">2. Crea <code>.github/workflows/snake.yml</code> en tu repositorio <code>usuario/usuario</code>:</p>
-          <textarea id="yamlOutput" readonly class="code-box"></textarea>
-          <button id="copyYamlBtn" class="btn btn-cyber-primary" style="width: 100%; margin-bottom: 1.2rem;">Copiar YAML</button>
-
-          <p class="wf-step">3. Ejecutalo en <strong>Actions &rarr; GitHub Snake &rarr; Run workflow</strong> y pega esto en tu <code>README.md</code>:</p>
-        </div>
-        <p id="wfEndpointStep" class="wf-step" hidden>2. Pega esto en tu <code>README.md</code>. Se actualiza solo cada pocas horas:</p>
-        <textarea id="readmeOutput" readonly class="code-box" style="height: 90px;"></textarea>
-        <button id="copyReadmeBtn" class="btn btn-cyber-secondary" style="width: 100%;">Copiar Markdown</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/i18n.js?v=20261028-clip"></script>
-  <script src="js/calendar.js?v=20261028-clip"></script>
-  <script src="js/analytics.js?v=20261028-clip"></script>
-  <script src="js/audio.js?v=20261028-clip"></script>
-  <script src="js/recorder.js?v=20261028-clip"></script>
-  <script src="js/templates.js?v=20261028-clip"></script>
-  <script src="js/achievements.js?v=20261028-clip"></script>
-  <script src="shared/theme-tokens.js?v=20261028-clip"></script>
-  <script src="js/exporter.js?v=20261028-clip"></script>
-  <script src="js/github.js?v=20261028-clip"></script>
-  <script src="js/pathfinding.js?v=20261028-clip"></script>
-  <script src="js/snake.js?v=20261028-clip"></script>
-  <script src="js/renderer.js?v=20261028-clip"></script>
-  <script src="js/duel.js?v=20261028-clip"></script>
-  <script src="js/video-studio.js?v=20261028-clip"></script>
-  <script src="js/app.js?v=20261028-clip"></script>
-  <!-- Cloudflare Web Analytics -->
-  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3e77b1cd85dc43deb7ca6f16ca8c9fef"}'></script>
-  <!-- End Cloudflare Web Analytics -->
+  <script src="shared/brand.js?v=1"></script>
+  <script src="shared/theme-tokens.js?v=1"></script>
+  <script src="shared/kit-snippet.js?v=1"></script>
+  <script src="js/site.js?v=1"></script>
 </body>
 </html>

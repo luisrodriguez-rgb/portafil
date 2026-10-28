@@ -16,7 +16,8 @@ class GitHubFetcher {
     // Endpoint propio (meta snake-api en index.html): API oficial de GitHub con caché en CDN.
     // En la GitHub Action no hay document y no se usa
     const meta = typeof document !== 'undefined' ? document.querySelector('meta[name="snake-api"]') : null;
-    this.calendarApiBase = ((meta && meta.content) || '').trim().replace(/\/$/, '');
+    const sameOrigin = typeof location !== 'undefined' && location.protocol.startsWith('http') ? location.origin : '';
+    this.calendarApiBase = (((meta && meta.content) || '').trim() || (meta ? sameOrigin : '')).replace(/\/$/, '');
 
     this.topDevelopers = [
       {

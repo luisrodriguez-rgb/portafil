@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const recordingOptions = {
       duration: duration,
-      filenamePrefix: `github-snake-${currentUsername}`
+      filenamePrefix: `perfila-${currentUsername}`
     };
 
     const onProgress = (time) => {
@@ -1016,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   exportSvgBtn.addEventListener('click', () => {
     sound.playClick();
     // Sincronizar con el tema actual
-    const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+    const currentTheme = document.body.getAttribute('data-theme') || 'ink';
     exportThemeSelect.value = currentTheme;
     modalExportSvg.classList.add('visible');
   });
@@ -1056,7 +1056,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const wfActionSteps = document.getElementById('wfActionSteps');
   const wfEndpointStep = document.getElementById('wfEndpointStep');
   // Endpoint SVG desplegado (meta snake-api en index.html). Sin él solo se ofrece el workflow
-  const snakeApiBase = (document.querySelector('meta[name="snake-api"]')?.content || '').trim().replace(/\/$/, '');
+  // Sin valor en la meta, la API está en el mismo dominio que la web (despliegue en Vercel)
+  const snakeApiBase = ((document.querySelector('meta[name="snake-api"]')?.content || '').trim() || (location.protocol.startsWith('http') ? location.origin : '')).replace(/\/$/, '');
   wfMethod.hidden = !snakeApiBase;
 
   // Las opciones salen de los selectores del exportador SVG para no duplicar listas
@@ -1065,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   wfMorph.innerHTML = exportMorphSelect.innerHTML;
   wfSpeed.innerHTML = exportSpeedSelect.innerHTML;
   wfPause.innerHTML = exportPauseSelect.innerHTML;
-  wfDarkTheme.value = 'dark';
+  wfDarkTheme.value = 'ink';
   wfLightTheme.value = 'light';
   wfMorph.value = 'matrix_viper';
   wfSpeed.value = 'normal';
@@ -1196,7 +1197,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Contador Dinamico de Estrellas en GitHub
   async function updateGitHubStarsBadge() {
     try {
-      const res = await fetch('https://api.github.com/repos/luisrodriguez-rgb/GITHUB_SNAKE.EXE');
+      // Solo cuando el repositorio público exista (shared/brand.js)
+      if (!window.Brand || !Brand.repo) return;
+      const res = await fetch(`https://api.github.com/repos/${Brand.repo}`);
       if (res.ok) {
         const data = await res.json();
         const count = data.stargazers_count !== undefined ? data.stargazers_count : 0;
@@ -1396,7 +1399,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const videoStudio = new VideoStudio(exporter);
   let vsVideo = null; // { blob, url, file, extension }
   vsTheme.innerHTML = exportThemeSelect.innerHTML;
-  vsTheme.value = 'dark';
+  vsTheme.value = 'ink';
 
   /** El empaquetador MP4 (74 KB) solo se descarga al generar el primer video */
   let muxerLoading = null;
@@ -1522,7 +1525,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         out = await videoStudio.render({ grid, user: gridOwner, lang: I18n.lang, theme: vsTheme.value, format, shareUrl: link, avatar, onProgress });
       }
       if (vsVideo) URL.revokeObjectURL(vsVideo.url);
-      const name = `github-snake-${fileOwner}-${format}.${out.extension}`;
+      const name = `perfila-${fileOwner}-${format}.${out.extension}`;
       vsVideo = { ...out, url: URL.createObjectURL(out.blob), file: new File([out.blob], name, { type: out.mimeType.split(';')[0] }) };
       vsPreview.src = vsVideo.url;
       vsPreview.play().catch(() => {});

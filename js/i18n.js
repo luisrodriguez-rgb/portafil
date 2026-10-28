@@ -7,6 +7,10 @@
 
 const STATIC_EN = {
   // Cabecera y entrada
+  'estudio': 'studio',
+  'Juega, compite y graba clips con tu gráfico de contribuciones': 'Play, compete and record clips with your contribution graph',
+  'Tinta (neutro oscuro)': 'Ink (neutral dark)',
+  'Papel (neutro claro)': 'Paper (neutral light)',
   'Logros: 0/7': 'Achievements: 0/7',
   'Matrix Phosphor (Oscuro)': 'Matrix Phosphor (Dark)',
   'Modo Claro (GitHub Light)': 'Light Mode (GitHub Light)',
@@ -56,23 +60,6 @@ const STATIC_EN = {
   'Copiar enlace': 'Copy link',
 
   // Perfiles destacados y documentación
-  'Perfiles Destacados': 'Featured Profiles',
-  'Carga y devora la matriz de contribuciones real de algunos referentes del Open Source.':
-    'Load and devour the real contribution grid of some Open Source leaders.',
-  'Renderizado Zero-Flicker a 60 FPS': 'Zero-Flicker 60 FPS Rendering',
-  'Calcula la posicion de sub-pixel mediante': 'Computes sub-pixel positions with',
-  'interpolacion lineal continua (LERP)': 'continuous linear interpolation (LERP)',
-  'entre ticks discretos, eliminando cualquier vibracion o salto abrupto en la pantalla.':
-    'between discrete ticks, removing any jitter or sudden jumps on screen.',
-  'Ejecuta un arbol de busqueda en anchura que localiza los commits mas ricos energeticamente mientras utiliza un algoritmo de':
-    'Runs a breadth-first search to reach the nearest commits while using a',
-  'Flood Fill de seguridad': 'safety Flood Fill',
-  'para jamas quedar atrapada.': 'check so it never traps itself.',
-  'Sincronizacion con GitHub API': 'GitHub API Sync',
-  'Parsea la matriz de 53 semanas x 7 dias en tiempo real y reacciona dinamicamente disipando la intensidad de cada commit devorado con particulas cuanticas.':
-    'Parses the 53-week x 7-day grid in real time and fades each devoured commit with particle effects.',
-  '© GITHUB_SNAKE_MATRIX // CONSTRUIDO CON CANVAS 2D, LERP SUB-PIXEL & VANILLA JS':
-    '© GITHUB_SNAKE_MATRIX // BUILT WITH CANVAS 2D, SUB-PIXEL LERP & VANILLA JS',
 
   // Modal de video
   'Grabacion de Video HD (Pantalla / Tablero)': 'HD Video Recording (Screen / Board)',
@@ -120,8 +107,6 @@ const STATIC_EN = {
   'SERPIENTE 2 (JUGADOR CIAN)': 'SNAKE 2 (CYAN PLAYER)',
   'Nueva Partida / Revancha': 'New Game / Rematch',
   'Exportar SVG': 'Export SVG',
-  '¿Te ha gustado el proyecto? Apóyalo con una estrella:': 'Enjoying the project? Support it with a star:',
-  'Star en GitHub ★': 'Star on GitHub ★',
   'LOGRO DESBLOQUEADO': 'ACHIEVEMENT UNLOCKED',
   'Primer Bocado': 'First Bite',
   'Devora tu primer commit de la matriz.': 'Devour your first commit.',
@@ -191,7 +176,6 @@ const STATIC_EN = {
   'Cerrar': 'Close',
 
   // Atributos (placeholder, title, aria-label, alt)
-  'Ver repositorio y dar estrella en GitHub': 'View the repository and star it on GitHub',
   'usuario o enlace (ej: midudev, torvalds, https://github.com/antfu)...': 'username or link (e.g. midudev, torvalds, https://github.com/antfu)...',
   'Arriba': 'Up',
   'Izquierda': 'Left',
