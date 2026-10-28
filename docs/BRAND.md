@@ -6,6 +6,8 @@
 
 Se llamó *Perfila* hasta el 28-10-2026: el nombre y perfila.vercel.app ya los usaba otro producto (un diagnóstico de Instagram con IA). Comprobado ese día para *Portafil*: libres portafil.vercel.app, la cuenta github.com/portafil, el paquete de npm y los dominios portafil.com, .dev y .app; ningún producto con ese nombre. El riesgo conocido: en inglés recuerda a *portafilter* (la pieza de la cafetera espresso), de otro sector.
 
+Dominio: portafil.vercel.app no se pudo añadir en Vercel (estaba reservado aunque no tenía despliegue), así que la web va en **perfila-lr.vercel.app** (`Brand.site`) hasta tener dominio propio; portafil.com seguía libre.
+
 Otros candidatos que se valoraron: *Celdafy*, *Perfilux* (se parece a *Profilux* y a *Perfila*), *Cellfolio*. Antes ya se habían descartado *Facet* (genérico y ocupado), *Lienzo* (difícil en inglés) y *Readmi* (demasiado atado al archivo README).
 
 No usar "GitHub" ni "Octo" en el nombre ni en el logo: son marcas de GitHub.

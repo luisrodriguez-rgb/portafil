@@ -7,7 +7,7 @@
 const Brand = {
   name: 'Portafil',
   // Dominio público de la web y la API (provisional hasta elegir dominio)
-  site: 'https://portafil.vercel.app',
+  site: 'https://perfila-lr.vercel.app',
   // Repositorio público (owner/nombre): la web enlaza a él y el estudio ofrece la Action cuando su etiqueta existe
   repo: 'luisrodriguez-rgb/portafil',
   // Perfil público que se usa en los ejemplos de la web y de examples/ (el del autor)

@@ -4,12 +4,12 @@ Orden de trabajo para sacar Portafil al público. Lo que depende del autor (cuen
 
 ## 1. Antes de anunciar nada
 
-Estado al 28-10-2026: el repositorio luisrodriguez-rgb/portafil es público y tiene la etiqueta `v1`; la web está desplegada en https://perfila-mauve.vercel.app sin `GITHUB_TOKEN` (todas las piezas dan 500).
+Estado al 28-10-2026: el repositorio luisrodriguez-rgb/portafil es público y tiene la etiqueta `v1`; la web está desplegada en https://perfila-lr.vercel.app con `GITHUB_TOKEN` y datos oficiales. Falta subir el arreglo de las tarjetas para redes (`/api/og/...` daban 400).
 
 | | Tarea | Cómo comprobarlo |
 | --- | --- | --- |
-| 👤 | En Vercel, *Settings → Environment Variables*: `GITHUB_TOKEN` con un token *fine-grained* sin ningún permiso (solo lee datos públicos), en Production y Preview. Después *Deployments → Redeploy* | `npm run check:deploy -- https://perfila-mauve.vercel.app` |
-| 👤 | En Vercel, *Settings → Domains → Add*: `portafil.vercel.app` (es gratis y está libre). Es el dominio de `Brand.site`, de los README y de `examples/`: sin él, sus imágenes no cargan. Con dominio propio más adelante, cambiar `site` en `shared/brand.js` y `node scripts/build-examples.js` | `npm run check:deploy` (sin URL usa `Brand.site`) |
+| ✅ | En Vercel, *Settings → Environment Variables*: `GITHUB_TOKEN` con un token sin ningún permiso (solo lee datos públicos), en Production y Preview, y *Redeploy* | `npm run check:deploy` |
+| ✅ | Dominio: `perfila-lr.vercel.app` (portafil.vercel.app estaba reservado). Es el de `Brand.site`, los README y `examples/`. Con dominio propio más adelante, cambiar `site` en `shared/brand.js` y `node scripts/build-examples.js` | `npm run check:deploy` (sin URL usa `Brand.site`) |
 | 👤 | Opcional, para tráfico alto: en Vercel, *Storage → Upstash (Redis)* y conectarlo al proyecto; crea `KV_REST_API_URL` y `KV_REST_API_TOKEN` y la caché se comparte entre instancias (`server/cache.js`) | en los logs, menos consultas a GitHub |
 | 👤 | Datos del repositorio en GitHub (descripción, web y temas), con el comando de abajo o desde la rueda de *About* | se ven en la portada del repositorio |
 | 👤 | Poner el perfil del autor con Portafil: hay una propuesta en `docs/launch/perfil-autor.md` | se ve en `github.com/luisrodriguez-rgb` |
@@ -19,15 +19,15 @@ Estado al 28-10-2026: el repositorio luisrodriguez-rgb/portafil es público y ti
 Datos del repositorio (con `gh auth login` hecho):
 
 ```bash
-gh repo edit luisrodriguez-rgb/portafil --description "Tu perfil de GitHub con un solo estilo: cabecera, estadísticas, racha, lenguajes, juegos sobre tu gráfico de contribuciones y duelos. SVG animado, sin JavaScript." --homepage https://portafil.vercel.app --add-topic github-profile,profile-readme,readme,github-stats,github-readme-stats,svg,contribution-graph,github-actions
+gh repo edit luisrodriguez-rgb/portafil --description "Tu perfil de GitHub con un solo estilo: cabecera, estadísticas, racha, lenguajes, juegos sobre tu gráfico de contribuciones y duelos. SVG animado, sin JavaScript." --homepage https://perfila-lr.vercel.app --add-topic github-profile,profile-readme,readme,github-stats,github-readme-stats,svg,contribution-graph,github-actions
 ```
 
 `npm run check:deploy` recorre la web y cada ruta de `vercel.json` con un usuario real, y comprueba código 200, tipo de contenido, cabeceras de seguridad y que los datos vienen de la API oficial. Además, a ojo:
 
 ```text
-https://portafil.vercel.app/?u=USUARIO
-https://portafil.vercel.app/play.html?u=USUARIO
-https://portafil.vercel.app/duel/USUARIO-vs-torvalds
+https://perfila-lr.vercel.app/?u=USUARIO
+https://perfila-lr.vercel.app/play.html?u=USUARIO
+https://perfila-lr.vercel.app/duel/USUARIO-vs-torvalds
 ```
 
 Comprobar también la vista previa del enlace `/u/USUARIO` y `/duel/...` con el inspector de tarjetas de X o LinkedIn (Post Inspector).

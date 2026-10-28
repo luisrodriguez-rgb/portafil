@@ -12,41 +12,41 @@ Cambia `theme=ink` / `theme=paper` por cualquiera de `dark`, `light`, `cyberpunk
 
 ```html
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/header/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/header/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario by Portafil" src="https://portafil.vercel.app/api/header/tu-usuario.svg?theme=paper&lang=es" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/header/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/header/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario by Portafil" src="https://perfila-lr.vercel.app/api/header/tu-usuario.svg?theme=paper&lang=es" width="100%">
 </picture>
 
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/stats/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario stats" src="https://portafil.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="390">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/stats/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario stats" src="https://perfila-lr.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario streak" src="https://portafil.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario streak" src="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/langs/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario languages" src="https://portafil.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="390">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/langs/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario languages" src="https://perfila-lr.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/activity/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario weekly activity" src="https://portafil.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="390">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/activity/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario weekly activity" src="https://perfila-lr.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="snake eating @tu-usuario contributions by Portafil" src="https://portafil.vercel.app/api/tu-usuario.svg?theme=paper&lang=es" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="snake eating @tu-usuario contributions by Portafil" src="https://perfila-lr.vercel.app/api/tu-usuario.svg?theme=paper&lang=es" width="100%">
 </picture>
 ```
 
@@ -56,9 +56,9 @@ Cualquier pieza funciona sola. Por ejemplo, solo la racha:
 
 ```html
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario streak" src="https://portafil.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario streak" src="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="390">
 </picture>
 ```
 
@@ -67,11 +67,11 @@ Cualquier pieza funciona sola. Por ejemplo, solo la racha:
 El duelo enlaza a su página, donde cualquiera puede verlo en grande y retar al ganador:
 
 ```html
-<a href="https://portafil.vercel.app/duel/tu-usuario-vs-rival">
+<a href="https://perfila-lr.vercel.app/duel/tu-usuario-vs-rival">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://portafil.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=ink&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://portafil.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=paper&lang=es">
-  <img alt="@tu-usuario vs @rival duel" src="https://portafil.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=paper&lang=es" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario vs @rival duel" src="https://perfila-lr.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=paper&lang=es" width="100%">
 </picture>
 </a>
 ```
@@ -79,5 +79,5 @@ El duelo enlaza a su página, donde cualquiera puede verlo en grande y retar al 
 ## Todo en una imagen
 
 ```html
-<img src="https://portafil.vercel.app/api/kit/tu-usuario.svg?theme=ink&lang=es" width="100%">
+<img src="https://perfila-lr.vercel.app/api/kit/tu-usuario.svg?theme=ink&lang=es" width="100%">
 ```

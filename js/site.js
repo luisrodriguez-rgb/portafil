@@ -73,7 +73,7 @@
       speed: { normal: 'Normal', fast: 'Rápida', relaxed: 'Tranquila' },
       themes: { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub claro', cyberpunk: 'Cyberpunk', neon_cyan: 'Cian', amber_terminal: 'Ámbar' },
       pieces: {
-        header: ['Cabecera', 'Avatar, nombre, bio y cifras (repos con forks, como GitHub)'],
+        header: ['Cabecera', 'Avatar, nombre, bio y cifras (repos propios, sin forks)'],
         stats: ['Estadísticas', 'Contribuciones, commits, PRs, issues, reviews'],
         streak: ['Racha', 'Actual, más larga y últimos 30 días'],
         langs: ['Lenguajes', 'Por tamaño de código, sin forks'],
@@ -150,7 +150,7 @@
       speed: { normal: 'Normal', fast: 'Fast', relaxed: 'Relaxed' },
       themes: { ink: 'Ink', paper: 'Paper', dark: 'Phosphor', light: 'GitHub light', cyberpunk: 'Cyberpunk', neon_cyan: 'Cyan', amber_terminal: 'Amber' },
       pieces: {
-        header: ['Header', 'Avatar, name, bio and numbers (repos include forks, as on GitHub)'],
+        header: ['Header', 'Avatar, name, bio and numbers (own repos, no forks)'],
         stats: ['Stats', 'Contributions, commits, PRs, issues, reviews'],
         streak: ['Streak', 'Current, longest and last 30 days'],
         langs: ['Languages', 'By code size, no forks'],
