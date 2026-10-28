@@ -30,7 +30,7 @@ Estado: ✅ hecho · 🟡 parcial · ⬜ pendiente
 | ✅ | Estudio rediseñado con el lenguaje de la portada: cabecera común, tablero en una tarjeta, controles y herramientas agrupados (Jugar / Llévatelo), modales limpios, sin lluvia matrix ni brillos; la página es neutra y el tema solo colorea el tablero | `play.html`, `css/studio.css` |
 | ⬜ | Logo definitivo: trazado propio para el nombre (hoy usa la tipografía del sistema) | `assets/brand/` |
 | ✅ | Servidor local que sirve la web y la API como Vercel, con datos de prueba sin token | `scripts/dev-server.js` |
-| ⬜ | Conectar el repositorio remoto que pase el autor, poner `repo` y `actionRef` en `shared/brand.js` y hacer push | — |
+| ✅ | Conectar el repositorio remoto (github.com/luisrodriguez-rgb/portafil), con `repo` y `actionRef` en `shared/brand.js`; falta publicar la etiqueta `v1` de la Action | — |
 | ⬜ | Elegir dominio y desplegar en Vercel con `GITHUB_TOKEN`; cambiar `site` en `shared/brand.js` | — |
 | ⬜ | Comprobar disponibilidad del nombre y el dominio | — |
 

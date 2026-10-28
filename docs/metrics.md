@@ -46,7 +46,7 @@ La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 6 h)
 ## 2. Repositorio (alcance)
 
 ```bash
-GITHUB_TOKEN=<token con acceso al repo> node scripts/baseline.js <owner/repo>
+GITHUB_TOKEN=ghp_xxx node scripts/baseline.js luisrodriguez-rgb/Perfila
 ```
 
 Guarda `docs/metrics/baseline-<fecha>.json` con estrellas, forks, visitas y clones de 14 días, principales referentes, y una aproximación de adopción por búsqueda de código (READMEs que enlazan el endpoint y workflows que usan la Action). Ejecutarlo al cerrar cada fase para comparar.

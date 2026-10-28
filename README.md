@@ -43,7 +43,7 @@ En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo 
 Si prefieres no depender del servidor, la Action genera la serpiente en tu propio repositorio:
 
 ```yaml
-- uses: portafil/portafil@v1   # referencia provisional, ver shared/brand.js
+- uses: luisrodriguez-rgb/portafil@v1
   with:
     github_user_name: tu-usuario
     outputs: |
@@ -59,10 +59,12 @@ Node 20 o superior. Una sola dependencia, `@resvg/resvg-js`, para convertir las 
 npm run dev
 ```
 
-Levanta la web y la API en `http://localhost:3000` con datos reales de GitHub. Sin token usa las API públicas (perfil, calendario, seguidores y estrellas exactos; commits, PRs y lenguajes aproximados, y la web lo avisa). Con token, igual que en producción:
+Levanta la web y la API en `http://localhost:3000` (o el siguiente puerto libre, si ese está ocupado) con datos reales de GitHub. Sin token usa las API públicas (perfil, calendario, seguidores y estrellas exactos; commits, PRs y lenguajes aproximados, y la web lo avisa).
+
+Con token, igual que en producción. Crea uno *fine-grained* sin ningún permiso en [github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens) (solo lee datos públicos) y pásalo así, sustituyendo `ghp_xxx` por el tuyo:
 
 ```bash
-GITHUB_TOKEN=<token sin permisos> npm run dev
+GITHUB_TOKEN=ghp_xxx npm run dev
 ```
 
 `npm run dev:fixture` usa datos de prueba inventados, sin red (lo usan las pruebas visuales); la web también lo avisa.

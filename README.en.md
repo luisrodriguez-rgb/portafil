@@ -43,7 +43,7 @@ All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cy
 If you would rather not depend on the server, the Action generates the snake in your own repository:
 
 ```yaml
-- uses: portafil/portafil@v1   # provisional reference, see shared/brand.js
+- uses: luisrodriguez-rgb/portafil@v1
   with:
     github_user_name: your-user
     outputs: |
@@ -59,10 +59,12 @@ Node 20 or later. A single dependency, `@resvg/resvg-js`, turns the social cards
 npm run dev
 ```
 
-Serves the web and the API at `http://localhost:3000` with real GitHub data. Without a token it uses the public APIs (profile, calendar, followers and stars exact; commits, PRs and languages approximate, and the web says so). With a token, same as production:
+Serves the web and the API at `http://localhost:3000` (or the next free port if that one is busy) with real GitHub data. Without a token it uses the public APIs (profile, calendar, followers and stars exact; commits, PRs and languages approximate, and the web says so).
+
+With a token, same as production. Create a *fine-grained* token with no permissions at [github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens) (it only reads public data) and pass it like this, replacing `ghp_xxx` with yours:
 
 ```bash
-GITHUB_TOKEN=<token with no scopes> npm run dev
+GITHUB_TOKEN=ghp_xxx npm run dev
 ```
 
 `npm run dev:fixture` uses made-up test data without network (the visual tests use it); the web says so too.

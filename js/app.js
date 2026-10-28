@@ -1022,9 +1022,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Endpoint SVG desplegado (meta snake-api en index.html). Sin él solo se ofrece el workflow
   // Sin valor en la meta, la API está en el mismo dominio que la web (despliegue en Vercel)
   const snakeApiBase = ((document.querySelector('meta[name="snake-api"]')?.content || '').trim() || (location.protocol.startsWith('http') ? location.origin : '')).replace(/\/$/, '');
-  // La Action solo se ofrece cuando el repositorio público existe (shared/brand.js): antes, su referencia no lleva a ningún sitio
-  const actionReady = Boolean(window.Brand && Brand.repo);
-  wfMethod.hidden = !snakeApiBase || !actionReady;
+  // La Action solo se ofrece cuando su versión está publicada (la etiqueta de Brand.actionRef existe en
+  // Brand.repo): antes, el workflow que copiaría la gente fallaría al no encontrar la Action
+  let actionReady = false;
+  wfMethod.hidden = true;
+  (async () => {
+    if (!window.Brand || !Brand.repo || !snakeApiBase) return;
+    const tag = String(Brand.actionRef).split('@')[1] || '';
+    try {
+      const res = await fetch(`https://api.github.com/repos/${Brand.repo}/git/ref/tags/${encodeURIComponent(tag)}`);
+      actionReady = res.ok;
+    } catch (e) {}
+    wfMethod.hidden = !actionReady;
+  })();
 
   // Las opciones salen de los selectores del exportador SVG para no duplicar listas
   wfDarkTheme.innerHTML = exportThemeSelect.innerHTML;

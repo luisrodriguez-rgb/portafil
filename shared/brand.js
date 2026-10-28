@@ -8,12 +8,12 @@ const Brand = {
   name: 'Portafil',
   // Dominio público de la web y la API (provisional hasta elegir dominio)
   site: 'https://portafil.vercel.app',
-  // Repositorio público (vacío hasta crearlo): la web enlaza a él si existe
-  repo: '',
+  // Repositorio público (owner/nombre): la web enlaza a él y el estudio ofrece la Action cuando su etiqueta existe
+  repo: 'luisrodriguez-rgb/portafil',
   // Perfil público que se usa en los ejemplos de la web y de examples/ (el del autor)
   demoUser: 'luisrodriguez-rgb',
   // Referencia de la GitHub Action para el workflow generado
-  actionRef: 'portafil/portafil@v1',
+  actionRef: 'luisrodriguez-rgb/portafil@v1',
   userAgent: 'portafil'
 };
 

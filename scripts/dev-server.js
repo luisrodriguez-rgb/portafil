@@ -4,7 +4,7 @@
  *   GITHUB_TOKEN=... node scripts/dev-server.js   datos reales con la API oficial, como en producción
  *   node scripts/dev-server.js                    sin token: datos reales públicos (algunas cifras aproximadas)
  *   node scripts/dev-server.js --fixture          datos de prueba inventados, sin red (para las pruebas visuales)
- * Aplica las reescrituras y las cabeceras de seguridad de vercel.json. Opción --port <n> (por defecto 3000). Cada respuesta de la API lleva X-Portafil-Data con el origen de los datos,
+ * Aplica las reescrituras y las cabeceras de seguridad de vercel.json. Opción --port <n> (por defecto 3000, o el siguiente libre). Cada respuesta de la API lleva X-Portafil-Data con el origen de los datos,
  * y la web avisa cuando no son los oficiales.
  */
 
@@ -14,7 +14,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const args = process.argv.slice(2);
-const port = Number(args[args.indexOf('--port') + 1]) || Number(process.env.PORT) || 3000;
+const askedPort = Number(args[args.indexOf('--port') + 1]) || Number(process.env.PORT) || 0;
+const MAX_TRIES = 10;
 
 let dataSource = 'github';
 if (args.includes('--fixture')) {
@@ -86,7 +87,7 @@ function serveStatic(pathname, res) {
   });
 }
 
-http.createServer(async (req, res) => {
+const server = http.createServer(async (req, res) => {
   const original = new URL(req.url, 'http://localhost');
   for (const rule of headerRules) {
     if (rule.re.test(original.pathname)) for (const { key, value } of rule.headers) res.setHeader(key, value);
@@ -111,7 +112,21 @@ http.createServer(async (req, res) => {
     return;
   }
   serveStatic(url.pathname, res);
-}).listen(port, () => {
+});
+
+// Sin puerto pedido se usa el 3000 o, si está ocupado (otro servidor de Portafil, por ejemplo), el siguiente libre.
+// Con --port o PORT se usa ese o se avisa: las pruebas y la vista previa necesitan saber dónde escucha.
+let port = askedPort || 3000;
+server.on('error', (err) => {
+  if (err.code !== 'EADDRINUSE') throw err;
+  if (askedPort || port >= 3000 + MAX_TRIES) {
+    console.error(`El puerto ${port} ya está en uso. Cierra el otro servidor o elige otro: node scripts/dev-server.js --port 3001`);
+    process.exit(1);
+  }
+  console.log(`El puerto ${port} está ocupado, pruebo con el ${port + 1}`);
+  server.listen(++port);
+});
+server.listen(port, () => {
   const notes = { github: 'datos reales (API oficial)', public: 'datos reales públicos sin token: commits, PRs y lenguajes aproximados', fixture: 'DATOS DE PRUEBA inventados' };
   console.log(`Portafil en http://localhost:${port} · ${notes[dataSource]}`);
 });
