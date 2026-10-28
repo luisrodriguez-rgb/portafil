@@ -1,0 +1,6 @@
+dist/
+.claude/
+.DS_Store
+.kilo/
+.impeccable/
+node_modules/
