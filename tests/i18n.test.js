@@ -29,12 +29,12 @@ test('los mensajes de JS tienen las mismas claves y variables en español e ingl
   }
 });
 
-test('cada texto estático del diccionario existe en index.html y su traducción es única', () => {
+test('cada texto estático del diccionario existe en play.html y su traducción es única', () => {
   const { STATIC_EN } = loadI18n();
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')
+  const html = fs.readFileSync(path.join(__dirname, '..', 'play.html'), 'utf8')
     .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&rarr;/g, '→').replace(/&copy;/g, '©').replace(/\s+/g, ' ');
   for (const es of Object.keys(STATIC_EN)) {
-    assert.ok(html.includes(es), `'${es}' ya no está en index.html (diccionario desactualizado)`);
+    assert.ok(html.includes(es), `'${es}' ya no está en play.html (diccionario desactualizado)`);
   }
   // Si dos textos españoles distintos compartieran traducción, volver al español sería ambiguo
   const seen = new Map();
