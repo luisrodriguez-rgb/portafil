@@ -84,6 +84,16 @@
           </div>
         </div>
         <div class="board-opts">
+          <label class="inline"><span>Juego</span>
+            <select id="gameSelect">
+              <option value="snake" selected>Serpiente</option>
+              <option value="life">Juego de la vida</option>
+              <option value="pacman">Pac-Man</option>
+              <option value="invaders">Invasores</option>
+              <option value="tetris">Tetris</option>
+            </select>
+          </label>
+          <label class="check" id="arcadePlayerWrap" hidden><input type="checkbox" id="arcadePlayer"> <span>Juegas tú</span></label>
           <label class="inline"><span>Estilo</span>
             <select id="themeSelect">
               <option value="ink" selected>Tinta</option>
@@ -108,7 +118,9 @@
 
       <div class="canvas-wrapper">
         <canvas id="snakeCanvas" width="920" height="145"></canvas>
+        <canvas id="arcadeCanvas" width="797" height="160" hidden aria-label="Tablero del modo de juego"></canvas>
       </div>
+      <p class="arcade-hint" id="arcadeHint" hidden></p>
 
       <div class="progress">
         <div class="progress-row">
@@ -637,8 +649,10 @@
   <script src="js/snake.js?v=20261028-studio"></script>
   <script src="js/renderer.js?v=20261028-studio"></script>
   <script src="js/duel.js?v=20261028-studio"></script>
+  <script src="shared/games.js?v=20261028-studio"></script>
   <script src="js/video-studio.js?v=20261028-studio"></script>
   <script src="js/app.js?v=20261028-studio"></script>
+  <script src="js/arcade.js?v=20261028-studio"></script>
   <!-- Cloudflare Web Analytics -->
   <!-- End Cloudflare Web Analytics -->
 </body>

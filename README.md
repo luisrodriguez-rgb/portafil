@@ -23,6 +23,8 @@ Escribe tu usuario en la web, elige lo que quieras y copia el código. Sin YAML 
 | Serpiente | `/api/<usuario>.svg` | Una IA (BFS + Flood Fill) se come tu gráfico de contribuciones |
 | Juego de la vida | `/api/<usuario>.svg?game=life` | Tus contribuciones evolucionan con las reglas de Conway |
 | Pac-Man | `/api/<usuario>.svg?game=pacman` | Pac-Man se come tu gráfico mientras dos fantasmas lo persiguen |
+| Invasores | `/api/<usuario>.svg?game=invaders` | Una nave dispara a tus contribuciones, columna a columna |
+| Tetris | `/api/<usuario>.svg?game=tetris` | Tu año cae hacia el pasado y las piezas completan semanas |
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Tus cifras frente a las de otro perfil |
 | Duelo | `/api/duel/<a>-vs-<b>.svg` | La misma IA en los dos gráficos, con marcador; la página `/duel/<a>-vs-<b>` sirve para compartir y retar |
 
@@ -30,7 +32,7 @@ Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`
 
 ## Estudio
 
-En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, Commit Art y clips de video para X, LinkedIn, Reels o TikTok.
+En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y clips de video para X, LinkedIn, Reels o TikTok.
 
 ## GitHub Action
 

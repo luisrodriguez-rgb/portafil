@@ -43,15 +43,17 @@ Estado: ✅ hecho · 🟡 parcial · ⬜ pendiente
 | ✅ | Pac-Man: tus contribuciones son la comida, hasta 4 celdas de nivel 4 son pastillas de poder, dos fantasmas persiguen con BFS, 3 vidas. Caminos rectos (menos giros, menos peso) | `GameModes.simulatePacman` |
 | ✅ | Estados (`mood=auto`): la serpiente duerme tras 7 días sin contribuir (tablero atenuado, serpiente enroscada al final, zetas) y la cabecera muestra la racha cuando pasa de 7 días | `js/exporter.js` |
 | ✅ | `?game=` y `?mood=` en el contrato, el endpoint, la Action y la galería web (grupo "Juegos") | `shared/snake-core.js`, `shared/kit-snippet.js`, `js/site.js` |
-| ⬜ | Space Invaders sobre las columnas | `shared/games.js` |
-| ⬜ | Tetris | `shared/games.js` |
-| ⬜ | Pieles por fecha (Halloween, fin de año) y estados también en las tarjetas | — |
-| ⬜ | Los modos nuevos en el estudio (`play.html`), jugables en el canvas | `js/app.js` |
+| ✅ | Invasores: tus contribuciones son la formación enemiga; una nave dispara a la celda viva más baja de cada columna, y las intensas aguantan dos disparos | `GameModes.invaders*` |
+| ✅ | Tetris de lado: la gravedad junta tus contribuciones hacia el pasado (cada día de la semana se vuelve una barra) y las piezas entran desde hoy para completar semanas | `GameModes.tetris*` |
+| ⬜ | Pieles por fecha (Halloween, fin de año). Pendiente de decidir: cambiarían el color que eligió cada usuario, y eso choca con el principio de coherencia; propuesta: solo con `mood=season` | — |
+| ⬜ | Estados también en las tarjetas (p. ej. la tarjeta de racha "en racha") | — |
+| ✅ | Interfaz común `create` / `step` / `view` (iniciar, avanzar, dibujar) en los cuatro modos; el SVG del README y el estudio usan la misma | `shared/games.js` |
+| ✅ | Los cuatro modos en el estudio: selector "Juego", la IA juega la misma partida que el SVG y con "Juegas tú" se controla con teclado o cruceta (en el juego de la vida, clic en las celdas) | `play.html`, `js/arcade.js` |
 | ⬜ | Piezas sin juego con el mismo motor: mapa de calor por día de la semana, "año en resumen", insignias de logros | — |
 
-Pesos medidos con perfiles de prueba: juego de la vida 29-63 KB, Pac-Man 92-96 KB (3-7 KB con brotli), serpiente dormida 28 KB. Simular cuesta 1-36 ms.
+Pesos medidos con perfiles de prueba: juego de la vida 29-63 KB, Pac-Man 92-96 KB, invasores 109-110 KB, Tetris 88-89 KB (3-10 KB con brotli), serpiente dormida 28 KB. Simular cuesta 1-37 ms.
 
-**Puerta:** interfaz común ✅ y dos modos en producción ✅ (en cuanto se despliegue).
+**Puerta:** interfaz común ✅ y cuatro modos listos ✅ (en producción en cuanto se despliegue).
 
 ## Fase 4 · Imagen para redes y plantillas
 

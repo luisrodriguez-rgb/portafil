@@ -18,7 +18,7 @@ const SnakeCore = {
     pause: ['fast', 'medium', 'none'],
     lang: ['en', 'es'],
     // Modo de juego (shared/games.js) y estados según la actividad (la serpiente duerme o celebra la racha)
-    game: ['snake', 'life', 'pacman'],
+    game: ['snake', 'life', 'pacman', 'invaders', 'tetris'],
     mood: ['auto', 'off']
   },
 

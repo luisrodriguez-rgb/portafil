@@ -13,7 +13,7 @@ const V1 = {
     morph: ['matrix_viper', 'capsule', 'retro'],
     pause: ['fast', 'medium', 'none'],
     lang: ['en', 'es'],
-    game: ['snake', 'life', 'pacman'],
+    game: ['snake', 'life', 'pacman', 'invaders', 'tetris'],
     mood: ['auto', 'off']
   },
   cards: {

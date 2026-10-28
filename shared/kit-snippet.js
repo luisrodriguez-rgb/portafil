@@ -18,6 +18,8 @@ const KitSnippet = {
     snake: { width: 'full', game: 'snake' },
     life: { width: 'full', game: 'life' },
     pacman: { width: 'full', game: 'pacman' },
+    invaders: { width: 'full', game: 'invaders' },
+    tetris: { width: 'full', game: 'tetris' },
     versus: { width: 'full', pair: true },
     duel: { width: 'full', pair: true }
   },
@@ -77,6 +79,8 @@ const KitSnippet = {
       snake: `snake eating ${u} contributions by Perfila`,
       life: `game of life from ${u} contributions by Perfila`,
       pacman: `pac-man eating ${u} contributions by Perfila`,
+      invaders: `invaders on ${u} contributions by Perfila`,
+      tetris: `tetris on ${u} contributions by Perfila`,
       versus: `${u} vs @${ctx.rival}`,
       duel: `${u} vs @${ctx.rival} duel`
     }[kind];

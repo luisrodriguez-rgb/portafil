@@ -23,6 +23,8 @@ Type your username on the web, pick what you like and copy the code. No YAML, no
 | Snake | `/api/<user>.svg` | An AI (BFS + Flood Fill) eats your contribution graph |
 | Game of Life | `/api/<user>.svg?game=life` | Your contributions evolve with Conway's rules |
 | Pac-Man | `/api/<user>.svg?game=pacman` | Pac-Man eats your graph while two ghosts chase it |
+| Invaders | `/api/<user>.svg?game=invaders` | A ship shoots your contributions, column by column |
+| Tetris | `/api/<user>.svg?game=tetris` | Your year falls toward the past and pieces complete weeks |
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Your numbers next to another profile's |
 | Duel | `/api/duel/<a>-vs-<b>.svg` | The same AI on both graphs, with the score; the `/duel/<a>-vs-<b>` page is for sharing and challenging |
 
@@ -30,7 +32,7 @@ All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cy
 
 ## Studio
 
-`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, Commit Art and video clips for X, LinkedIn, Reels or TikTok.
+`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok.
 
 ## GitHub Action
 

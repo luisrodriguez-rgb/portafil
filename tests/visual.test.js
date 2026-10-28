@@ -55,7 +55,7 @@ test('los modos de juego no cambian por accidente en ningún tema', () => {
   const exporter = new engine.ExporterEngine();
   const outputs = {};
   for (const theme of SnakeCore.OPTION_VALUES.theme) {
-    for (const game of ['life', 'pacman']) {
+    for (const game of ['life', 'pacman', 'invaders', 'tetris']) {
       outputs[`${game}/${theme}`] = exporter.buildSvg(grid, { game, theme, user: 'octocat' });
     }
   }

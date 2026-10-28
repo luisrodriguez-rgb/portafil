@@ -79,7 +79,7 @@ test('pac-man: determinista, lo comido cuadra con los fotogramas y las vidas no 
 test('los modos son SVG con CSS, sin JavaScript, y caben en el presupuesto de peso', () => {
   for (const variant of [0, 1, 2, 3]) {
     const grid = SnakeCore.weeksToGrid(fixtureWeeks(variant));
-    for (const game of ['life', 'pacman']) {
+    for (const game of ['life', 'pacman', 'invaders', 'tetris']) {
       const svg = exporter.buildSvg(grid, { game, user: 'octocat', theme: 'cyberpunk', lang: 'es' });
       assert.ok(svg.startsWith('<svg'), game);
       assert.ok(svg.includes('#090614'), `${game} usa el tema`);
@@ -123,7 +123,95 @@ test('el endpoint de la serpiente acepta ?game= y ?mood=', async () => {
   assert.match(pac.body, /pac-man eating @octocat/);
   const life = await renderSnakeSvg({ user: 'octocat', query: 'game=life&mood=off', token: 't', fetchImpl });
   assert.match(life.body, /game of life/);
-  const bad = await renderSnakeSvg({ user: 'octocat', query: 'game=tetris', token: 't', fetchImpl });
+  const bad = await renderSnakeSvg({ user: 'octocat', query: 'game=pong', token: 't', fetchImpl });
   assert.strictEqual(bad.status, 400);
   assert.match(bad.body, /game/);
+});
+
+test('invasores: cada disparo acierta o se pierde, el daño cuadra y la IA limpia el tablero', () => {
+  for (const variant of [0, 1, 2, 3]) {
+    const grid = SnakeCore.weeksToGrid(fixtureWeeks(variant));
+    const sim = GameModes.simulateInvaders(grid);
+    assert.strictEqual(sim.cleared, true, `variante ${variant}`);
+    assert.strictEqual(sim.shipPath.length, sim.ticks + 1);
+    assert.ok(sim.shots.every(s => s.end !== null && s.end >= s.fire));
+    assert.strictEqual(sim.shots.filter(s => s.hit).length, sim.hits);
+    // Cada celda acaba a cero y solo pierde niveles
+    for (const changes of Object.values(sim.cellChanges)) {
+      assert.strictEqual(changes[changes.length - 1][1], 0);
+      for (let i = 1; i < changes.length; i++) assert.ok(changes[i][1] < changes[i - 1][1]);
+    }
+    for (let s = 1; s < sim.shipPath.length; s++) assert.ok(Math.abs(sim.shipPath[s].x - sim.shipPath[s - 1].x) <= 1);
+  }
+});
+
+test('tetris: la gravedad junta cada fila hacia el pasado y las piezas no se pisan', () => {
+  const grid = SnakeCore.weeksToGrid(fixtureWeeks(1));
+  const sim = GameModes.simulateTetris(grid);
+  assert.ok(sim.placed > 10);
+  assert.ok(['topout', 'pieces'].includes(sim.end));
+  // Tras la compactación, cada fila es una barra continua desde la izquierda
+  const s = GameModes.create('tetris', grid);
+  for (let i = 0; i < GameModes.COMPACT_TICK; i++) GameModes.step(s);
+  for (let y = 0; y < 7; y++) {
+    const row = s.board.map(col => col[y] > 0);
+    const first = row.indexOf(false);
+    assert.ok(first === -1 || row.slice(first).every(v => !v), `fila ${y} con huecos`);
+  }
+  // Ninguna pieza ocupa una celda ya llena, y cada una llega más a la izquierda de donde entra
+  const occupied = new Set();
+  const start = GameModes.create('tetris', grid);
+  for (let i = 0; i < GameModes.COMPACT_TICK; i++) GameModes.step(start);
+  start.board.forEach((col, x) => col.forEach((v, y) => { if (v) occupied.add(`${x}_${y}`); }));
+  for (const p of sim.pieces) {
+    assert.ok(p.landX <= p.spawnX);
+    for (const [dx, dy] of p.cells) {
+      const key = `${p.landX + dx}_${p.y + dy}`;
+      assert.ok(!occupied.has(key), `pieza encima de ${key}`);
+      occupied.add(key);
+    }
+  }
+  // Las semanas completas que cuenta son columnas llenas
+  const full = [...Array(53).keys()].filter(x => [...Array(7).keys()].every(y => occupied.has(`${x}_${y}`)));
+  assert.strictEqual(full.length, sim.lines);
+});
+
+test('interfaz común: create, step y view en los cuatro modos, también con controles del jugador', () => {
+  const grid = SnakeCore.weeksToGrid(fixtureWeeks(0));
+  for (const mode of GameModes.MODES) {
+    const s = GameModes.create(mode, grid, { player: true });
+    for (let i = 0; i < 40 && !s.done; i++) GameModes.step(s, null);
+    const v = GameModes.view(s);
+    assert.strictEqual(v.levels.length, 53, mode);
+    assert.ok(v.progress >= 0 && v.progress <= 1, mode);
+    assert.ok(Array.isArray(v.actors), mode);
+  }
+  assert.throws(() => GameModes.create('pong', grid), /desconocido/);
+
+  // Pac-Man del jugador sigue la última dirección pedida
+  const pac = GameModes.create('pacman', grid, { player: true });
+  GameModes.step(pac, { dir: 1 });
+  GameModes.step(pac, null);
+  assert.deepStrictEqual({ x: pac.pac.x, y: pac.pac.y }, { x: 0, y: 5 });
+
+  // Invasores: la nave se mueve y dispara a petición
+  const inv = GameModes.create('invaders', grid, { player: true });
+  GameModes.step(inv, { move: -1, fire: true });
+  assert.strictEqual(inv.ship, 25);
+  assert.strictEqual(inv.shots.length, 1);
+
+  // Tetris: la pieza del jugador cambia de fila y cae al pedirlo
+  const tet = GameModes.create('tetris', grid, { player: true });
+  while (!tet.active) GameModes.step(tet);
+  const y0 = tet.active.y;
+  GameModes.step(tet, { dy: 1 });
+  assert.strictEqual(tet.active ? tet.active.y : y0 + 1, y0 + 1);
+  GameModes.step(tet, { drop: true });
+  assert.strictEqual(tet.placed, 1);
+
+  // Juego de la vida: un clic enciende una celda sin avanzar de generación
+  const life = GameModes.create('life', gridOf([]));
+  GameModes.step(life, { toggle: [3, 3] });
+  assert.strictEqual(life.alive[3][3], true);
+  assert.strictEqual(life.gens, 0);
 });

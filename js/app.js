@@ -130,6 +130,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Estados
   let grid = [];
+  // Modos de juego del estudio (js/arcade.js): toman el tablero, el teclado y la cruceta mientras están activos
+  let arcadeActive = false;
+  window.PerfilaStudio = {
+    grid: () => grid,
+    setArcade(on) { arcadeActive = Boolean(on); }
+  };
   let totalCommitsInitial = 0;
   let totalPointsInitial = 0;
   let isRunning = true;
@@ -483,6 +489,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function gameLoop(now) {
+    // Con un modo de juego activo (js/arcade.js) la serpiente se queda quieta y no se pinta
+    if (arcadeActive) {
+      animationFrameId = requestAnimationFrame(gameLoop);
+      return;
+    }
 
     const tickInterval = 1000 / ticksPerSecond;
     const elapsed = now - lastTickTime;
@@ -512,6 +523,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- Controles de Teclado ---
   window.addEventListener('keydown', (e) => {
+    if (arcadeActive) return;
     const activeEl = document.activeElement;
     if (activeEl === usernameInput || activeEl === customWordInput || (activeEl && activeEl.tagName === 'TEXTAREA')) {
       return;
@@ -538,7 +550,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   function applyDirection(dir) {
-    if (!dir) return;
+    if (!dir || arcadeActive) return;
     if (isDuelMode && snake2) {
       if (snake2.direction.x !== -dir.x || snake2.direction.y !== -dir.y) {
         player2NextDir = dir;

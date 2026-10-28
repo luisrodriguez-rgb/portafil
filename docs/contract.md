@@ -13,7 +13,7 @@ Las URL de este documento ya están pegadas en perfiles reales. Regla: **se pued
 | `morph` | `matrix_viper`, `capsule`, `retro` | `matrix_viper` |
 | `pause` | `fast`, `medium`, `none` | `fast` |
 | `lang` | `en`, `es` | `en` |
-| `game` | `snake`, `life` (juego de la vida), `pacman` | `snake` |
+| `game` | `snake`, `life` (juego de la vida), `pacman`, `invaders`, `tetris` | `snake` |
 | `mood` | `auto` (la serpiente duerme tras 7 días sin contribuir y muestra rachas de 7 o más), `off` | `auto` |
 
 `morph`, `speed` y `pause` solo afectan a `game=snake`. La GitHub Action acepta las mismas opciones en cada línea de `outputs`.

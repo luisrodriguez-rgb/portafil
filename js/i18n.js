@@ -7,6 +7,10 @@
 
 const STATIC_EN = {
   // Cabecera y entrada
+  'Juego': 'Game',
+  'Juego de la vida': 'Game of Life',
+  'Invasores': 'Invaders',
+  'Juegas tú': 'You play',
   'Rápida': 'Fast',
   'Tranquila': 'Relaxed',
   'Corta (1,5 s)': 'Short (1.5 s)',

@@ -101,6 +101,10 @@ body[data-theme="amber_terminal"] {
 .canvas-wrapper { position: relative; background: var(--canvas-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; justify-content: center; overflow: hidden; }
 .canvas-wrapper canvas { display: block; max-width: 100%; height: auto; touch-action: none; image-rendering: -webkit-optimize-contrast; }
 
+.arcade-hint { margin: -6px 0 0; font-size: 13px; color: var(--muted); }
+.arcade-hint kbd { font-family: var(--mono); font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--surface); color: var(--text); }
+#arcadeCanvas { cursor: default; }
+#arcadeCanvas.clickable { cursor: pointer; }
 .progress { display: grid; gap: 6px; }
 .progress-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-family: var(--mono); }
 .progress-track { height: 6px; border-radius: 999px; background: var(--soft); overflow: hidden; }

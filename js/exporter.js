@@ -30,9 +30,8 @@ class ExporterEngine {
   /** Punto de entrada: la serpiente o el modo de juego pedido con ?game= (shared/games.js) */
   buildSvg(grid, options = {}) {
     const game = options.game || 'snake';
-    if (game !== 'snake' && typeof GameModes !== 'undefined') {
-      if (game === 'life') return GameModes.buildLifeSvg(grid, options);
-      if (game === 'pacman') return GameModes.buildPacmanSvg(grid, options);
+    if (game !== 'snake' && typeof GameModes !== 'undefined' && GameModes.MODES.includes(game)) {
+      return GameModes.buildSvg(game, grid, options);
     }
     return this.buildAnimatedSvg(grid, options);
   }

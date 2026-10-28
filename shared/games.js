@@ -1,11 +1,14 @@
 /**
- * Modos de juego sobre el gráfico de contribuciones (?game=life | pacman).
+ * Modos de juego sobre el gráfico de contribuciones (?game=life | pacman | invaders | tetris).
  *
- * Interfaz común: cada modo es una simulación determinista que devuelve una línea de tiempo
- *   { steps, cellChanges: { 'x_y': [[paso, nivel], ...] }, actors, progress: [[paso, fracción]], ... }
- * y el marco común la convierte en un SVG animado solo con CSS: misma cabecera, rejilla, barra de progreso
- * y medidas que la serpiente, así que todos los modos se ven como parte del mismo perfil.
- * Sin JavaScript en el SVG: GitHub lo eliminaría. Script plano (sin import/export), como el resto del motor.
+ * Interfaz común (iniciar, avanzar, dibujar):
+ *   create(modo, grid, opciones) -> estado        estado.done indica el final de la partida
+ *   step(estado, entrada)                          un paso; entrada null = juega la IA, o los controles del jugador
+ *   view(estado) -> { levels, actors, score }      lo que hay que pintar ahora (el estudio lo dibuja en un canvas)
+ * Mientras avanza, cada modo anota su línea de tiempo (cambios de celda, recorridos, progreso). Para el README,
+ * la IA juega la partida entera y el marco común la convierte en un SVG animado solo con CSS, con la misma
+ * cabecera, rejilla y barra que la serpiente. Sin JavaScript en el SVG: GitHub lo eliminaría.
+ * Todo es determinista: el mismo gráfico da siempre la misma partida. Script plano (sin import/export).
  */
 
 const GameModes = {
@@ -17,12 +20,41 @@ const GameModes = {
   TEXT: {
     en: {
       life: 'game of life', generations: (n) => `${n} generations`,
-      pacman: 'pac-man', pts: 'pts', lives: 'lives'
+      pacman: 'pac-man', pts: 'pts', lives: 'lives',
+      invaders: 'invaders', hits: (n) => `${n} hits`,
+      tetris: 'tetris', weeks: (n) => `${n} full ${n === 1 ? 'week' : 'weeks'}`, pieces: (n) => `${n} ${n === 1 ? 'piece' : 'pieces'}`
     },
     es: {
       life: 'juego de la vida', generations: (n) => `${n} generaciones`,
-      pacman: 'pac-man', pts: 'pts', lives: 'vidas'
+      pacman: 'pac-man', pts: 'pts', lives: 'vidas',
+      invaders: 'invasores', hits: (n) => `${n} impactos`,
+      tetris: 'tetris', weeks: (n) => `${n} ${n === 1 ? 'semana completa' : 'semanas completas'}`, pieces: (n) => `${n} ${n === 1 ? 'pieza' : 'piezas'}`
     }
+  },
+
+  MODES: ['life', 'pacman', 'invaders', 'tetris'],
+
+  // ---------- Interfaz común ----------
+
+  create(mode, grid, options = {}) {
+    if (!this.MODES.includes(mode)) throw new Error(`Modo desconocido '${mode}'`);
+    return this[`${mode}Create`](grid, options);
+  },
+
+  step(state, input = null) {
+    if (!state.done) this[`${state.mode}Step`](state, input);
+    return state;
+  },
+
+  view(state) {
+    return this[`${state.mode}View`](state);
+  },
+
+  /** La IA juega la partida entera (para el SVG) */
+  run(mode, grid, options) {
+    const state = this.create(mode, grid, options);
+    while (!state.done) this.step(state, null);
+    return state;
   },
 
   // ---------- Marco común ----------
@@ -89,7 +121,7 @@ const GameModes = {
    * SVG final de un modo. cellChanges: cambios de nivel por celda; restoreWave: al terminar, las celdas
    * vuelven a su nivel original en ola de izquierda a derecha (si no, saltan al inicio al reiniciar el bucle).
    */
-  frame({ grid, tokens, title, credit, steps, stepDuration, pauseDuration, cellChanges, restoreWave, progress, body = '', css = '' }) {
+  frame({ grid, tokens, title, credit, steps, stepDuration, pauseDuration, cellChanges, restoreWave, progress, body = '', css = '', gridClass = '' }) {
     const L = this.layout();
     const t = this.timing(steps, stepDuration, pauseDuration);
     const colors = [tokens.empty, tokens.l1, tokens.l2, tokens.l3, tokens.l4];
@@ -139,7 +171,7 @@ const GameModes = {
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L.width} ${L.height}" width="${L.width}" height="${L.height}"><title>${this.escapeXml(credit)}</title>`
       + `<style>svg{background:${tokens.bg};border-radius:12px;border:1px solid ${tokens.border}}${headerCss}${cellCss}${typeof css === 'function' ? css(t) : css}</style>`
-      + `${header}<g>${cells}</g>${typeof body === 'function' ? body(t) : body}</svg>`;
+      + `${header}<g${gridClass ? ` class="${gridClass}"` : ''}>${cells}</g>${typeof body === 'function' ? body(t) : body}</svg>`;
   },
 
   levelsOf(grid) {
@@ -156,71 +188,88 @@ const GameModes = {
 
   /**
    * Conway (B3/S23) sobre un toro de 53×7 que arranca desde tus contribuciones. Las celdas vivas se
-   * colorean por edad (recién nacidas tenues, veteranas intensas). Para al extinguirse, al repetir un
-   * estado (estable u oscilante), a las maxGens generaciones o al agotar el presupuesto de peso.
+   * colorean por edad (recién nacidas tenues, veteranas intensas). Para al extinguirse, al estabilizarse,
+   * a las maxGens generaciones o al agotar el presupuesto de peso; a los osciladores los deja latir hasta minGens.
    */
-  simulateLife(grid, { maxGens = 60, minGens = 30, budget = this.MAX_CELL_CHANGES } = {}) {
+  lifeCreate(grid, { maxGens = 60, minGens = 30, budget = this.MAX_CELL_CHANGES } = {}) {
+    const alive = this.levelsOf(grid).map(col => col.map(level => level > 0));
+    return {
+      mode: 'life', done: false, tick: 0, maxGens, minGens, budget,
+      alive, age: alive.map(col => col.map(() => 0)), shown: this.levelsOf(grid),
+      cellChanges: {}, population: [alive.flat().filter(Boolean).length],
+      seen: new Map([[alive.flat().map(Number).join(''), 0]]), used: 0, gens: 0, end: 'limit'
+    };
+  },
+
+  /** Una generación. En el estudio, input.toggle = [x, y] enciende o apaga una celda sin avanzar */
+  lifeStep(s, input) {
     const W = this.COLS;
     const H = this.ROWS;
-    let alive = this.levelsOf(grid).map(col => col.map(level => level > 0));
-    let age = alive.map(col => col.map(() => 0));
-    const shown = this.levelsOf(grid);
-    const cellChanges = {};
-    const population = [alive.flat().filter(Boolean).length];
-    const seen = new Map([[alive.flat().map(Number).join(''), 0]]);
-    let used = 0;
-    let gens = 0;
-    let end = 'limit';
-
-    for (let g = 1; g <= maxGens; g++) {
-      const next = [];
-      const nextAge = [];
-      for (let x = 0; x < W; x++) {
-        next.push([]);
-        nextAge.push([]);
-        for (let y = 0; y < H; y++) {
-          let n = 0;
-          for (let dx = -1; dx <= 1; dx++) {
-            for (let dy = -1; dy <= 1; dy++) {
-              if ((dx || dy) && alive[(x + dx + W) % W][(y + dy + H) % H]) n++;
-            }
+    if (input && input.toggle) {
+      const [x, y] = input.toggle;
+      s.alive[x][y] = !s.alive[x][y];
+      s.age[x][y] = 0;
+      s.shown[x][y] = s.alive[x][y] ? 2 : 0;
+      s.seen = new Map();
+      return;
+    }
+    const g = s.gens + 1;
+    if (g > s.maxGens) { s.done = true; return; }
+    const next = [];
+    const nextAge = [];
+    for (let x = 0; x < W; x++) {
+      next.push([]);
+      nextAge.push([]);
+      for (let y = 0; y < H; y++) {
+        let n = 0;
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            if ((dx || dy) && s.alive[(x + dx + W) % W][(y + dy + H) % H]) n++;
           }
-          const lives = alive[x][y] ? n === 2 || n === 3 : n === 3;
-          next[x].push(lives);
-          nextAge[x].push(lives ? (alive[x][y] ? age[x][y] + 1 : 0) : 0);
         }
+        const lives = s.alive[x][y] ? n === 2 || n === 3 : n === 3;
+        next[x].push(lives);
+        nextAge[x].push(lives ? (s.alive[x][y] ? s.age[x][y] + 1 : 0) : 0);
       }
-
-      // Cambios visibles de esta generación; si no caben en el presupuesto, se para antes
-      const genChanges = [];
-      for (let x = 0; x < W; x++) {
-        for (let y = 0; y < H; y++) {
-          const level = next[x][y] ? Math.min(4, 2 + nextAge[x][y]) : 0;
-          if (level !== shown[x][y]) genChanges.push([x, y, level]);
-        }
-      }
-      if (used + genChanges.length > budget) break;
-      for (const [x, y, level] of genChanges) {
-        (cellChanges[`${x}_${y}`] = cellChanges[`${x}_${y}`] || []).push([g, level]);
-        shown[x][y] = level;
-      }
-      used += genChanges.length;
-      alive = next;
-      age = nextAge;
-      gens = g;
-      const count = alive.flat().filter(Boolean).length;
-      population.push(count);
-      if (count === 0) { end = 'extinct'; break; }
-      const sig = alive.flat().map(Number).join('');
-      // Estable: ya no cambia nada. Oscilante: se deja latir hasta minGens, que es lo vistoso
-      if (seen.has(sig)) {
-        end = seen.get(sig) === g - 1 ? 'stable' : 'cycle';
-        if (end === 'stable' || g >= minGens) break;
-      }
-      seen.set(sig, g);
     }
 
-    return { steps: Math.max(1, gens), generations: gens, cellChanges, population, end, changes: used };
+    // Cambios visibles de esta generación; si no caben en el presupuesto, se para antes
+    const genChanges = [];
+    for (let x = 0; x < W; x++) {
+      for (let y = 0; y < H; y++) {
+        const level = next[x][y] ? Math.min(4, 2 + nextAge[x][y]) : 0;
+        if (level !== s.shown[x][y]) genChanges.push([x, y, level]);
+      }
+    }
+    if (s.used + genChanges.length > s.budget) { s.done = true; return; }
+    for (const [x, y, level] of genChanges) {
+      (s.cellChanges[`${x}_${y}`] = s.cellChanges[`${x}_${y}`] || []).push([g, level]);
+      s.shown[x][y] = level;
+    }
+    s.used += genChanges.length;
+    s.alive = next;
+    s.age = nextAge;
+    s.gens = g;
+    s.tick = g;
+    const count = s.alive.flat().filter(Boolean).length;
+    s.population.push(count);
+    if (count === 0) { s.end = 'extinct'; s.done = true; return; }
+    const sig = s.alive.flat().map(Number).join('');
+    // Estable: ya no cambia nada. Oscilante: se deja latir hasta minGens, que es lo vistoso
+    if (s.seen.has(sig)) {
+      s.end = s.seen.get(sig) === g - 1 ? 'stable' : 'cycle';
+      if (s.end === 'stable' || g >= s.minGens) { s.done = true; return; }
+    }
+    s.seen.set(sig, g);
+  },
+
+  lifeView(s) {
+    return { levels: s.shown, actors: [], score: s.gens, progress: Math.min(1, s.gens / Math.max(1, s.minGens)) };
+  },
+
+  simulateLife(grid, options) {
+    const s = this.run('life', grid, options);
+    return { steps: Math.max(1, s.gens), generations: s.gens, cellChanges: s.cellChanges, population: s.population, end: s.end, changes: s.used };
   },
 
   buildLifeSvg(grid, options = {}) {
@@ -291,11 +340,10 @@ const GameModes = {
    * celdas de nivel 4 son pastillas de poder que asustan a los fantasmas. Dos fantasmas persiguen con BFS;
    * si te alcanzan pierdes una vida y todos vuelven a su sitio. Determinista: mismo gráfico, misma partida.
    */
-  simulatePacman(grid, { maxTicks = 480, lives = 3 } = {}) {
+  pacmanCreate(grid, { maxTicks = 480, lives = 3, player = false } = {}) {
     const W = this.COLS;
     const H = this.ROWS;
-    const levels = this.levelsOf(grid);
-    const food = levels.map(col => col.slice());
+    const food = this.levelsOf(grid);
     let remaining = 0;
     const fours = [];
     for (let x = 0; x < W; x++) {
@@ -310,127 +358,151 @@ const GameModes = {
       const p = fours[Math.floor(((i + 0.5) * fours.length) / Math.min(4, fours.length))];
       power.add(`${p.x}_${p.y}`);
     }
-    const total = remaining;
-
     const pacStart = { x: 0, y: 3 };
     const ghostStarts = [{ x: W - 1, y: 0 }, { x: W - 1, y: H - 1 }];
-    let pac = { ...pacStart };
-    let dir = 0;
-    let ghosts = ghostStarts.map(p => ({ ...p, scaredUntil: -1, dir: 2 }));
-    let score = 0;
+    return {
+      mode: 'pacman', done: false, tick: 0, maxTicks, lives, player,
+      food, remaining, total: remaining, power, pacStart, ghostStarts,
+      pac: { ...pacStart }, dir: 0, wantDir: 0,
+      ghosts: ghostStarts.map(p => ({ ...p, scaredUntil: -1, dir: 2 })),
+      score: 0,
+      pacPath: [{ ...pacStart, dir: 0 }],
+      ghostPaths: ghostStarts.map(p => [{ x: p.x, y: p.y }]),
+      scared: ghostStarts.map(() => []), // [inicio, fin] de cada susto por fantasma
+      cellChanges: {}, progress: [], lifeLost: [], scores: [0]
+    };
+  },
 
-    const pacPath = [{ ...pac, dir }];
-    const ghostPaths = ghosts.map(g => [{ x: g.x, y: g.y }]);
-    const scared = ghosts.map(() => []); // [inicio, fin] de cada susto por fantasma
-    const cellChanges = {};
-    const progress = [];
-    const lifeLost = [];
-    const scores = [0];
-    let tick = 0;
-
+  /** Un paso. Con player, input.dir (0 derecha, 1 abajo, 2 izquierda, 3 arriba) gira a Pac-Man; si no, juega la IA */
+  pacmanStep(s, input) {
+    if (!(s.tick < s.maxTicks && s.remaining > 0 && s.lives > 0)) { s.done = true; return; }
+    const W = this.COLS;
+    const H = this.ROWS;
+    const tick = ++s.tick;
     const same = (a, b) => a.x === b.x && a.y === b.y;
     const isScared = (g) => g.scaredUntil >= tick;
+    const danger = (x, y) => s.ghosts.some(g => !isScared(g) && Math.abs(g.x - x) + Math.abs(g.y - y) <= 1);
+    const onGhost = (x, y) => s.ghosts.some(g => !isScared(g) && g.x === x && g.y === y);
 
-    while (tick < maxTicks && remaining > 0 && lives > 0) {
-      tick++;
-      const danger = (x, y) => ghosts.some(g => !isScared(g) && Math.abs(g.x - x) + Math.abs(g.y - y) <= 1);
-      const onGhost = (x, y) => ghosts.some(g => !isScared(g) && g.x === x && g.y === y);
-
+    let move = null;
+    if (s.player) {
+      // Sigue recto en la última dirección pedida, como en la máquina
+      if (input && input.dir !== undefined) s.wantDir = input.dir;
+      const d = this.DIRS[s.wantDir];
+      const n = { x: s.pac.x + d.x, y: s.pac.y + d.y };
+      if (n.x >= 0 && n.y >= 0 && n.x < W && n.y < H) move = n;
+      s.dir = s.wantDir;
+    } else {
       // Pac-Man: a por un fantasma asustado si está cerca; si no, a la comida más cercana lejos de los fantasmas
-      let move = null;
-      if (ghosts.some(isScared)) {
-        const hunt = this.bfsStep(pac, (x, y) => ghosts.some(g => isScared(g) && g.x === x && g.y === y), onGhost, dir);
+      if (s.ghosts.some(isScared)) {
+        const hunt = this.bfsStep(s.pac, (x, y) => s.ghosts.some(g => isScared(g) && g.x === x && g.y === y), onGhost, s.dir);
         if (hunt && hunt.dist <= 6) move = hunt.step;
       }
-      if (!move) move = (this.bfsStep(pac, (x, y) => food[x][y] > 0, danger, dir) || this.bfsStep(pac, (x, y) => food[x][y] > 0, onGhost, dir) || {}).step;
-      if (move) {
-        const d = this.DIRS.findIndex(v => v.x === move.x - pac.x && v.y === move.y - pac.y);
-        if (d >= 0) dir = d;
-        pac = { x: move.x, y: move.y };
-      }
-
-      const here = food[pac.x][pac.y];
-      if (here > 0) {
-        const key = `${pac.x}_${pac.y}`;
-        score += 10 * here;
-        food[pac.x][pac.y] = 0;
-        remaining--;
-        (cellChanges[key] = cellChanges[key] || []).push([tick, 0]);
-        progress.push([tick, (total - remaining) / total]);
-        if (power.has(key)) {
-          ghosts.forEach((g, i) => {
-            g.scaredUntil = tick + 24;
-            scared[i].push([tick, tick + 24]);
-          });
-        }
-      }
-
-      // Fantasmas: persiguen con BFS (el segundo apunta 3 casillas por delante de Pac-Man) a 2/3 de su ritmo;
-      // asustados se alejan a la mitad. Nunca comparten casilla.
-      ghosts.forEach((g, i) => {
-        if (isScared(g) ? tick % 2 : tick % 3 === 0) return;
-        const others = (x, y) => ghosts.some((o, j) => j !== i && o.x === x && o.y === y);
-        let step = null;
-        if (isScared(g)) {
-          let best = -1;
-          for (const d of this.DIRS) {
-            const n = { x: g.x + d.x, y: g.y + d.y };
-            if (n.x < 0 || n.y < 0 || n.x >= W || n.y >= H || others(n.x, n.y)) continue;
-            const far = Math.abs(n.x - pac.x) + Math.abs(n.y - pac.y);
-            if (far > best) { best = far; step = n; }
-          }
-        } else {
-          const ahead = this.DIRS[dir];
-          const target = i === 0 ? pac : {
-            x: Math.max(0, Math.min(W - 1, pac.x + ahead.x * 3)),
-            y: Math.max(0, Math.min(H - 1, pac.y + ahead.y * 3))
-          };
-          const found = this.bfsStep(g, (x, y) => (x === target.x && y === target.y) || (x === pac.x && y === pac.y), others, g.dir);
-          step = found && found.step;
-        }
-        if (step) {
-          g.dir = Math.max(0, this.DIRS.findIndex(v => v.x === step.x - g.x && v.y === step.y - g.y));
-          g.x = step.x;
-          g.y = step.y;
-        }
-      });
-
-      // Choques (también cuando se cruzan en el mismo paso)
-      const before = pacPath[pacPath.length - 1];
-      let caught = false;
-      ghosts.forEach((g, i) => {
-        const prevG = ghostPaths[i][ghostPaths[i].length - 1];
-        const hit = same(g, pac) || (same(g, before) && same(prevG, pac));
-        if (!hit) return;
-        if (isScared(g)) {
-          score += 200;
-          g.x = ghostStarts[i].x;
-          g.y = ghostStarts[i].y;
-          g.scaredUntil = -1;
-          const last = scared[i][scared[i].length - 1];
-          if (last) last[1] = tick;
-        } else {
-          caught = true;
-        }
-      });
-      if (caught) {
-        lives--;
-        lifeLost.push(tick);
-        pac = { ...pacStart };
-        dir = 0;
-        ghosts = ghostStarts.map(p => ({ ...p, scaredUntil: -1, dir: 2 }));
-        scared.forEach(list => { const last = list[list.length - 1]; if (last && last[1] > tick) last[1] = tick; });
-      }
-
-      pacPath.push({ ...pac, dir });
-      ghosts.forEach((g, i) => ghostPaths[i].push({ x: g.x, y: g.y }));
-      scores.push(score);
+      if (!move) move = (this.bfsStep(s.pac, (x, y) => s.food[x][y] > 0, danger, s.dir) || this.bfsStep(s.pac, (x, y) => s.food[x][y] > 0, onGhost, s.dir) || {}).step;
+    }
+    if (move) {
+      const d = this.DIRS.findIndex(v => v.x === move.x - s.pac.x && v.y === move.y - s.pac.y);
+      if (d >= 0) s.dir = d;
+      s.pac = { x: move.x, y: move.y };
     }
 
+    const here = s.food[s.pac.x][s.pac.y];
+    if (here > 0) {
+      const key = `${s.pac.x}_${s.pac.y}`;
+      s.score += 10 * here;
+      s.food[s.pac.x][s.pac.y] = 0;
+      s.remaining--;
+      (s.cellChanges[key] = s.cellChanges[key] || []).push([tick, 0]);
+      s.progress.push([tick, (s.total - s.remaining) / s.total]);
+      if (s.power.has(key)) {
+        s.ghosts.forEach((g, i) => {
+          g.scaredUntil = tick + 24;
+          s.scared[i].push([tick, tick + 24]);
+        });
+      }
+    }
+
+    // Fantasmas: persiguen con BFS (el segundo apunta 3 casillas por delante de Pac-Man) a 2/3 de su ritmo;
+    // asustados se alejan a la mitad. Nunca comparten casilla.
+    s.ghosts.forEach((g, i) => {
+      if (isScared(g) ? tick % 2 : tick % 3 === 0) return;
+      const others = (x, y) => s.ghosts.some((o, j) => j !== i && o.x === x && o.y === y);
+      let step = null;
+      if (isScared(g)) {
+        let best = -1;
+        for (const d of this.DIRS) {
+          const n = { x: g.x + d.x, y: g.y + d.y };
+          if (n.x < 0 || n.y < 0 || n.x >= W || n.y >= H || others(n.x, n.y)) continue;
+          const far = Math.abs(n.x - s.pac.x) + Math.abs(n.y - s.pac.y);
+          if (far > best) { best = far; step = n; }
+        }
+      } else {
+        const ahead = this.DIRS[s.dir];
+        const target = i === 0 ? s.pac : {
+          x: Math.max(0, Math.min(W - 1, s.pac.x + ahead.x * 3)),
+          y: Math.max(0, Math.min(H - 1, s.pac.y + ahead.y * 3))
+        };
+        const found = this.bfsStep(g, (x, y) => (x === target.x && y === target.y) || (x === s.pac.x && y === s.pac.y), others, g.dir);
+        step = found && found.step;
+      }
+      if (step) {
+        g.dir = Math.max(0, this.DIRS.findIndex(v => v.x === step.x - g.x && v.y === step.y - g.y));
+        g.x = step.x;
+        g.y = step.y;
+      }
+    });
+
+    // Choques (también cuando se cruzan en el mismo paso)
+    const before = s.pacPath[s.pacPath.length - 1];
+    let caught = false;
+    s.ghosts.forEach((g, i) => {
+      const prevG = s.ghostPaths[i][s.ghostPaths[i].length - 1];
+      const hit = same(g, s.pac) || (same(g, before) && same(prevG, s.pac));
+      if (!hit) return;
+      if (isScared(g)) {
+        s.score += 200;
+        g.x = s.ghostStarts[i].x;
+        g.y = s.ghostStarts[i].y;
+        g.scaredUntil = -1;
+        const last = s.scared[i][s.scared[i].length - 1];
+        if (last) last[1] = tick;
+      } else {
+        caught = true;
+      }
+    });
+    if (caught) {
+      s.lives--;
+      s.lifeLost.push(tick);
+      s.pac = { ...s.pacStart };
+      s.dir = 0;
+      s.wantDir = 0;
+      s.ghosts = s.ghostStarts.map(p => ({ ...p, scaredUntil: -1, dir: 2 }));
+      s.scared.forEach(list => { const last = list[list.length - 1]; if (last && last[1] > tick) last[1] = tick; });
+    }
+
+    s.pacPath.push({ ...s.pac, dir: s.dir });
+    s.ghosts.forEach((g, i) => s.ghostPaths[i].push({ x: g.x, y: g.y }));
+    s.scores.push(s.score);
+  },
+
+  pacmanView(s) {
     return {
-      steps: Math.max(1, tick), ticks: tick, cellChanges, progress, pacPath, ghostPaths, scared, lifeLost,
-      score, scores, lives, eaten: total - remaining, total, power: [...power],
-      end: remaining === 0 ? 'cleared' : lives === 0 ? 'caught' : 'time'
+      levels: s.food,
+      actors: [
+        { kind: 'pac', x: s.pac.x, y: s.pac.y, dir: s.dir },
+        ...s.ghosts.map(g => ({ kind: 'ghost', x: g.x, y: g.y, scared: g.scaredUntil >= s.tick }))
+      ],
+      score: s.score, lives: s.lives, progress: (s.total - s.remaining) / Math.max(1, s.total)
+    };
+  },
+
+  simulatePacman(grid, options) {
+    const s = this.run('pacman', grid, options);
+    return {
+      steps: Math.max(1, s.tick), ticks: s.tick, cellChanges: s.cellChanges, progress: s.progress,
+      pacPath: s.pacPath, ghostPaths: s.ghostPaths, scared: s.scared, lifeLost: s.lifeLost,
+      score: s.score, scores: s.scores, lives: s.lives, eaten: s.total - s.remaining, total: s.total, power: [...s.power],
+      end: s.remaining === 0 ? 'cleared' : s.lives === 0 ? 'caught' : 'time'
     };
   },
 
@@ -496,6 +568,435 @@ const GameModes = {
       css,
       body: `${lives}<g class="ac">${ghost(0)}${ghost(1)}${pacman}</g>`
     });
+  },
+
+  // ---------- Invasores ----------
+
+  /**
+   * Space Invaders: tus contribuciones son la formación enemiga y una nave recorre el borde inferior
+   * disparando a la celda viva más baja de cada columna. Cada impacto quita dos niveles, así que las
+   * celdas intensas aguantan dos disparos. La IA va a la columna viva más cercana descontando las balas en vuelo.
+   */
+  invadersCreate(grid, { maxTicks = 700, player = false } = {}) {
+    const hp = this.levelsOf(grid);
+    let total = 0;
+    hp.forEach(col => col.forEach(v => { total += v; }));
+    const start = Math.floor(this.COLS / 2);
+    return {
+      mode: 'invaders', done: false, tick: 0, maxTicks, player,
+      hp, total, left: total, hits: 0, ship: start, cooldown: 0, bullets: [],
+      shipPath: [{ x: start, y: 0 }], shots: [], cellChanges: {}, progress: []
+    };
+  },
+
+  /** Un paso. Con player, input.move (-1 / 1) mueve la nave e input.fire dispara; si no, juega la IA */
+  invadersStep(s, input) {
+    if (s.left <= 0 || s.tick >= s.maxTicks) {
+      for (const b of s.bullets) { b.shot.end = s.tick; b.shot.endY = -1; }
+      s.bullets = [];
+      s.done = true;
+      return;
+    }
+    const W = this.COLS;
+    const tick = ++s.tick;
+
+    // Balas: suben tres filas por paso y golpean la celda viva más baja de su columna
+    for (const b of s.bullets) {
+      const col = s.hp[b.x];
+      let row = -1;
+      for (let y = this.ROWS - 1; y >= 0; y--) if (col[y] > 0) { row = y; break; }
+      const ny = b.y - 3;
+      if (row >= 0 && ny <= row) {
+        const dmg = Math.min(2, col[row]);
+        col[row] -= dmg;
+        s.left -= dmg;
+        s.hits++;
+        const key = `${b.x}_${row}`;
+        (s.cellChanges[key] = s.cellChanges[key] || []).push([tick, col[row]]);
+        s.progress.push([tick, (s.total - s.left) / s.total]);
+        Object.assign(b.shot, { end: tick, endY: row, hit: true });
+        b.dead = true;
+      } else if (ny < -1) {
+        Object.assign(b.shot, { end: tick, endY: -1 });
+        b.dead = true;
+      } else {
+        b.y = ny;
+      }
+    }
+    s.bullets = s.bullets.filter(b => !b.dead);
+
+    let move = 0;
+    let fire = false;
+    if (s.player) {
+      move = (input && input.move) || 0;
+      fire = Boolean(input && input.fire);
+    } else {
+      let target = -1;
+      let best = Infinity;
+      for (let x = 0; x < W; x++) {
+        const pending = s.bullets.filter(b => b.x === x).length * 2;
+        const life = s.hp[x].reduce((sum, v) => sum + v, 0);
+        if (life - pending > 0 && Math.abs(x - s.ship) < best) {
+          best = Math.abs(x - s.ship);
+          target = x;
+        }
+      }
+      if (target >= 0) {
+        if (target !== s.ship) move = Math.sign(target - s.ship);
+        else fire = true;
+      }
+    }
+    s.ship = Math.max(0, Math.min(W - 1, s.ship + move));
+    if (fire && s.cooldown <= 0) {
+      const shot = { x: s.ship, fire: tick, end: null, endY: null, hit: false };
+      s.shots.push(shot);
+      s.bullets.push({ x: s.ship, y: this.ROWS + 0.5, shot });
+      s.cooldown = 1;
+    }
+    s.cooldown--;
+    s.shipPath.push({ x: s.ship, y: 0 });
+  },
+
+  invadersView(s) {
+    return {
+      levels: s.hp,
+      actors: [{ kind: 'ship', x: s.ship, y: this.ROWS }, ...s.bullets.map(b => ({ kind: 'bullet', x: b.x, y: b.y }))],
+      score: s.hits, progress: (s.total - s.left) / Math.max(1, s.total)
+    };
+  },
+
+  simulateInvaders(grid, options) {
+    const s = this.run('invaders', grid, options);
+    return {
+      steps: Math.max(1, s.tick), ticks: s.tick, cellChanges: s.cellChanges, progress: s.progress,
+      shipPath: s.shipPath, shots: s.shots, hits: s.hits, cleared: s.left <= 0
+    };
+  },
+
+  buildInvadersSvg(grid, options = {}) {
+    const tokens = ThemeTokens.get(options.theme);
+    const lang = options.lang === 'es' ? 'es' : 'en';
+    const T = this.TEXT[lang];
+    const sim = this.simulateInvaders(grid);
+    const L = this.layout();
+    const user = options.user ? String(options.user) : '';
+    const shipY = L.gridTop + this.ROWS * L.step - 2;
+    const shipPx = (p) => `${+(L.pad + p.x * L.step).toFixed(2)}px,${shipY}px`;
+
+    // Balas: un grupo pequeño de elementos que se reutilizan por turnos (como las ondas de la serpiente)
+    const pool = [];
+    for (const shot of sim.shots) {
+      const end = shot.end == null ? sim.ticks : shot.end;
+      let slot = pool.findIndex(list => list[list.length - 1].endTick < shot.fire);
+      if (slot < 0) { pool.push([]); slot = pool.length - 1; }
+      pool[slot].push({ ...shot, endTick: end });
+    }
+    const css = (t) => {
+      let out = `.sh{animation:sh ${t.total}s infinite linear}@keyframes sh{${this.pathFrames(sim.shipPath, t, shipPx)}}`;
+      pool.forEach((shots, i) => {
+        let frames = '0%{opacity:0}';
+        for (const shot of shots) {
+          const bx = +(L.pad + shot.x * L.step + 4.5).toFixed(2);
+          const by = shot.endY >= 0 ? L.gridTop + shot.endY * L.step + 6 : L.gridTop - 12;
+          const from = t.pct(shot.fire - 1);
+          frames += `${Math.max(0, +(from - 0.001).toFixed(3))}%{transform:translate(${bx}px,${shipY - 4}px);opacity:0}${from}%{opacity:1}`
+            + `${t.pct(shot.endTick)}%{transform:translate(${bx}px,${by}px);opacity:1}${+(t.pct(shot.endTick) + 0.001).toFixed(3)}%{opacity:0}`;
+        }
+        out += `.b${i}{animation:b${i} ${t.total}s infinite linear}@keyframes b${i}{${frames}}`;
+      });
+      // La formación marcha de lado a lado, a saltos
+      out += '.sw{animation:sw 1.4s infinite steps(1,end)}@keyframes sw{0%{transform:translateX(-2px)}50%{transform:translateX(2px)}}';
+      out += `.ac{animation:ac ${t.total}s infinite linear}@keyframes ac{0%,${t.active}%{opacity:1}${t.at(t.play + 0.3)}%,99.9%{opacity:0}100%{opacity:1}}`;
+      out += '@media (prefers-reduced-motion:reduce){.sw{animation:none}}';
+      return out;
+    };
+    const ship = `<path class="sh" d="M0 8V5h2V3.5h3V0h1v3.5h3V5h2v3z" fill="${tokens.body}"/>`;
+    const bullets = pool.map((_, i) => `<rect class="b${i}" width="2" height="5" rx="1" fill="${tokens.head}" opacity="0"/>`).join('');
+
+    return this.frame({
+      grid, tokens,
+      title: [user ? `@${user}` : '', T.invaders, T.hits(this.fmt(sim.hits, lang))].filter(Boolean).join(' · '),
+      credit: `invaders on ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
+      steps: sim.steps, stepDuration: 0.08, pauseDuration: 2,
+      cellChanges: sim.cellChanges, restoreWave: true, progress: sim.progress,
+      gridClass: 'sw', css, body: `<g class="ac">${ship}${bullets}</g>`
+    });
+  },
+
+  // ---------- Tetris ----------
+
+  // Piezas en coordenadas (x, y); en el tablero la gravedad tira hacia la izquierda, hacia el pasado
+  TETROMINOES: {
+    I: [[0, 0], [1, 0], [2, 0], [3, 0]],
+    O: [[0, 0], [1, 0], [0, 1], [1, 1]],
+    T: [[0, 0], [1, 0], [2, 0], [1, 1]],
+    S: [[1, 0], [2, 0], [0, 1], [1, 1]],
+    Z: [[0, 0], [1, 0], [1, 1], [2, 1]],
+    J: [[0, 0], [0, 1], [1, 1], [2, 1]],
+    L: [[2, 0], [0, 1], [1, 1], [2, 1]]
+  },
+  PIECE_LEVEL: { I: 4, O: 3, T: 4, S: 3, Z: 3, J: 2, L: 2 },
+  COMPACT_TICK: 3,
+
+  /** Rotaciones distintas de una pieza, normalizadas a su esquina */
+  rotations(cells) {
+    const out = [];
+    let cur = cells;
+    for (let r = 0; r < 4; r++) {
+      const minX = Math.min(...cur.map(c => c[0]));
+      const minY = Math.min(...cur.map(c => c[1]));
+      const norm = cur.map(([x, y]) => [x - minX, y - minY]).sort((a, b) => a[1] - b[1] || a[0] - b[0]);
+      const key = norm.join(';');
+      if (!out.some(o => o.key === key)) {
+        out.push({ cells: norm, key, w: 1 + Math.max(...norm.map(c => c[0])), h: 1 + Math.max(...norm.map(c => c[1])) });
+      }
+      cur = cur.map(([x, y]) => [-y, x]);
+    }
+    return out;
+  },
+
+  /** Generador pseudoaleatorio determinista (mulberry32) */
+  rng(seed) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  },
+
+  tetrisFits(board, rot, x, y) {
+    return rot.cells.every(([dx, dy]) => {
+      const cx = x + dx;
+      const cy = y + dy;
+      return cx >= 0 && cy >= 0 && cx < this.COLS && cy < this.ROWS && board[cx][cy] === 0;
+    });
+  },
+
+  /**
+   * La IA elige rotación y fila: la pieza entra por la derecha (hoy) y se desliza hasta chocar.
+   * Gana la que llega más lejos hacia el pasado dejando menos huecos detrás.
+   */
+  tetrisBest(board, rots) {
+    const rowEnd = [];
+    for (let y = 0; y < this.ROWS; y++) {
+      let end = 0;
+      for (let x = 0; x < this.COLS; x++) if (board[x][y]) end = x + 1;
+      rowEnd.push(end);
+    }
+    let best = null;
+    rots.forEach((rot, r) => {
+      for (let y = 0; y + rot.h <= this.ROWS; y++) {
+        let x = this.COLS - rot.w;
+        if (!this.tetrisFits(board, rot, x, y)) continue;
+        while (this.tetrisFits(board, rot, x - 1, y)) x--;
+        let holes = 0;
+        for (let dy = 0; dy < rot.h; dy++) {
+          const row = rot.cells.filter(c => c[1] === dy);
+          if (row.length) holes += Math.max(0, x + Math.min(...row.map(c => c[0])) - rowEnd[y + dy]);
+        }
+        const score = x * 4 + holes * 3;
+        if (!best || score < best.score) best = { r, y, x, score };
+      }
+    });
+    return best;
+  },
+
+  /**
+   * Tetris de lado: primero la gravedad junta tus contribuciones hacia el pasado (cada día de la semana
+   * se convierte en una barra) y luego caen piezas desde hoy hacia la izquierda. Cada semana que se llena
+   * de arriba abajo parpadea. Acaba cuando una pieza ya no cabe o tras maxPieces piezas.
+   */
+  tetrisCreate(grid, { maxPieces = 60, player = false } = {}) {
+    const orig = this.levelsOf(grid);
+    let seed = 7;
+    for (const col of orig) for (const v of col) seed = (Math.imul(seed, 31) + v) >>> 0;
+    return {
+      mode: 'tetris', done: false, tick: 0, maxPieces, player,
+      orig, board: orig.map(col => col.slice()), rnd: this.rng(seed), bag: [],
+      active: null, spawnWait: 0, doneAt: 0, placed: 0, lines: 0, end: 'pieces',
+      pieces: [], cellChanges: {}, progress: []
+    };
+  },
+
+  /** Semanas completas: columnas con los siete días llenos (las que ya junta la gravedad y las que completan las piezas) */
+  fullWeeks(board) {
+    return board.filter(col => col.every(v => v > 0)).length;
+  },
+
+  tetrisLock(s, tick) {
+    const a = s.active;
+    const rot = a.rots[a.r];
+    const change = (x, y, at, level) => {
+      const key = `${x}_${y}`;
+      (s.cellChanges[key] = s.cellChanges[key] || []).push([at, level]);
+    };
+    for (const [dx, dy] of rot.cells) {
+      s.board[a.x + dx][a.y + dy] = a.level;
+      change(a.x + dx, a.y + dy, tick, a.level);
+    }
+    s.pieces.push({ kind: a.kind, cells: rot.cells, level: a.level, y: a.y, spawnX: a.spawnX, spawn: a.spawn, landX: a.x, land: tick });
+    // Semana que esta pieza completa: la columna parpadea dos veces
+    const cols = [...new Set(rot.cells.map(c => a.x + c[0]))];
+    for (const x of cols) {
+      if (s.board[x].every(v => v > 0)) {
+        for (let y = 0; y < this.ROWS; y++) {
+          change(x, y, tick + 1, 0);
+          change(x, y, tick + 2, s.board[x][y]);
+          change(x, y, tick + 3, 0);
+          change(x, y, tick + 4, s.board[x][y]);
+        }
+      }
+    }
+    let filled = 0;
+    s.board.forEach(col => col.forEach(v => { if (v) filled++; }));
+    s.progress.push([tick, filled / (this.COLS * this.ROWS)]);
+    s.lines = this.fullWeeks(s.board);
+    s.active = null;
+    s.spawnWait = 1;
+    s.placed++;
+    if (s.placed >= s.maxPieces) s.doneAt = tick + 5;
+  },
+
+  /** Un paso. Con player: input.dy (-1 / 1) cambia de fila, input.rotate gira e input.drop la deja caer */
+  tetrisStep(s, input) {
+    const tick = ++s.tick;
+    if (s.doneAt && tick >= s.doneAt) { s.done = true; return; }
+    if (tick < this.COMPACT_TICK) return;
+    if (tick === this.COMPACT_TICK) {
+      // Gravedad hacia el pasado: en cada fila las contribuciones se juntan a la izquierda
+      for (let y = 0; y < this.ROWS; y++) {
+        const row = [];
+        for (let x = 0; x < this.COLS; x++) if (s.orig[x][y] > 0) row.push(s.orig[x][y]);
+        for (let x = 0; x < this.COLS; x++) {
+          const level = row[x] || 0;
+          if (level !== s.board[x][y]) {
+            s.board[x][y] = level;
+            (s.cellChanges[`${x}_${y}`] = s.cellChanges[`${x}_${y}`] || []).push([tick, level]);
+          }
+        }
+      }
+      s.lines = this.fullWeeks(s.board);
+      s.spawnWait = 3;
+      return;
+    }
+
+    if (!s.active) {
+      if (s.doneAt) return;
+      if (s.spawnWait > 0) { s.spawnWait--; return; }
+      if (!s.bag.length) {
+        s.bag = Object.keys(this.TETROMINOES);
+        for (let i = s.bag.length - 1; i > 0; i--) {
+          const j = Math.floor(s.rnd() * (i + 1));
+          [s.bag[i], s.bag[j]] = [s.bag[j], s.bag[i]];
+        }
+      }
+      const kind = s.bag.shift();
+      const rots = this.rotations(this.TETROMINOES[kind]);
+      let choice = null;
+      if (s.player) {
+        // Entra centrada; si no cabe, prueba el resto de filas y rotaciones
+        for (let r = 0; r < rots.length && !choice; r++) {
+          const mid = Math.floor((this.ROWS - rots[r].h) / 2);
+          const ys = [...Array(this.ROWS - rots[r].h + 1).keys()].sort((p, q) => Math.abs(p - mid) - Math.abs(q - mid));
+          for (const y of ys) if (this.tetrisFits(s.board, rots[r], this.COLS - rots[r].w, y)) { choice = { r, y }; break; }
+        }
+      } else {
+        choice = this.tetrisBest(s.board, rots);
+      }
+      if (!choice) {
+        s.end = 'topout';
+        s.doneAt = tick + 5;
+        return;
+      }
+      const x = this.COLS - rots[choice.r].w;
+      s.active = { kind, rots, r: choice.r, y: choice.y, x, spawnX: x, spawn: tick, level: this.PIECE_LEVEL[kind] };
+      return;
+    }
+
+    const a = s.active;
+    const fits = (r, x, y) => this.tetrisFits(s.board, a.rots[r], x, y);
+    if (s.player && input) {
+      if (input.dy && fits(a.r, a.x, a.y + input.dy)) a.y += input.dy;
+      if (input.rotate) {
+        const r = (a.r + 1) % a.rots.length;
+        for (const dy of [0, -1, 1, -2]) if (fits(r, a.x, a.y + dy)) { a.r = r; a.y += dy; break; }
+      }
+      if (input.drop) {
+        while (fits(a.r, a.x - 1, a.y)) a.x--;
+        this.tetrisLock(s, tick);
+        return;
+      }
+    }
+    // IA: dos columnas por paso. Jugador: una cada tres pasos (la gravedad del juego)
+    const moves = s.player ? (tick % 3 === 0 ? 1 : 0) : 2;
+    for (let k = 0; k < moves; k++) {
+      if (fits(a.r, a.x - 1, a.y)) a.x--;
+      else { this.tetrisLock(s, tick); return; }
+    }
+  },
+
+  tetrisView(s) {
+    const levels = s.board.map(col => col.slice());
+    if (s.active) {
+      for (const [dx, dy] of s.active.rots[s.active.r].cells) levels[s.active.x + dx][s.active.y + dy] = s.active.level;
+    }
+    let filled = 0;
+    s.board.forEach(col => col.forEach(v => { if (v) filled++; }));
+    return { levels, actors: [], score: s.lines, pieces: s.placed, progress: filled / (this.COLS * this.ROWS) };
+  },
+
+  simulateTetris(grid, options) {
+    const s = this.run('tetris', grid, options);
+    return {
+      steps: Math.max(1, s.tick), ticks: s.tick, cellChanges: s.cellChanges, progress: s.progress,
+      pieces: s.pieces, lines: s.lines, placed: s.placed, end: s.end
+    };
+  },
+
+  buildTetrisSvg(grid, options = {}) {
+    const tokens = ThemeTokens.get(options.theme);
+    const lang = options.lang === 'es' ? 'es' : 'en';
+    const T = this.TEXT[lang];
+    const sim = this.simulateTetris(grid);
+    const L = this.layout();
+    const user = options.user ? String(options.user) : '';
+    const colors = [tokens.empty, tokens.l1, tokens.l2, tokens.l3, tokens.l4];
+
+    // Cada pieza es un grupo de cuatro celdas que solo se ve mientras se desliza; al encajar la sustituyen sus celdas
+    const css = (t) => {
+      let out = '';
+      sim.pieces.forEach((p, i) => {
+        const from = t.pct(p.spawn - 1);
+        const to = t.pct(p.land);
+        const at = (x) => `translate(${+(x * L.step).toFixed(2)}px,0)`;
+        out += `.q${i}{animation:q${i} ${t.total}s infinite linear}@keyframes q${i}{0%,${Math.max(0, +(from - 0.001).toFixed(3))}%{transform:${at(p.spawnX)};opacity:0}`
+          + `${from}%{opacity:1}${to}%{transform:${at(p.landX)};opacity:1}${+(to + 0.001).toFixed(3)}%,100%{opacity:0}}`;
+      });
+      return out;
+    };
+    const body = sim.pieces.map((p, i) => `<g class="q${i}" opacity="0">${p.cells.map(([dx, dy]) => `<rect x="${L.cellX(dx)}" y="${L.cellY(p.y + dy)}" width="${L.cell}" height="${L.cell}" rx="2.5" fill="${colors[p.level]}"/>`).join('')}</g>`).join('');
+
+    return this.frame({
+      grid, tokens,
+      title: [user ? `@${user}` : '', T.tetris, T.weeks(sim.lines), T.pieces(sim.placed)].filter(Boolean).join(' · '),
+      credit: `tetris on ${user ? `@${user}` : 'a GitHub'} contributions by Perfila`,
+      steps: sim.steps, stepDuration: 0.06, pauseDuration: 2.5,
+      cellChanges: sim.cellChanges, restoreWave: true, progress: sim.progress,
+      css, body
+    });
+  },
+
+  /** SVG de un modo para el README */
+  buildSvg(mode, grid, options) {
+    return {
+      life: () => this.buildLifeSvg(grid, options),
+      pacman: () => this.buildPacmanSvg(grid, options),
+      invaders: () => this.buildInvadersSvg(grid, options),
+      tetris: () => this.buildTetrisSvg(grid, options)
+    }[mode]();
   }
 };
 
