@@ -99,6 +99,13 @@ a { color: inherit; }
 .hero-cells i[data-l="3"] { background: var(--c3); }
 .hero-cells i[data-l="4"] { background: var(--c4); }
 
+.examples { padding: 0 0 64px; }
+.examples h2 { font-size: 28px; letter-spacing: -0.03em; }
+.examples > p { margin: 8px 0 20px; }
+.examples-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.example { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: grid; gap: 10px; }
+.example img { display: block; width: 100%; height: auto; border-radius: 8px; background: var(--soft); }
+.example-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; }
 .steps { list-style: none; margin: 0; padding: 32px 0 64px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; border-top: 1px solid var(--line); counter-reset: step; }
 .steps li { counter-increment: step; display: grid; gap: 4px; }
 .steps li::before { content: counter(step); font-family: var(--mono); font-size: 13px; color: var(--muted); }

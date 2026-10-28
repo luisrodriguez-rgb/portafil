@@ -10,6 +10,8 @@ const Brand = {
   site: 'https://perfila.vercel.app',
   // Repositorio público (vacío hasta crearlo): la web enlaza a él si existe
   repo: '',
+  // Perfil público que se usa en los ejemplos de la web y de examples/ (el del autor)
+  demoUser: 'luisrodriguez-rgb',
   // Referencia de la GitHub Action para el workflow generado
   actionRef: 'perfila/perfila@v1',
   userAgent: 'perfila'

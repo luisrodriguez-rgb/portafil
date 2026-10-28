@@ -65,6 +65,10 @@
     "api/og.js": {
       "maxDuration": 10,
       "includeFiles": "{js,shared,action,server,assets/fonts}/**"
+    },
+    "api/event.js": {
+      "maxDuration": 5,
+      "includeFiles": "{js,shared,action}/**"
     }
   }
 }

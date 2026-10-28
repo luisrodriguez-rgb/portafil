@@ -112,3 +112,14 @@ test('vista previa del README: Markdown justo, HTML de las piezas y texto escapa
   // Los enlaces que no son http(s) no se convierten
   assert.ok(!KitSnippet.previewHtml('[x](javascript:alert(1))').includes('<a '));
 });
+
+test('eventos de la web: solo nombres y valores conocidos, nada personal', () => {
+  const { parseEvent } = require('../server/event');
+  assert.deepStrictEqual({ ...parseEvent('{"event":"copy","ms":74213.6,"pieces":6,"theme":"cyberpunk","template":"developer","lang":"es"}') },
+    { event: 'copy', ms: 74214, pieces: 6, theme: 'cyberpunk', template: 'developer', lang: 'es' });
+  // Campos desconocidos o con valores fuera de lista se descartan
+  assert.deepStrictEqual({ ...parseEvent({ event: 'copy-piece', kind: 'tetris', user: 'octocat', theme: 'pink', ms: -5 }) }, { event: 'copy-piece', kind: 'tetris' });
+  assert.strictEqual(parseEvent('{"event":"hack"}'), null);
+  assert.strictEqual(parseEvent('no json'), null);
+  assert.strictEqual(parseEvent('{"event":"copy","x":"' + 'a'.repeat(2000) + '"}'), null);
+});

@@ -71,7 +71,18 @@ Pesos medidos con perfiles de prueba: juego de la vida 29-63 KB, Pac-Man 92-96 K
 
 ## Fase 5 · Lanzamiento y distribución
 
-Al cerrar la Fase R con el despliegue: listas *awesome* de README de perfil, GitHub Marketplace para la Action, artículo en dev.to ("por qué todos los perfiles se ven iguales"), clips verticales de duelos, un perfil de ejemplo por tema.
+| Estado | Tarea | Dónde |
+| --- | --- | --- |
+| ✅ | Plan de lanzamiento: comprobaciones antes de anunciar, prueba de humo, día D, cuatro semanas de contenido y metas | `docs/launch/README.md` |
+| ✅ | Un perfil de ejemplo por estilo, en la portada ("Así se ve un perfil completo", con "Usar este estilo") y en el repositorio, generado y comprobado por las pruebas | `examples/`, `scripts/build-examples.js` |
+| ✅ | Medición de la puerta de la Fase 4: eventos de la web sin cookies ni usuario (`user`, `copy`, `preview`, `share`), respetando Do Not Track | `server/event.js`, `docs/metrics.md` |
+| ✅ | Entradas y textos de PR para las tres listas *awesome* activas, comprobadas el 28 de octubre de 2026 | `docs/launch/listas-awesome.md` |
+| ✅ | Guía para publicar la Action en Marketplace, con los requisitos actuales de GitHub | `docs/launch/marketplace.md` |
+| ✅ | Artículo para dev.to en español e inglés ("por qué todos los perfiles se ven iguales") | `docs/launch/articulo-devto.md`, `docs/launch/article-devto.en.md` |
+| ✅ | Publicaciones para X y LinkedIn (lanzamiento, duelo, un modo por semana) | `docs/launch/publicaciones.md` |
+| ⬜ 👤 | Desplegar, poner dominio y repositorio en `shared/brand.js`, publicar artículo, posts, Action y PR | `docs/launch/README.md` |
+
+**Puerta:** perfiles reales usando el endpoint cada semana y más de la mitad con dos o más piezas ⬜ (se mide tras el despliegue).
 
 ## Fuera de alcance (veto)
 

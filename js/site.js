@@ -33,6 +33,8 @@
       'readme.count': (n) => (n === 1 ? '1 pieza' : `${n} piezas`),
       'readme.empty': '<!-- Marca "Añadir al README" en las piezas que quieras -->',
       'foot.note': 'Todo es SVG con CSS: tu perfil no ejecuta JavaScript.',
+      'ex.title': 'Así se ve un perfil completo', 'ex.lead': 'El mismo perfil en los siete estilos. Elige uno y escribe tu usuario.',
+      'ex.use': 'Usar este estilo', 'ex.chosen': (n) => `Estilo ${n} elegido. Ahora escribe tu usuario.`,
       'msg.checking': (u) => `Buscando a @${u}…`,
       'msg.invalid': 'Ese no parece un usuario de GitHub: letras, números y guiones, hasta 39.',
       'msg.notFound': (u) => `No encontramos a @${u} en GitHub.`,
@@ -92,6 +94,8 @@
       'readme.count': (n) => (n === 1 ? '1 piece' : `${n} pieces`),
       'readme.empty': '<!-- Tick "Add to README" on the pieces you want -->',
       'foot.note': 'Everything is SVG with CSS: your profile runs no JavaScript.',
+      'ex.title': 'What a whole profile looks like', 'ex.lead': 'The same profile in all seven styles. Pick one and type your username.',
+      'ex.use': 'Use this style', 'ex.chosen': (n) => `${n} style picked. Now type your username.`,
       'msg.checking': (u) => `Looking for @${u}…`,
       'msg.invalid': 'That does not look like a GitHub username: letters, numbers and dashes, up to 39.',
       'msg.notFound': (u) => `We could not find @${u} on GitHub.`,
@@ -166,6 +170,17 @@
   const previewBase = location.protocol.startsWith('http') ? location.origin : Brand.site;
   const publicBase = isLocal || !location.protocol.startsWith('http') ? Brand.site : location.origin;
 
+  /**
+   * Medición sin cookies ni usuario (server/event.js): cuánto se tarda desde abrir la web hasta copiar.
+   * Respeta Do Not Track y Global Privacy Control.
+   */
+  const pageStart = performance.now();
+  function track(event, extra = {}) {
+    if (navigator.doNotTrack === '1' || navigator.globalPrivacyControl || !location.protocol.startsWith('http') || !navigator.sendBeacon) return;
+    const body = { event, ms: Math.round(performance.now() - pageStart), theme: state.theme, template: state.template, lang: state.ui, ...extra };
+    try { navigator.sendBeacon(`${previewBase}/api/event`, JSON.stringify(body)); } catch (e) {}
+  }
+
   const otherTheme = () => state.other || PARTNER[state.theme];
   const snippetOptions = (base) => {
     const light = LIGHT.has(state.theme);
@@ -206,6 +221,34 @@
     const rows = [];
     for (let r = 0; r < 7; r++) for (let c = 0; c < 17; c++) rows.push(cells[c * 7 + r]);
     $('heroCells').innerHTML = rows.join('');
+  }
+
+  // --- Ejemplos: el perfil de demostración en cada estilo ---
+  function buildExamples() {
+    const box = $('examplesGrid');
+    box.innerHTML = '';
+    for (const theme of THEMES) {
+      const card = document.createElement('article');
+      card.className = 'example';
+      const src = `${previewBase}/api/kit/${Brand.demoUser}.svg?theme=${theme}${state.ui === 'es' ? '&lang=es' : ''}`;
+      card.innerHTML = `<img src="${src}" alt="@${Brand.demoUser} · ${T('themes')[theme]}" loading="lazy" decoding="async" width="797" height="474">
+        <div class="example-foot"><strong>${T('themes')[theme]}</strong><button type="button" class="btn small">${T('ex.use')}</button></div>`;
+      card.querySelector('button').addEventListener('click', () => {
+        state.theme = theme;
+        state.other = '';
+        if (state.user) {
+          refresh();
+          $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        syncUrl();
+        $('formMsg').classList.remove('error');
+        $('formMsg').textContent = T('ex.chosen', T('themes')[theme]);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        $('user').focus({ preventScroll: true });
+      });
+      box.appendChild(card);
+    }
   }
 
   // --- URL ---
@@ -262,7 +305,11 @@
         <a class="btn small" id="ogIn" target="_blank" rel="noopener noreferrer">${T('share.in')}</a>
       </div></div></article>`;
     gallery.appendChild(share);
-    $('ogCopy').addEventListener('click', (e) => copy(e.currentTarget, shareUrl()));
+    $('ogCopy').addEventListener('click', (e) => {
+      copy(e.currentTarget, shareUrl());
+      track('share');
+    });
+    $('ogDownload').addEventListener('click', () => track('share'));
     $('rivalForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const value = $('rival').value.trim().replace(/^@/, '').replace(/^https?:\/\/github\.com\//i, '').replace(/\/.*$/, '');
@@ -300,7 +347,10 @@
     });
     card.querySelector('[data-copy]').addEventListener('click', (e) => {
       const code = KitSnippet.piece(kind, state.user, snippetOptions(publicBase));
-      if (code) copy(e.currentTarget, code);
+      if (code) {
+        copy(e.currentTarget, code);
+        track('copy-piece', { kind });
+      }
     });
     card.querySelectorAll('[data-opt]').forEach(sel => sel.addEventListener('change', () => {
       state[sel.dataset.opt] = sel.value;
@@ -470,8 +520,10 @@
     if (state.user.toLowerCase() !== user.toLowerCase() && state.rival.toLowerCase() === user.toLowerCase()) state.rival = '';
     state.user = user;
     $('who').textContent = `@${user}`;
+    track('user');
     $('results').hidden = false;
     $('how').hidden = true;
+    $('examples').hidden = true;
     buildGallery();
     refresh();
     $('results').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -512,8 +564,12 @@
     state.other = e.target.value;
     refresh();
   });
-  $('copyAll').addEventListener('click', (e) => copy(e.currentTarget, $('readmeCode').textContent));
-  $('dockCopy').addEventListener('click', (e) => copy(e.currentTarget, $('readmeCode').textContent));
+  const copyAll = (e) => {
+    copy(e.currentTarget, $('readmeCode').textContent);
+    track('copy', { pieces: state.picked.size });
+  };
+  $('copyAll').addEventListener('click', copyAll);
+  $('dockCopy').addEventListener('click', copyAll);
   $('templateSelect').addEventListener('change', (e) => {
     state.template = e.target.value;
     const pieces = KitSnippet.templatePieces(state.template);
@@ -524,6 +580,7 @@
     updateReadme();
   });
   $('previewBtn').addEventListener('click', () => {
+    track('preview');
     renderPreview();
     $('previewDialog').showModal();
   });
@@ -538,6 +595,7 @@
     try { localStorage.setItem('perfila.lang', state.ui); } catch (e) {}
     applyStaticText();
     buildTemplates();
+    buildExamples();
     if (state.user) {
       buildGallery();
       refresh();
@@ -546,6 +604,7 @@
 
   applyStaticText();
   buildTemplates();
+  buildExamples();
   drawHeroCells();
   const rivalParam = cleanUser(params.get('r'));
   if (USER_RE.test(rivalParam)) state.rival = rivalParam;

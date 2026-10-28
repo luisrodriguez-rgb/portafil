@@ -23,6 +23,24 @@ Los Runtime Logs del plan gratuito duran poco, así que para medir semanas hay q
 | Perfiles compartidos fuera de GitHub | peticiones a `og-profile` y `share-page` (las redes piden la imagen al mostrar el enlace) |
 | Coste | percentil 95 de `ms` por `endpoint` |
 
+### Eventos de la web
+
+La web envía a `POST /api/event` (`server/event.js`) unos pocos eventos, sin cookies ni usuario de GitHub, y nunca si el navegador pide Do Not Track o Global Privacy Control:
+
+```json
+{"evt":"perfila.event","event":"copy","ms":74213,"pieces":6,"theme":"cyberpunk","template":"developer","lang":"es"}
+```
+
+| Evento | Cuándo |
+| --- | --- |
+| `user` | se cargan las piezas de un usuario |
+| `copy` | se copia el bloque README completo (`pieces`: cuántas piezas) |
+| `copy-piece` | se copia una pieza suelta (`kind`) |
+| `preview` | se abre la vista previa del README |
+| `share` | se copia el enlace o se descarga la tarjeta para redes |
+
+**Puerta de la Fase 4** (publicar el perfil en menos de dos minutos): la mediana de `ms` del primer `copy` de cada visita, por debajo de 120000. Como aproximación de "publicado", cruzarlo con perfiles nuevos en los logs de render en las horas siguientes.
+
 La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 6 h), así que estas cifras cuentan **perfiles**, no visitas al perfil.
 
 ## 2. Repositorio (alcance)

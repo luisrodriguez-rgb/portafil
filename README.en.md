@@ -77,5 +77,7 @@ Deployment: Vercel serves the web and the API together; it needs the `GITHUB_TOK
 - [Plan and phases](docs/roadmap/PLAN.md)
 - [URL contract](docs/contract.md)
 - [Metrics](docs/metrics.md)
+- [Example profiles by style](examples/README.md)
+- [Launch: lists, Marketplace, article and posts](docs/launch/README.md)
 
 Perfila grows out of the GITHUB_SNAKE.EXE engine, by the same author.

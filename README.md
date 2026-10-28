@@ -87,5 +87,7 @@ Despliegue: Vercel sirve la web y la API juntas; necesita la variable `GITHUB_TO
 - [Plan y fases](docs/roadmap/PLAN.md)
 - [Contrato de URL](docs/contract.md)
 - [Métricas](docs/metrics.md)
+- [Perfiles de ejemplo por estilo](examples/README.md)
+- [Lanzamiento: listas, Marketplace, artículo y publicaciones](docs/launch/README.md)
 
 Perfila nace del motor de GITHUB_SNAKE.EXE, del mismo autor.

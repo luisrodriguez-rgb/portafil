@@ -33,3 +33,12 @@ test('cada script de js/ lo carga alguna página (un archivo nuevo sin cargar ro
     assert.ok(refs.some(ref => ref.startsWith(`js/${file}?`)), `js/${file} no está en ninguna página`);
   }
 });
+
+test('examples/ está al día con las plantillas y los estilos', () => {
+  const { files } = require('../scripts/build-examples');
+  for (const [name, content] of Object.entries(files())) {
+    const file = path.join(ROOT, 'examples', name);
+    assert.ok(fs.existsSync(file), `falta examples/${name}`);
+    assert.strictEqual(fs.readFileSync(file, 'utf8'), content, `examples/${name} desactualizado: node scripts/build-examples.js`);
+  }
+});
