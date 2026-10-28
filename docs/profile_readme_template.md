@@ -1,97 +1,83 @@
-# Plantilla para tu Perfil Especial de GitHub (`luisrodriguez-rgb/luisrodriguez-rgb`)
+# Plantilla de perfil
 
-Copia y pega este contenido en el archivo `README.md` de tu repositorio especial de GitHub (`https://github.com/luisrodriguez-rgb/luisrodriguez-rgb`):
+Lo más rápido es la web: escribe tu usuario, elige las piezas y copia. Este archivo es la versión a mano.
 
-## Kit visual completo (recomendado)
+1. Crea en GitHub un repositorio con **exactamente tu nombre de usuario** (`tu-usuario/tu-usuario`). GitHub muestra su `README.md` en tu perfil.
+2. Pega uno de los bloques de abajo en ese `README.md` y cambia `tu-usuario`.
+3. Listo: las piezas se actualizan solas cada pocas horas y cambian con el modo claro u oscuro de GitHub.
 
-Cabecera, estadísticas, racha, lenguajes, actividad y serpiente con el mismo tema. Cada pieza cambia sola entre modo claro y oscuro con `<picture>`. No necesita workflow: el endpoint lee tus datos públicos y se actualiza cada pocas horas.
+Cambia `theme=ink` / `theme=paper` por cualquiera de `dark`, `light`, `cyberpunk`, `neon_cyan` o `amber_terminal`, y quita `&lang=es` para tenerlo en inglés. El contrato completo de URL está en [contract.md](contract.md).
+
+## Perfil completo
 
 ```html
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-snake-ebon.vercel.app/api/header/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-snake-ebon.vercel.app/api/header/luisrodriguez-rgb.svg?theme=light&lang=es">
-  <img alt="@luisrodriguez-rgb by GITHUB_SNAKE.EXE" src="https://github-snake-ebon.vercel.app/api/header/luisrodriguez-rgb.svg?theme=light&lang=es" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/header/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/header/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario by Perfila" src="https://perfila.vercel.app/api/header/tu-usuario.svg?theme=paper&lang=es" width="100%">
 </picture>
 
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-snake-ebon.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-snake-ebon.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=light&lang=es">
-  <img alt="@luisrodriguez-rgb stats" src="https://github-snake-ebon.vercel.app/api/stats/luisrodriguez-rgb.svg?theme=light&lang=es" width="49%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario stats" src="https://perfila.vercel.app/api/stats/tu-usuario.svg?theme=paper&lang=es" width="49%">
 </picture>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-snake-ebon.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-snake-ebon.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=light&lang=es">
-  <img alt="@luisrodriguez-rgb streak" src="https://github-snake-ebon.vercel.app/api/streak/luisrodriguez-rgb.svg?theme=light&lang=es" width="49%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="49%">
 </picture>
 </p>
 
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-snake-ebon.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-snake-ebon.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=light&lang=es">
-  <img alt="@luisrodriguez-rgb languages" src="https://github-snake-ebon.vercel.app/api/langs/luisrodriguez-rgb.svg?theme=light&lang=es" width="49%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario languages" src="https://perfila.vercel.app/api/langs/tu-usuario.svg?theme=paper&lang=es" width="49%">
 </picture>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-snake-ebon.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-snake-ebon.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=light&lang=es">
-  <img alt="@luisrodriguez-rgb weekly activity" src="https://github-snake-ebon.vercel.app/api/activity/luisrodriguez-rgb.svg?theme=light&lang=es" width="49%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario weekly activity" src="https://perfila.vercel.app/api/activity/tu-usuario.svg?theme=paper&lang=es" width="49%">
 </picture>
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-snake-ebon.vercel.app/api/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-snake-ebon.vercel.app/api/luisrodriguez-rgb.svg?theme=light&lang=es">
-  <img alt="snake eating @luisrodriguez-rgb contributions by GITHUB_SNAKE.EXE" src="https://github-snake-ebon.vercel.app/api/luisrodriguez-rgb.svg?theme=light&lang=es" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="snake eating @tu-usuario contributions by Perfila" src="https://perfila.vercel.app/api/tu-usuario.svg?theme=paper&lang=es" width="100%">
 </picture>
 ```
 
-Variantes: cambia `cyberpunk` por `dark`, `neon_cyan` o `amber_terminal`; quita `&lang=es` para inglés; o usa una sola imagen con todo:
+## Una sola pieza
+
+Cualquier pieza funciona sola. Por ejemplo, solo la racha:
 
 ```html
-<img src="https://github-snake-ebon.vercel.app/api/kit/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es" width="100%">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario streak" src="https://perfila.vercel.app/api/streak/tu-usuario.svg?theme=paper&lang=es" width="49%">
+</picture>
 ```
 
-## Plantilla completa con texto
+## Duelo contra otro perfil
 
-```markdown
-# Hola, soy Luis Rodriguez 👋
+El duelo enlaza a su página, donde cualquiera puede verlo en grande y retar al ganador:
 
-> Desarrollador Frontend & Creador de Sistemas Interactivos.  
-> Especializado en aplicaciones web de alto rendimiento, Canvas 2D / WebGL, algoritmos de grafos y herramientas para desarrolladores.
+```html
+<a href="https://perfila.vercel.app/duel/tu-usuario-vs-rival">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=ink&lang=es">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=paper&lang=es">
+  <img alt="@tu-usuario vs @rival duel" src="https://perfila.vercel.app/api/duel/tu-usuario-vs-rival.svg?theme=paper&lang=es" width="100%">
+</picture>
+</a>
+```
 
----
+## Todo en una imagen
 
-### Proyecto Destacado: GITHUB_SNAKE.EXE
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/luisrodriguez-rgb/luisrodriguez-rgb/output/github-contribution-grid-snake-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/luisrodriguez-rgb/luisrodriguez-rgb/output/github-contribution-grid-snake.svg">
-    <img alt="Snake Contribution Animation" src="https://raw.githubusercontent.com/luisrodriguez-rgb/luisrodriguez-rgb/output/github-contribution-grid-snake.svg" width="100%">
-  </picture>
-</p>
-
-* **[Probar Demo en Vivo](https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/)**
-* **[Ver Código en GitHub](https://github.com/luisrodriguez-rgb/GITHUB_SNAKE.EXE)**
-* Motor interactivo a 60 FPS desarrollado con **Vanilla JavaScript** y **Canvas 2D**:
-  * Pathfinding inteligente con búsqueda en anchura (**BFS**) y evaluación espacial de seguridad (**Flood Fill**).
-  * Renderizado desacoplado con interpolación **LERP sub-píxel** sin vibraciones.
-  * Creador de **Commit Art** con fuentes tipográficas bitmap y generación automática de scripts Bash (.sh).
-  * Modo versus multijugador (IA vs Jugador).
-
----
-
-### Tecnologías & Enfoque
-
-* **Frontend & Gráficos**: JavaScript (ES6+), TypeScript, Canvas 2D, WebGL, Web Audio API, MediaRecorder API.
-* **Arquitectura & Performance**: Algoritmos de grafos (BFS, DFS, Dijkstra), Autómatas celulares, Web Workers, Service Workers.
-* **Infraestructura & Edge**: Cloudflare Workers, Pages, GitHub Actions, Docker, CI/CD.
-
----
-
-### Conectemos
-
-* **GitHub**: [github.com/luisrodriguez-rgb](https://github.com/luisrodriguez-rgb)
-* **X (Twitter)**: [@Luis_RodG11](https://twitter.com/Luis_RodG11)
+```html
+<img src="https://perfila.vercel.app/api/kit/tu-usuario.svg?theme=ink&lang=es" width="100%">
 ```

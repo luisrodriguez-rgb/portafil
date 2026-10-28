@@ -27,8 +27,10 @@ Estado: ✅ hecho · 🟡 parcial · ⬜ pendiente
 | ✅ | Fuera lo que no sirve: perfiles destacados, documentación vieja, capturas, proxy de Cloudflare, cabeceras de Pages, carpetas de herramientas | — |
 | ✅ | Web nueva: portada que explica qué hace, un solo campo de usuario, galería de todas las piezas con tema, idioma y "copiar" por pieza, y bloque README con solo lo elegido | `index.html`, `css/site.css`, `js/site.js` |
 | ✅ | El juego, el duelo en vivo, Commit Art y el estudio de video pasan a `/play.html`, con la paleta neutra | `play.html`, `style.css`, `js/app.js` |
+| ⬜ | Rediseñar el estudio con el mismo lenguaje limpio de la portada (hoy solo cambió la paleta; conserva la maquetación anterior) | `play.html`, `style.css` |
+| ⬜ | Logo definitivo: trazado propio para el nombre (hoy usa la tipografía del sistema) | `assets/brand/` |
 | ✅ | Servidor local que sirve la web y la API como Vercel, con datos de prueba sin token | `scripts/dev-server.js` |
-| ⬜ | Crear el repositorio remoto (lo pasa el autor) y hacer push | — |
+| ⬜ | Conectar el repositorio remoto que pase el autor, poner `repo` y `actionRef` en `shared/brand.js` y hacer push | — |
 | ⬜ | Elegir dominio y desplegar en Vercel con `GITHUB_TOKEN`; cambiar `site` en `shared/brand.js` | — |
 | ⬜ | Comprobar disponibilidad del nombre y el dominio | — |
 

@@ -1,464 +1,83 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="GITHUB_SNAKE.EXE Logo" width="120" height="120" />
+  <img src="assets/brand/og.png" alt="Perfila: tu perfil de GitHub, con un solo estilo" width="100%">
 </p>
-
-# GITHUB_SNAKE.EXE — tu perfil de GitHub con un solo estilo
 
 <p align="center"><a href="README.en.md">English</a> · <b>Español</b></p>
 
-> **Cabecera, estadísticas, racha, lenguajes, actividad y la serpiente que se come tus commits, todo con el mismo tema y generado desde una URL.** Sin YAML y sin diseñar nada a mano. GitHub no ejecuta JavaScript en un README, así que cada pieza es un SVG con animación CSS.
+# Perfila
 
-<p align="center">
-  <img src="https://github-snake-ebon.vercel.app/api/kit/luisrodriguez-rgb.svg?theme=cyberpunk&lang=es" alt="@luisrodriguez-rgb GitHub profile by GITHUB_SNAKE.EXE" width="100%" />
-</p>
-<p align="center">
-  <img src="assets/showcase/yyx990803.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="100%" />
-</p>
+**Tu perfil de GitHub, con un solo estilo.** Cabecera, estadísticas, racha, lenguajes, actividad, la serpiente que se come tus commits, versus y duelos contra otros perfiles: todas las piezas comparten tema, tipografía y medidas, así que tu perfil parece un solo diseño y no un collage de widgets.
 
-## El kit en una línea
+Escribe tu usuario en la web, elige lo que quieras y copia el código. Sin YAML y sin configurar nada. GitHub no ejecuta JavaScript en un README, así que cada pieza es un SVG con animación CSS servido desde una URL.
 
-Todo el perfil en una sola imagen (cambia `TU_USUARIO` y el tema):
-
-```html
-<img src="https://github-snake-ebon.vercel.app/api/kit/TU_USUARIO.svg?theme=cyberpunk" width="100%">
-```
-
-O pieza a pieza, para colocarlas donde quieras. Todas comparten tema, tipografía y medidas: la cabecera y la serpiente ocupan el ancho completo, y el resto van de dos en dos.
+## Piezas
 
 | Pieza | URL | Muestra |
 | --- | --- | --- |
-| `header` | `/api/header/TU_USUARIO.svg` | Avatar, nombre, bio, seguidores, repos, estrellas |
-| `stats` | `/api/stats/TU_USUARIO.svg` | Contribuciones, commits, PRs, issues, reviews |
-| `streak` | `/api/streak/TU_USUARIO.svg` | Racha actual y más larga, últimos 30 días |
-| `langs` | `/api/langs/TU_USUARIO.svg` | Lenguajes por tamaño de código |
-| `activity` | `/api/activity/TU_USUARIO.svg` | Contribuciones por semana |
-| serpiente | `/api/TU_USUARIO.svg` | La serpiente devorando tu calendario |
-| duelo | `/api/duel/TU_USUARIO-vs-RIVAL.svg` | Repetición del duelo con marcador; la página para compartir y retar es `/duel/TU_USUARIO-vs-RIVAL` |
-| versus | `/api/versus/TU_USUARIO-vs-RIVAL.svg` | Tus cifras frente a las de otro perfil |
+| Cabecera | `/api/header/<usuario>.svg` | Avatar, nombre, bio, seguidores, repos, estrellas y días activos |
+| Estadísticas | `/api/stats/<usuario>.svg` | Contribuciones, commits, PRs, issues, reviews y estrellas del último año |
+| Racha | `/api/streak/<usuario>.svg` | Racha actual, la más larga y los últimos 30 días |
+| Lenguajes | `/api/langs/<usuario>.svg` | Lenguajes por tamaño de código en tus repos públicos |
+| Actividad | `/api/activity/<usuario>.svg` | Contribuciones por semana, 53 semanas |
+| Todo en una | `/api/kit/<usuario>.svg` | Las cinco anteriores en una sola imagen |
+| Serpiente | `/api/<usuario>.svg` | Una IA (BFS + Flood Fill) se come tu gráfico de contribuciones |
+| Versus | `/api/versus/<a>-vs-<b>.svg` | Tus cifras frente a las de otro perfil |
+| Duelo | `/api/duel/<a>-vs-<b>.svg` | La misma IA en los dos gráficos, con marcador; la página `/duel/<a>-vs-<b>` sirve para compartir y retar |
 
-Opciones: `theme` (`dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) y `lang` (`en`, `es`). El bloque completo con modo claro y oscuro está en [docs/profile_readme_template.md](docs/profile_readme_template.md) y el contrato de URL en [docs/contract.md](docs/contract.md).
+Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed` y `pause`. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
-<p align="center">
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/">
-    <img src="https://img.shields.io/badge/DEMO_EN_VIVO-PROBAR_EN_EL_NAVEGADOR-00ff66?style=for-the-badge&logo=github&logoColor=black" alt="Demo en Vivo" />
-  </a>
-</p>
+## Estudio
 
-<p align="center">
-  <img src="https://img.shields.io/badge/FPS-60_Zero--Flicker-00ff66?style=for-the-badge" alt="60 FPS Zero-Flicker" />
-  <img src="https://img.shields.io/badge/Pathfinding-BFS_%2B_Flood_Fill-00f2fe?style=for-the-badge" alt="BFS Pathfinding" />
-  <img src="https://img.shields.io/badge/Architecture-Modular_Vanilla_JS-ff007f?style=for-the-badge" alt="Modular Architecture" />
-  <img src="https://img.shields.io/badge/Audio-Web_Audio_Procedural-fcee0a?style=for-the-badge" alt="Web Audio API" />
-  <img src="https://img.shields.io/badge/License-MIT-white?style=for-the-badge" alt="MIT License" />
-</p>
+En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, Commit Art y clips de video para X, LinkedIn, Reels o TikTok.
 
----
+## GitHub Action
 
-> [!TIP]
-> **Acceso Directo a la Demo Desplegada**:  
-> Puedes interactuar con la simulación, competir en modo duelo y generar scripts de Commit Art en:  
-> **https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/**
-
----
-
-## Videos
-
-Cada bloque de abajo es la animación que se pega en un perfil. El clip para X, Reels o TikTok se genera en la web: unos 10 segundos, y en el duelo sale vertical, comiendo desde el primer frame.
-
-<p align="center">
-  <img src="assets/showcase/yyx990803.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=yyx990803">@yyx990803</a> · Cyberpunk · capsule
-</p>
-<p align="center">
-  <img src="assets/showcase/sindresorhus.svg" alt="snake eating @sindresorhus contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=sindresorhus">@sindresorhus</a> · Cyan · capsule
-</p>
-<p align="center">
-  <img src="assets/showcase/addyosmani.svg" alt="snake eating @addyosmani contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=addyosmani">@addyosmani</a> · Amber · capsule
-</p>
-<p align="center">
-  <img src="assets/showcase/ThePrimeagen.svg" alt="snake eating @ThePrimeagen contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=ThePrimeagen">@ThePrimeagen</a> · Cyberpunk · viper
-</p>
-<p align="center">
-  <img src="assets/showcase/midudev.svg" alt="snake eating @midudev contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=midudev">@midudev</a> · Cyan · viper
-</p>
-<p align="center">
-  <img src="assets/showcase/wesbos.svg" alt="snake eating @wesbos contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=wesbos">@wesbos</a> · Amber · viper
-</p>
-<p align="center">
-  <img src="assets/showcase/kentcdodds.svg" alt="snake eating @kentcdodds contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=kentcdodds">@kentcdodds</a> · Cyberpunk · capsule
-</p>
-<p align="center">
-  <img src="assets/showcase/dhh.svg" alt="snake eating @dhh contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=dhh">@dhh</a> · Cyan · capsule
-</p>
-<p align="center">
-  <img src="assets/showcase/mrdoob.svg" alt="snake eating @mrdoob contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=mrdoob">@mrdoob</a> · Amber · capsule
-</p>
-<p align="center">
-  <img src="assets/showcase/ggerganov.svg" alt="snake eating @ggerganov contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=ggerganov">@ggerganov</a> · Cyberpunk · viper
-</p>
-
-<p align="center">
-  <img src="assets/showcase/yyx990803.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="48%" />
-  <img src="assets/showcase/sindresorhus.svg" alt="snake eating @sindresorhus contributions by GITHUB_SNAKE.EXE" width="48%" /><br>
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=yyx990803&vs=sindresorhus">Video del duelo</a>
-</p>
-
-### Estilos
-
-El mismo año, cuatro looks. El YAML de abajo publica el claro con capsule y el cyberpunk con capsule.
-
-<p align="center">
-  <img src="assets/showcase/style-dark.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  Dark · viper · <code>?theme=dark&amp;morph=matrix_viper&amp;speed=fast</code>
-</p>
-<p align="center">
-  <img src="assets/showcase/yyx990803.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  Cyberpunk · capsule · <code>?theme=cyberpunk&amp;morph=capsule&amp;speed=fast</code>
-</p>
-<p align="center">
-  <img src="assets/showcase/style-cyan.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  Cyan · capsule · <code>?theme=neon_cyan&amp;morph=capsule&amp;speed=fast</code>
-</p>
-<p align="center">
-  <img src="assets/showcase/style-amber.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="100%" /><br>
-  Amber · viper · <code>?theme=amber_terminal&amp;morph=matrix_viper&amp;speed=fast</code>
-</p>
-
----
-
-## Estructura del Sistema en 3 Pilares
-
-El proyecto está diseñado bajo una arquitectura modular desacoplada en tres componentes funcionales principales:
-
-```
-                                  GITHUB_SNAKE.EXE
-                                          │
-       ┌──────────────────────────────────┼──────────────────────────────────┐
-       ▼                                  ▼                                  ▼
-[ 1. ENGINE & AI ]              [ 2. COMMIT ART CREATOR ]         [ 3. DEVELOPER ECOSYSTEM ]
-• Render LERP 60 FPS Sub-pixel  • Rasterizador tipográfico 53x7   • Web Component <github-snake>
-• Pathfinding BFS + Lookahead   • Fuentes Bitmap A-Z / 0-9        • Exportador SVG Optimizado
-• Modo Duelo (IA vs Jugador)    • Generador Bash Scripts (.sh)    • GitHub Action propia
-• Síntesis Web Audio API        • Commits con fechas calculadas   • Seguridad Edge (_headers)
-```
-
----
-
-## 1. Motor de Simulación e Inteligencia Artificial (Engine & AI)
-
-* **Renderizado Zero-Flicker a 60 FPS**:
-  * Desacoplamiento de la frecuencia lógica de ticks ($1\text{ a }9\text{ t/s}$) y la tasa de refresco visual ($60\text{ FPS}$).
-  * Interpolación lineal continua (LERP) a nivel de sub-píxel:
-    $$\vec{P}(t) = \vec{P}_{\text{prev}} + (\vec{P}_{\text{curr}} - \vec{P}_{\text{prev}}) \cdot \text{progress}$$
-  * Contornos de alto contraste y columna vertebral láser blanca para evitar que la serpiente se mimetice con las celdas verdes de fondo.
-  * En los modos manual y duelo los bordes son toroidales, con *Ghost Segments* al cruzarlos sin cortes en pantalla. La IA no cruza bordes.
-* **Toma de Decisiones de la IA (BFS + Flood Fill)**:
-  * **BFS (Búsqueda en Anchura)**: Busca la ruta más corta hacia la celda con commits más cercana (a igual distancia, la de mayor intensidad).
-  * **Lookahead de Seguridad (Flood Fill)**: Antes de ejecutar un movimiento, proyecta la posición de la cabeza y evalúa si el área libre restante es suficiente para el cuerpo de la serpiente, evitando encierros y colisiones.
-* **Modos de Juego**:
-  * **IA Autónoma**: Simulación automática auto-optimizada.
-  * **Modo Manual**: Control directo con teclado (WASD / Flechas) con prevención de giros inversos.
-  * **Modo Duelo**: Serpiente Verde (IA) vs Serpiente Cian (Jugador) con barra de progreso dual en tiempo real y pantalla de victoria/game over.
-  * **Duelo de Perfiles**: dos usuarios reales de GitHub, la misma IA y 60 segundos. Gana el perfil cuya serpiente devora más puntos. El resultado depende solo de los ticks (es reproducible en cualquier equipo) y se comparte con un enlace: `?u=tu_usuario&vs=rival`.
-  * **Enlaces directos**: `?u=usuario` abre la web con la cuadrícula de ese perfil.
-  * **Video para redes**: genera en el navegador un MP4 (H.264) de unos 10 s. La serpiente ya está comiendo en el primer frame, con tu usuario visible todo el clip. Horizontal 16:9, cuadrado 1:1 o vertical 9:16. En el móvil, **Compartir** abre X, Instagram o TikTok con el archivo.
-  * **Video del duelo**: al terminar, un solo botón genera el vertical 9:16, sin elegir formato. Mismas serpientes, mismos puntos y el mismo ganador que el enlace. No se genera video si algún perfil salió simulado.
-
----
-
-## 2. Herramienta Creativa: Commit Art & Script Generator
-
-* **Rasterizador Tipográfico Matricial**:
-  * Convierte cualquier palabra personalizada (ej: tu nombre, `DEV`, `HIRE ME`, `REACT`) en una matriz de 53 semanas $\times$ 7 días.
-  * Diccionario de fuentes bitmap $3\times5$ y $4\times5$ que centra automáticamente el texto en el año.
-* **Variación Orgánica de Contribuciones**:
-  * Cada celda del dibujo recibe intensidades variables (niveles 2, 3 y 4) y conteos aleatorios realistas ($14\text{ a }55+\text{ commits}$).
-* **Generador de Scripts Git (`.sh`)**:
-  * Produce scripts ejecutables que fijan `GIT_AUTHOR_DATE` y `GIT_COMMITTER_DATE` con la fecha exacta de cada celda de la cuadrícula de GitHub (53 semanas, domingo a sábado) para pintar ese dibujo en el perfil real.
-  * Son commits vacíos y decorativos. Para que GitHub los cuente, el email de git debe estar verificado en tu cuenta y los commits deben subirse a la rama por defecto.
-
-<p align="center">
-  <img src="assets/commit_art.png" alt="Creador de Commit Art" width="95%" style="border-radius: 10px; border: 1px solid rgba(255,0,127,0.3);" />
-</p>
-
----
-
-## 3. Ecosistema para Desarrolladores & Integraciones
-
-* **Componente Web Independiente ([`embed.js`](embed.js))**:
-  * Etiqueta reutilizable bajo el estándar de Custom Elements v1 para incrustar la serpiente en cualquier sitio web o portafolio:
-    ```html
-    <script src="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/embed.js"></script>
-    <github-snake user="torvalds" theme="dark" speed="5"></github-snake>
-    ```
-* **Exportador de SVG Animado Ultra Optimizado**:
-  * Modal interactivo para personalizar velocidad ($3, 5, 8\text{ t/s}$), paleta de colores (*Dark, Light, Cyberpunk, Cyan, Amber*) y morfología.
-  * Keyframes CSS compactos y minificados con resolución del salto de bordes y reinicio instantáneo en bucle ($0.6\text{s}$).
-* **Tooltip Interactivo Estilo GitHub**:
-  * Muestra al pasar el cursor la cantidad de commits, fecha formateada en español y nivel de actividad.
-* **Grabador de Video HD WebM**:
-  * Captura fluida a 60 FPS directamente desde el canvas con la API nativa de `MediaRecorder`.
-
-<p align="center">
-  <a href="https://luisrodriguez-rgb.github.io/GITHUB_SNAKE.EXE/?u=yyx990803&vs=sindresorhus">
-    <img src="assets/showcase/yyx990803.svg" alt="snake eating @yyx990803 contributions by GITHUB_SNAKE.EXE" width="48%" />
-    <img src="assets/showcase/sindresorhus.svg" alt="snake eating @sindresorhus contributions by GITHUB_SNAKE.EXE" width="48%" />
-  </a>
-</p>
-
----
-
-## Métricas de Rendimiento y Benchmarks
-
-| Métrica / Módulo | Complejidad / Medición | Impacto Técnico |
-| :--- | :--- | :--- |
-| **Pathfinding BFS** | $\mathcal{O}(V + E)$ sobre 371 nodos | Mediana $0.006\text{ ms}$ y p95 $0.02\text{ ms}$ por tick (Node.js, 12.000 ticks sobre 4 matrices; índices numéricos y arrays tipados) |
-| **Renderizado LERP** | 60 FPS estables | $0\text{ jank}$, interpolación matemática continua |
-| **Peso SVG Exportado** | $\approx 45 - 120\text{ KB}$ ($\approx 3 - 10\text{ KB}$ con brotli) | Barrido completo de la matriz, una sola trayectoria compartida por todos los segmentos; generarlo cuesta $\approx 25 - 50\text{ ms}$ de CPU |
-| **Audio Procedural** | Web Audio API nativo | $0\text{ KB}$ en archivos de audio externos (sintetizado en tiempo real) |
-| **Caché en Edge** (opcional) | Cache API de Cloudflare (1h TTL) | Una sola consulta a la API por perfil y hora |
-
----
-
-## Arquitectura de Flujo de Datos
-
-```
-+-------------------------------------------------------------------------+
-|                              CAPA DE ENTRADA                            |
-|    GitHub API REST  │  Palabras Commit Art  │  WASD / Flechas Teclado   |
-+--------------------------------────┬────────────────────────────────────+
-                                     │
-                                     ▼
-+-------------------------------------------------------------------------+
-|                         MATRIZ DE CONTRIBUCIONES                        |
-|              Estructura normalizada de 53 columnas x 7 filas            |
-|              Fechas calculadas, conteos dinámicos y niveles 0-4         |
-+--------------------------------────┬────────────────────────────────────+
-                                     │
-                                     ▼
-+-------------------------------------------------------------------------+
-|                     MOTORES LÓGICOS Y PATHFINDING                       |
-|   • IA Verde: Búsqueda BFS con lookahead de seguridad Flood Fill        |
-|   • P2 Cian: Control manual con normalización de dirección toroidal     |
-|   • Scoring: Puntos por nivel de intensidad y detección de fin de juego |
-+--------------------------------────┬────────────────────────────────────+
-                                     │
-                                     ▼
-+-------------------------------------------------------------------------+
-|                     MOTOR DE RENDERIZADO CANVAS 2D                      |
-|   • requestAnimationFrame a 60 FPS con LERP sub-píxel                   |
-|   • Contorno de alto contraste + Columna vertebral láser brillante      |
-|   • Ondas de choque (Shockwaves), partículas cuánticas y scanlines      |
-|   • Tooltip flotante dinámico sincronizado con coordenadas de mouse     |
-+--------------------------------────┬────────────────────────────────────+
-                                     │
-                                     ▼
-+-------------------------------------------------------------------------+
-|                       EXPORTACIÓN Y AUTOMATIZACIÓN                      |
-|   • Exportador SVG minificado con keyframes CSS optimizados             |
-|   • Grabador de video WebM a 60 FPS (MediaRecorder nativo)              |
-|   • Generador de scripts Git (.sh) y GitHub Action con el mismo motor   |
-+-------------------------------------------------------------------------+
-```
-
----
-
-## Estructura del Código Fuente
-
-```
-.
-├── index.html            # Interfaz semántica, HUD, tooltips, modales y canvas
-├── style.css             # Design tokens, paletas de color, efectos glassmorphism
-├── favicon.svg           # Favicon y logo vectorial SVG oficial de alta resolución
-├── embed.js              # Web Component autónomo <github-snake> para portafolios
-├── action.yml            # GitHub Action: genera los SVG animados en tu perfil
-├── api/snake.js          # Función serverless (Vercel) del endpoint /api/<usuario>.svg
-├── shared/snake-core.js  # Opciones del SVG y calendario GraphQL, compartido por Action y endpoint
-├── vercel.json           # Reescritura /api/<usuario>.svg y archivos incluidos en la función
-├── action/               # Punto de entrada de la Action (Node.js, sin dependencias)
-├── tests/                # Tests de la Action (node --test tests/*.test.js)
-├── _headers              # Cabeceras de seguridad HTTP, HSTS, CSP y caché para producción
-├── assets/               # Capturas de pantalla, previews y recursos visuales
-│   ├── logo.svg          # Logo vectorial oficial del proyecto
-│   ├── hero_preview.png  # Captura de interfaz principal
-│   ├── duel_mode.png     # Captura del modo duelo IA vs Jugador
-│   ├── commit_art.png    # Captura del creador de Commit Art
-│   └── demo_recording.webp # Grabación de sesión
-├── docs/
-│   └── production_guide.md # Guía de arquitectura, seguridad, proxies y analíticas
-├── server/
-│   └── edge_proxy_worker.js # Proxy Edge opcional con caché de 1 hora
-├── js/
-│   ├── achievements.js   # Sistema de medallas, persistencia y eventos
-│   ├── audio.js          # Sintetizador procedural Web Audio API
-│   ├── calendar.js       # Geometría de la cuadrícula (fecha de cada celda)
-│   ├── duel.js           # Duelo de perfiles: dos matrices reales, misma IA, ticks fijos
-│   ├── exporter.js       # Exportador SVG con barrido 100% y generador YAML
-│   ├── github.js         # API Fetcher, cálculo de fechas y ranking de devs
-│   ├── pathfinding.js    # Algoritmo BFS y evaluación de seguridad Flood Fill
-│   ├── recorder.js       # Motor de grabación HD WebM en navegador
-│   ├── renderer.js       # Renderizado Canvas 2D con alto contraste y LERP
-│   ├── snake.js          # Máquina de estados, segmentos y partículas
-│   ├── templates.js      # Rasterizador de fuentes bitmap y scripts Bash Git
-│   └── app.js            # Orquestador maestro, bucle principal y eventos DOM
-├── README.md             # Documentación técnica del repositorio
-└── snake_link.md         # Especificación matemática de algoritmos
-```
-
----
-
-## Guía Detallada: Cómo Integrar la Serpiente en tu Perfil de GitHub
-
-La línea que se copia. En la web, **Poner en mi perfil** la rellena con tu usuario:
-
-```html
-<img alt="snake eating @TU_USUARIO contributions by GITHUB_SNAKE.EXE" src="https://github-snake-ebon.vercel.app/api/TU_USUARIO.svg?theme=cyberpunk&morph=capsule&speed=fast" width="100%">
-```
-
-Los pasos siguientes son para dejar el SVG dentro de tu repositorio `usuario/usuario`, regenerado cada día.
-
-### Paso 1: Crear tu Repositorio Especial
-1. Ve a [github.com/new](https://github.com/new).
-2. En **Repository name**, escribe exactamente tu nombre de usuario de GitHub (ejemplo: `luisrodriguez-rgb`).
-3. Verás un mensaje informativo confirmando que has desbloqueado el repositorio especial.
-4. Asegúrate de que esté configurado como **Public** y marca la casilla **Add a README file**.
-5. Haz clic en **Create repository**.
-
-### Paso 2: Habilitar Permisos de Escritura para GitHub Actions
-Para que la acción automatizada pueda guardar el archivo SVG generado en tu repositorio sin errores de permisos:
-1. En tu repositorio `usuario/usuario`, ve a la pestaña **Settings** (Configuración).
-2. En la barra lateral izquierda, entra en **Actions** -> **General**.
-3. Baja hasta la sección **Workflow permissions**.
-4. Marca la opción **Read and write permissions**.
-5. Marca la casilla **Allow GitHub Actions to create and approve pull requests**.
-6. Haz clic en **Save**.
-
-### Paso 3: Crear el Workflow Automatizado (`snake.yml`)
-
-El repositorio incluye una GitHub Action propia ([`action.yml`](action.yml)) que ejecuta el mismo motor de la web: IA BFS + Flood Fill, barrido del 100% de la matriz y los mismos temas. Lee tu calendario con la API GraphQL oficial de GitHub, así que la cuadrícula coincide con la de tu perfil.
-
-1. Dentro de tu repositorio especial, crea el archivo `.github/workflows/snake.yml`.
-2. Copia esta configuración (reemplaza `TU_USUARIO` por tu usuario de GitHub). El botón **Poner en mi perfil** de la web copia primero la línea del SVG; el YAML está en el mismo cuadro, como segunda opción, ya rellenado y con vista previa.
+Si prefieres no depender del servidor, la Action genera la serpiente en tu propio repositorio:
 
 ```yaml
-name: GitHub Snake
-
-on:
-  # Se regenera cada dia a medianoche (UTC)
-  schedule:
-    - cron: "0 0 * * *"
-  # Permite ejecutarlo a mano desde la pestana Actions
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-
-jobs:
-  generate:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Generate Snake SVG
-        uses: luisrodriguez-rgb/GITHUB_SNAKE.EXE@v3
-        with:
-          github_user_name: TU_USUARIO
-          outputs: |
-            dist/github-snake.svg?theme=light&morph=capsule&speed=fast
-            dist/github-snake-dark.svg?theme=cyberpunk&morph=capsule&speed=fast
-
-      - name: Deploy to Output Branch
-        uses: crazy-max/ghaction-github-pages@v4
-        with:
-          target_branch: output
-          build_dir: dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+- uses: perfila/perfila@v1   # referencia provisional, ver shared/brand.js
+  with:
+    github_user_name: tu-usuario
+    outputs: |
+      dist/perfila-snake.svg?theme=paper
+      dist/perfila-snake-dark.svg?theme=ink
 ```
 
-**Qué muestra el SVG:** una cabecera con tu usuario, tus contribuciones del último año y una barra de progreso que se llena mientras la serpiente come; un cuerpo continuo que se estrecha hacia la cola y una cabeza que gira y mira hacia donde avanza; ondas expansivas al vaciar una celda intensa; y al final un "100% DEVORADO" mientras la matriz vuelve a llenarse en ola. La serpiente empieza junto a tu primera semana con actividad.
+## Desarrollo
 
-**Opciones de cada salida** (formato query string tras la ruta `.svg`):
+Sin dependencias: Node 20 o superior.
 
-| Opción | Valores | Por defecto |
-| :--- | :--- | :--- |
-| `theme` | `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal` | `dark` |
-| `speed` | `normal`, `fast`, `relaxed` | `normal` |
-| `morph` | `matrix_viper`, `capsule`, `retro` | `matrix_viper` |
-| `pause` | `fast` (1,5 s de celebración), `medium` (2,5 s), `none` (sin celebración) | `fast` |
-| `lang` | `en`, `es` (textos de la cabecera) | `en` |
-
-Ejemplo: `dist/snake-neon.svg?theme=neon_cyan&speed=fast&morph=capsule`.
-
-### Paso 4: Ejecutar el Workflow por Primera Vez
-1. Ve a la pestaña **Actions** de tu repositorio.
-2. En el menú izquierdo, selecciona **GitHub Snake**.
-3. Haz clic en el botón desplegable **Run workflow** -> **Run workflow**.
-4. Una vez completado en verde, se habrá creado automáticamente la rama `output` con los SVG generados.
-
-### Paso 5: Mostrar la Animación en tu Portada
-Edita tu `README.md` principal y agrega este bloque para soporte automático en modo oscuro y claro:
-
-```markdown
-### Mi Matriz de Contribuciones
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TU_USUARIO/TU_USUARIO/output/github-snake-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TU_USUARIO/TU_USUARIO/output/github-snake.svg">
-  <img alt="snake eating @TU_USUARIO contributions by GITHUB_SNAKE.EXE" src="https://raw.githubusercontent.com/TU_USUARIO/TU_USUARIO/output/github-snake.svg">
-</picture>
+```bash
+npm run dev
 ```
 
-### El endpoint de esa línea
+Levanta la web y la API en `http://localhost:3000` con datos de prueba (cualquier usuario funciona; los que empiezan por `ghost` no existen). Con datos reales:
 
-Lo sirve [`server/snake-svg.js`](server/snake-svg.js) en `https://github-snake-ebon.vercel.app`, con las mismas opciones que la Action (`theme`, `speed`, `morph`, `pause`, `lang`). También está `/api/calendar/<usuario>.json`. Si algo falla, el SVG dice el motivo en lugar de salir roto.
+```bash
+GITHUB_TOKEN=<token sin permisos> npm run dev:live
+```
 
-**Desplegar tu propia instancia en Vercel (plan Hobby gratuito):**
-1. Importa este repositorio en [vercel.com/new](https://vercel.com/new) (framework: *Other*, sin comando de build).
-2. Crea un token en GitHub: *Settings → Developer settings → Fine-grained tokens*, **sin ningún permiso** (solo hace falta leer datos públicos).
-3. En Vercel, añade la variable de entorno `GITHUB_TOKEN` con ese token y despliega.
-4. Prueba `https://TU-PROYECTO.vercel.app/api/TU_USUARIO.svg?theme=dark`.
-5. Para que la web ofrezca la opción **Enlace directo**, pon esa URL base en `<meta name="snake-api" content="...">` de `index.html`.
+```bash
+npm test
+```
 
-Cada SVG se cachea 6 horas en la CDN (4 horas en el proxy de imágenes de GitHub) por usuario y combinación de opciones, se sirve comprimido con brotli (~10 veces más pequeño) y el calendario de cada usuario se reutiliza 30 minutos en memoria, así que el token apenas consume su límite de la API. Las visitas a la web en el dominio de Vercel se redirigen a GitHub Pages para no gastar la cuota en páginas. No se usa Cloudflare Workers porque generar un SVG cuesta ~25-50 ms de CPU y su plan gratuito permite 10 ms.
+| Carpeta | Qué hay |
+| --- | --- |
+| `index.html`, `css/`, `js/site.js` | La web: portada, campo de usuario y galería de piezas |
+| `play.html`, `style.css`, `js/` | El estudio y el motor (serpiente, pathfinding, exportador SVG, duelo, video) |
+| `shared/` | Lo que comparten web, API y Action: marca, design tokens, contrato, código para el README |
+| `server/`, `api/` | Funciones de Vercel: serpiente, piezas, duelo y calendario |
+| `action/` | GitHub Action |
+| `tests/` | Pruebas, incluidas huellas visuales de cada SVG por tema |
+| `docs/` | Marca, plan, contrato y métricas |
 
----
+Despliegue: Vercel sirve la web y la API juntas; necesita la variable `GITHUB_TOKEN` (un token sin permisos basta). El dominio y el repositorio públicos se configuran en `shared/brand.js`.
 
-## Ejecución en Local
+## Documentación
 
-1. **Clonar el repositorio**:
-   ```bash
-   git clone https://github.com/luisrodriguez-rgb/GITHUB_SNAKE.EXE.git
-   cd GITHUB_SNAKE.EXE
-   ```
+- [Marca: nombre, logo, color y tono](docs/BRAND.md)
+- [Plan y fases](docs/roadmap/PLAN.md)
+- [Contrato de URL](docs/contract.md)
+- [Métricas](docs/metrics.md)
 
-2. **Iniciar servidor web local**:
-   ```bash
-   # Opción A: Python
-   python3 -m http.server 3000
-
-   # Opción B: Node.js
-   npx serve .
-   ```
-
-3. **Abrir en el navegador**:
-   Visita `http://localhost:3000` en tu navegador.
-
-4. **Al publicar cambios de CSS o JS**: cambia el valor de `?v=` en `index.html` (el mismo en todas las etiquetas). GitHub Pages deja que el navegador reutilice esos archivos durante 10 minutos; sin cambiar la versión, un visitante puede recibir el HTML nuevo con CSS/JS viejos. `node --test tests/*.test.js` comprueba que todas las etiquetas lleven la misma versión.
-
----
-
-## Licencia
-
-Distribuido bajo la Licencia **MIT**. Diseñado y desarrollado como software libre de alto rendimiento para la comunidad de desarrolladores.
+Perfila nace del motor de GITHUB_SNAKE.EXE, del mismo autor.

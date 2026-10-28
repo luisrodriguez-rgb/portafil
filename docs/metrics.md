@@ -7,7 +7,7 @@ La señal principal es **cuántos perfiles reales usan el endpoint**, no las est
 Cada petición a `/api/...` escribe una línea JSON en los Runtime Logs de Vercel (`server/metrics.js`):
 
 ```json
-{"evt":"gse.render","endpoint":"stats","user":"octocat","theme":"cyberpunk","status":200,"ms":41}
+{"evt":"perfila.render","endpoint":"stats","user":"octocat","theme":"cyberpunk","status":200,"ms":41}
 ```
 
 `endpoint` es `snake`, `calendar`, la pieza del kit (`header`, `stats`, `streak`, `langs`, `activity`, `kit`) o del duelo (`duel`, `versus`, `duel-page`; ahí `user` es la pareja `a-vs-b`). Solo se registra el usuario de GitHub, que ya es público en la URL; ni IPs ni cookies.
@@ -27,7 +27,7 @@ La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 6 h)
 ## 2. Repositorio (alcance)
 
 ```bash
-GITHUB_TOKEN=<token con acceso al repo> node scripts/baseline.js
+GITHUB_TOKEN=<token con acceso al repo> node scripts/baseline.js <owner/repo>
 ```
 
 Guarda `docs/metrics/baseline-<fecha>.json` con estrellas, forks, visitas y clones de 14 días, principales referentes, y una aproximación de adopción por búsqueda de código (READMEs que enlazan el endpoint y workflows que usan la Action). Ejecutarlo al cerrar cada fase para comparar.
