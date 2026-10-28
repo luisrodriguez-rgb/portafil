@@ -5,6 +5,7 @@
  */
 
 const { engine } = require('./common');
+const { cached } = require('./cache');
 
 const PROFILE_QUERY = `query($login: String!) {
   user(login: $login) {
@@ -22,9 +23,7 @@ const PROFILE_QUERY = `query($login: String!) {
   }
 }`;
 
-// Igual que el calendario: 30 min en memoria por instancia caliente, y la promesa compartida entre peticiones simultáneas
-const PROFILE_TTL_MS = 30 * 60 * 1000;
-const PROFILE_CACHE_MAX = 500;
+// Igual que el calendario: caché de dos niveles (server/cache.js)
 const profileCache = new Map();
 
 // Un avatar PNG/JPEG a 176 px pesa ~5-20 KB, pero uno GIF animado pasa de 150 KB: si no cabe a 176 px (retina)
@@ -99,18 +98,8 @@ async function fetchProfile(user, token, fetchImpl = fetch) {
   return normalizeProfile(data, await fetchAvatar(data.avatarUrl, fetchImpl));
 }
 
-function getProfile(user, token, fetchImpl) {
-  const key = user.toLowerCase();
-  const hit = profileCache.get(key);
-  if (hit && Date.now() - hit.time < PROFILE_TTL_MS) return hit.promise;
-
-  const promise = fetchProfile(user, token, fetchImpl);
-  profileCache.set(key, { time: Date.now(), promise });
-  promise.catch(() => profileCache.delete(key));
-  if (profileCache.size > PROFILE_CACHE_MAX) {
-    profileCache.delete(profileCache.keys().next().value);
-  }
-  return promise;
+function getProfile(user, token, fetchImpl = fetch) {
+  return cached(profileCache, 'profile', user, token, fetchImpl, (t, f) => fetchProfile(user, t, f));
 }
 
 module.exports = { PROFILE_QUERY, getProfile, fetchProfile, normalizeProfile, profileCache };

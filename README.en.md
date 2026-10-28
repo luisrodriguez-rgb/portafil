@@ -71,7 +71,15 @@ GITHUB_TOKEN=<token with no scopes> npm run dev
 npm test
 ```
 
+`npm run smoke` opens the home page and the studio in headless Chrome, with test data and the security headers from `vercel.json`, and checks that they render (Chrome path via `CHROME=...`).
+
 Deployment: Vercel serves the web and the API together; it needs the `GITHUB_TOKEN` variable (a token with no scopes is enough). The public domain and repository are set in `shared/brand.js`.
+
+For heavy traffic (`server/cache.js`):
+
+- `GITHUB_TOKEN` accepts several comma-separated tokens: the one with the most requests left is used. When all of them have fewer than 500 left in the hour, data is considered fresh for 6 h instead of 30 min.
+- With `KV_REST_API_URL` and `KV_REST_API_TOKEN` (Vercel KV or Upstash Redis) the cache is shared across instances.
+- If GitHub fails, the last good data up to 24 h old is served instead of an error.
 
 ## Docs (Spanish)
 

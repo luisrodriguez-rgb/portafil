@@ -7,6 +7,7 @@
     "dev": "node scripts/dev-server.js",
     "dev:fixture": "node scripts/dev-server.js --fixture",
     "test": "node --test tests/*.test.js",
+    "smoke": "node scripts/smoke.js",
     "snapshots": "UPDATE_SNAPSHOTS=1 node --test tests/visual.test.js"
   },
   "engines": {

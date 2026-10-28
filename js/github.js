@@ -135,8 +135,8 @@ class GitHubFetcher {
     };
   }
 
-  computeDateForCoords(col, row) {
-    return ContributionCalendar.isoForCell(col, row);
+  computeDateForCoords(col, row, now) {
+    return ContributionCalendar.isoForCell(col, row, now);
   }
 
   async getContributions(rawInput) {
@@ -177,7 +177,12 @@ class GitHubFetcher {
   parseApiContributions(contributions) {
     // Se ubica cada día por su fecha: la API no garantiza que el primer elemento sea domingo
     const byDate = new Map(contributions.map(item => [item.date, item]));
-    const grid = this.createEmptyGrid();
+    // «Hoy» es el último día que trae la API (UTC, como en el servidor), no el reloj local: cerca de medianoche
+    // la fecha local y la UTC difieren, la cuadrícula se desplazaba un día y el mismo duelo podía dar otro
+    // ganador en la web que en el README o en la página del duelo
+    const last = contributions.reduce((max, item) => (item.date > max ? item.date : max), '');
+    const [y, m, d] = last.split('-').map(Number);
+    const grid = this.createEmptyGrid(last ? new Date(y, m - 1, d) : undefined);
 
     for (let col = 0; col < this.cols; col++) {
       for (let row = 0; row < this.rows; row++) {
@@ -200,7 +205,7 @@ class GitHubFetcher {
     return grid;
   }
 
-  createEmptyGrid() {
+  createEmptyGrid(now) {
     const grid = [];
     for (let x = 0; x < this.cols; x++) {
       const column = [];
@@ -211,7 +216,7 @@ class GitHubFetcher {
           level: 0,
           originalLevel: 0,
           count: 0,
-          date: this.computeDateForCoords(x, y)
+          date: this.computeDateForCoords(x, y, now)
         });
       }
       grid.push(column);

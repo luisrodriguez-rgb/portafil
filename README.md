@@ -71,6 +71,8 @@ GITHUB_TOKEN=<token sin permisos> npm run dev
 npm test
 ```
 
+`npm run smoke` abre la portada y el estudio en Chrome sin ventana, con datos de prueba y las cabeceras de seguridad de `vercel.json`, y comprueba que se pintan (ruta de Chrome con `CHROME=...`).
+
 | Carpeta | Qué hay |
 | --- | --- |
 | `index.html`, `css/`, `js/site.js` | La web: portada, campo de usuario y galería de piezas |
@@ -82,6 +84,12 @@ npm test
 | `docs/` | Marca, plan, contrato y métricas |
 
 Despliegue: Vercel sirve la web y la API juntas; necesita la variable `GITHUB_TOKEN` (un token sin permisos basta). El dominio y el repositorio públicos se configuran en `shared/brand.js`.
+
+Para aguantar mucho tráfico (`server/cache.js`):
+
+- `GITHUB_TOKEN` admite varios tokens separados por comas: se usa el que más consultas le quedan. Cuando a todos les quedan menos de 500 en la hora, los datos se dan por buenos 6 h en lugar de 30 min.
+- Con `KV_REST_API_URL` y `KV_REST_API_TOKEN` (Vercel KV o Upstash Redis) la caché se comparte entre instancias.
+- Si GitHub falla, se sirve el último dato bueno de hasta 24 h en vez de un error.
 
 ## Documentación
 

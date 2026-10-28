@@ -1,39 +1,39 @@
 /**
  * Piezas compartidas por los endpoints serverless (SVG y calendario):
- * motor cargado una vez, calendario de GitHub con caché en memoria y envío comprimido.
+ * motor cargado una vez, calendario de GitHub en caché y envío comprimido.
  */
 
 const zlib = require('zlib');
 const { loadEngine } = require('../action/lib');
+const { cached } = require('./cache');
+const { SVG_CSP, pageCsp, inlineScripts } = require('./security');
 
 const USER_RE = /^[a-z\d](?:[a-z\d-]{0,38})$/i;
 const engine = loadEngine();
 
-// Las instancias calientes se reutilizan entre peticiones: el calendario de cada usuario se guarda 30 min en memoria.
-// Así varios estilos del SVG y el JSON de la web del mismo perfil cuestan una sola consulta a GitHub.
-const CALENDAR_TTL_MS = 30 * 60 * 1000;
-const CALENDAR_CACHE_MAX = 500;
+// Calendario de cada usuario en la caché de dos niveles (server/cache.js): varios estilos del SVG y el JSON de la web
+// del mismo perfil cuestan una sola consulta a GitHub
 const calendarCache = new Map();
 
-function getCalendarWeeks(user, token, fetchImpl) {
-  const key = user.toLowerCase();
-  const hit = calendarCache.get(key);
-  if (hit && Date.now() - hit.time < CALENDAR_TTL_MS) return hit.promise;
+function getCalendarWeeks(user, token, fetchImpl = fetch) {
+  return cached(calendarCache, 'calendar', user, token, fetchImpl, (t, f) => engine.SnakeCore.fetchCalendarWeeks(user, t, f));
+}
 
-  // Se guarda la promesa: peticiones simultáneas del mismo usuario comparten la consulta en curso
-  const promise = engine.SnakeCore.fetchCalendarWeeks(user, token, fetchImpl);
-  calendarCache.set(key, { time: Date.now(), promise });
-  promise.catch(() => calendarCache.delete(key));
-  if (calendarCache.size > CALENDAR_CACHE_MAX) {
-    calendarCache.delete(calendarCache.keys().next().value);
+/** Cabeceras de la respuesta más su Content-Security-Policy según el tipo (server/security.js) */
+function securityHeaders(result) {
+  const headers = { 'X-Content-Type-Options': 'nosniff', ...result.headers };
+  const type = String(headers['Content-Type'] || '');
+  if (!headers['Content-Security-Policy']) {
+    if (type.startsWith('image/svg+xml')) headers['Content-Security-Policy'] = SVG_CSP;
+    else if (type.startsWith('text/html')) headers['Content-Security-Policy'] = pageCsp(inlineScripts(String(result.body)));
   }
-  return promise;
+  return headers;
 }
 
 /** Envía { status, headers, body } comprimido con brotli (calidad 5, ~2 ms) o gzip según Accept-Encoding */
 function sendCompressed(req, res, result) {
   res.statusCode = result.status;
-  for (const [name, value] of Object.entries(result.headers)) res.setHeader(name, value);
+  for (const [name, value] of Object.entries(securityHeaders(result))) res.setHeader(name, value);
 
   let body = Buffer.from(result.body);
   const accepted = String((req.headers && req.headers['accept-encoding']) || '');
@@ -56,4 +56,4 @@ function userFromRequest(req, ext) {
   return { url, user: url.searchParams.get('user') || (fromPath ? fromPath[1] : '') };
 }
 
-module.exports = { engine, USER_RE, calendarCache, getCalendarWeeks, sendCompressed, userFromRequest };
+module.exports = { engine, USER_RE, calendarCache, getCalendarWeeks, securityHeaders, sendCompressed, userFromRequest };

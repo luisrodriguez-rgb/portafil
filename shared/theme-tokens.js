@@ -67,6 +67,10 @@ const ThemeTokens = {
     }
   },
 
+  // Temas claros y su pareja para el otro modo (README adaptable): la web y los ejemplos usan la misma
+  light: ['paper', 'light'],
+  partner: { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper' },
+
   names() {
     return Object.keys(this.themes);
   },

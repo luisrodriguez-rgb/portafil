@@ -10,11 +10,11 @@ const fs = require('fs');
 const path = require('path');
 const { loadEngine } = require('../action/lib');
 
-const { KitSnippet, Brand, SnakeCore } = loadEngine();
+const { KitSnippet, Brand, SnakeCore, ThemeTokens } = loadEngine();
 const DIR = path.join(__dirname, '..', 'examples');
-const LIGHT = ['paper', 'light'];
-// Tema del modo contrario, igual que en la web (js/site.js)
-const PARTNER = { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper' };
+const LIGHT = ThemeTokens.light;
+// Tema del modo contrario: el mismo que en la web (shared/theme-tokens.js)
+const PARTNER = ThemeTokens.partner;
 const NAMES = { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub claro', cyberpunk: 'Cyberpunk', neon_cyan: 'Cian', amber_terminal: 'Ámbar' };
 const THEMES = [...SnakeCore.CARD_OPTION_VALUES.theme];
 

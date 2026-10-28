@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <button class="btn btn-cyber-secondary tool-btn load-dev-btn" data-user="${dev.username}">${t('leaderboard.load')}</button>
         </div>
         <div class="dev-header-flex">
-          <img src="${dev.avatar}" alt="${dev.name}" class="dev-avatar-img" onerror="this.src='https://github.com/github.png?size=100'">
+          <img src="${dev.avatar}" alt="${dev.name}" class="dev-avatar-img">
           <div class="dev-main-info">
             <h4>${dev.name}</h4>
             <span>@${dev.username}</span>
@@ -227,6 +227,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       `;
 
+      // Sin onerror en el HTML: la política de seguridad (CSP) no permite manejadores en línea
+      card.querySelector('.dev-avatar-img').addEventListener('error', (e) => { e.target.src = 'https://github.com/github.png?size=100'; }, { once: true });
       card.querySelector('.load-dev-btn').addEventListener('click', () => {
         sound.playClick();
         usernameInput.value = dev.username;

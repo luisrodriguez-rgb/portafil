@@ -4,7 +4,7 @@
  *   GITHUB_TOKEN=... node scripts/dev-server.js   datos reales con la API oficial, como en producción
  *   node scripts/dev-server.js                    sin token: datos reales públicos (algunas cifras aproximadas)
  *   node scripts/dev-server.js --fixture          datos de prueba inventados, sin red (para las pruebas visuales)
- * Opción --port <n> (por defecto 3000). Cada respuesta de la API lleva X-Perfila-Data con el origen de los datos,
+ * Aplica las reescrituras y las cabeceras de seguridad de vercel.json. Opción --port <n> (por defecto 3000). Cada respuesta de la API lleva X-Perfila-Data con el origen de los datos,
  * y la web avisa cuando no son los oficiales.
  */
 
@@ -45,6 +45,8 @@ function toRegExp(source) {
 
 const vercel = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
 const rewrites = vercel.rewrites.map(r => ({ re: toRegExp(r.source), destination: r.destination }));
+// Cabeceras de seguridad de vercel.json: en local también, para que un recurso bloqueado se vea antes de desplegar
+const headerRules = (vercel.headers || []).map(r => ({ re: toRegExp(r.source), headers: r.headers }));
 
 /** Aplica la primera reescritura que encaje; como en Vercel, la query original se conserva */
 function rewrite(url) {
@@ -85,7 +87,11 @@ function serveStatic(pathname, res) {
 }
 
 http.createServer(async (req, res) => {
-  const url = rewrite(new URL(req.url, 'http://localhost'));
+  const original = new URL(req.url, 'http://localhost');
+  for (const rule of headerRules) {
+    if (rule.re.test(original.pathname)) for (const { key, value } of rule.headers) res.setHeader(key, value);
+  }
+  const url = rewrite(original);
   const api = url.pathname.match(/^\/api\/(\w+)$/);
   if (api) {
     const handler = apiHandler(api[1]);

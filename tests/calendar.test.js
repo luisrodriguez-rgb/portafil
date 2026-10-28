@@ -72,3 +72,29 @@ test('el adaptador HTTP lee /api/calendar/<usuario>.json y comprime', async () =
   assert.strictEqual(res.headers['Content-Encoding'], 'gzip');
   assert.strictEqual(JSON.parse(zlib.gunzipSync(res.body)).user, 'octocat');
 });
+
+test('la web ubica los días como el servidor: «hoy» es el último día de la API, no el reloj local', () => {
+  const { GitHubFetcher, SnakeCore } = require('../action/lib').loadEngine();
+  // 371 días que terminan en domingo 2026-11-01: el servidor abre una semana nueva con un solo día
+  const end = Date.UTC(2026, 10, 1);
+  const contributions = Array.from({ length: 371 }, (_, i) => {
+    const date = new Date(end - (370 - i) * 86400000).toISOString().slice(0, 10);
+    return { date, count: i % 5, level: i % 5 };
+  });
+  const web = new GitHubFetcher().parseApiContributions(contributions);
+  assert.strictEqual(web[52][0].date, '2026-11-01');
+
+  // Las mismas fechas como semanas de GraphQL, en la cuadrícula del servidor: misma celda para cada día
+  const weeks = [];
+  for (const c of contributions) {
+    const weekday = new Date(`${c.date}T00:00:00Z`).getUTCDay();
+    if (weekday === 0 || !weeks.length) weeks.push({ contributionDays: [] });
+    weeks[weeks.length - 1].contributionDays.push({ date: c.date, weekday, contributionCount: c.count, contributionLevel: ['NONE', 'FIRST_QUARTILE', 'SECOND_QUARTILE', 'THIRD_QUARTILE', 'FOURTH_QUARTILE'][c.level] });
+  }
+  const server = SnakeCore.weeksToGrid(weeks);
+  for (let x = 0; x < 53; x++) {
+    for (let y = 0; y < 7; y++) {
+      if (server[x][y].date) assert.strictEqual(web[x][y].originalLevel, server[x][y].originalLevel, `celda ${x},${y} (${server[x][y].date})`);
+    }
+  }
+});

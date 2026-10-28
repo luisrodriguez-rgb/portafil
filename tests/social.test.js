@@ -147,3 +147,26 @@ test('tarjeta para redes: sin cuadros vacíos con emoji, ideogramas o árabe', (
   assert.ok(!/[\u{1F300}-\u{1FAFF}一-鿿]/u.test(svg), 'no queda ningún carácter que la fuente no tenga');
   assert.ok(svg.includes('@octocat<'), 'sin ubicación, el usuario va solo');
 });
+
+test('seguridad: CSP sin scripts en los SVG y con el hash del script en la página del duelo', async () => {
+  const crypto = require('crypto');
+  const { securityHeaders } = require('../server/common');
+  const svg = securityHeaders({ status: 200, headers: { 'Content-Type': 'image/svg+xml; charset=utf-8' }, body: '<svg/>' });
+  assert.match(svg['Content-Security-Policy'], /^default-src 'none'/);
+  assert.ok(!/script-src/.test(svg['Content-Security-Policy']), 'el SVG no puede ejecutar nada');
+  assert.strictEqual(svg['X-Content-Type-Options'], 'nosniff');
+
+  clearCaches();
+  const { fetchImpl } = fakePairGitHub();
+  const page = await renderDuelPageResponse({ pair: 'octocat-vs-hubot', token: 't', fetchImpl, origin: 'https://example.app' });
+  const csp = securityHeaders(page)['Content-Security-Policy'];
+  const script = page.body.match(/<script>([\s\S]*?)<\/script>/)[1];
+  const hash = crypto.createHash('sha256').update(script).digest('base64');
+  assert.ok(csp.includes(`'sha256-${hash}'`), 'el script de la página está autorizado por su hash');
+  assert.match(csp, /frame-ancestors 'none'/);
+
+  // La política de las páginas estáticas no admite scripts en línea ni de otros dominios
+  const vercel = require('../vercel.json');
+  const staticCsp = vercel.headers.flatMap(h => h.headers).find(h => h.key === 'Content-Security-Policy').value;
+  assert.match(staticCsp, /script-src 'self'(;|$)/);
+});

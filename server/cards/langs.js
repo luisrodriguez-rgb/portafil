@@ -3,13 +3,16 @@
  * Usa los colores de serie del tema y no los de GitHub: con los de GitHub la tarjeta no combinaría con nada.
  */
 
-const { T, LABELS, escapeXml, truncate, text, framed, delay } = require('./frame');
+const { T, LABELS, escapeXml, fmtNumber, truncate, text, framed, delay } = require('./frame');
 
 const WIDTH = T.size.half;
 const HEIGHT = 160;
 const MAX_ITEMS = 6;
+// Por debajo de esto un lenguaje se mostraba como «0,0 %»: pasa a «otros»
+const MIN_SHARE = 0.5;
 
 function fmtPct(value, lang) {
+  if (value < MIN_SHARE) return `<${String(MIN_SHARE).replace('.', lang === 'es' ? ',' : '.')}%`;
   return `${value.toFixed(1).replace('.', lang === 'es' ? ',' : '.')}%`;
 }
 
@@ -17,8 +20,9 @@ function fmtPct(value, lang) {
 function topLanguages(languages, otherLabel) {
   const total = languages.reduce((sum, l) => sum + l.size, 0);
   if (!total) return [];
-  const items = languages.length <= MAX_ITEMS ? languages : languages.slice(0, MAX_ITEMS - 1);
-  const rest = languages.slice(items.length).reduce((sum, l) => sum + l.size, 0);
+  const visible = languages.filter(l => (l.size / total) * 100 >= MIN_SHARE);
+  const items = visible.length <= MAX_ITEMS && visible.length === languages.length ? visible : visible.slice(0, MAX_ITEMS - 1);
+  const rest = total - items.reduce((sum, l) => sum + l.size, 0);
   const result = items.map(l => ({ name: l.name, share: (l.size / total) * 100 }));
   if (rest) result.push({ name: otherLabel, share: (rest / total) * 100, other: true });
   return result;
@@ -56,7 +60,7 @@ function render({ profile, tokens, lang }) {
       body += `<g class="zf"${delay(300 + i * 60)}>`
         + `<rect x="${x0}" y="${y - 9}" width="9" height="9" rx="${T.radius.cell}" fill="${colorOf(item, i)}"/>`
         + text(x0 + 15, y, escapeXml(truncate(item.name, maxName)), { fill: tokens.text })
-        + text(+(x0 + colW).toFixed(1), y, fmtPct(item.share, lang), { size: T.font.size.label + 1, fill: tokens.muted, anchor: 'end' })
+        + text(+(x0 + colW).toFixed(1), y, escapeXml(fmtPct(item.share, lang)), { size: T.font.size.label + 1, fill: tokens.muted, anchor: 'end' })
         + '</g>';
     });
   }
@@ -65,7 +69,7 @@ function render({ profile, tokens, lang }) {
     width: WIDTH,
     height: HEIGHT,
     title: `@${profile.login} languages by Perfila`,
-    content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.languages, subtitle: L.bySize, right: `${profile.publicRepos} ${L.repos}`, body })
+    content: framed({ width: WIDTH, height: HEIGHT, tokens, title: L.languages, subtitle: L.bySize, right: `${fmtNumber(profile.publicRepos, lang, false)} ${L.repos}`, body })
   };
 }
 

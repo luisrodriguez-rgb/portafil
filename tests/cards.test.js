@@ -227,3 +227,15 @@ test('el bloque README: cada pieza en claro y oscuro, solo las elegidas y las de
   assert.ok(single.includes('/api/kit/octocat.svg?theme=ink'));
   assert.ok(!single.includes('<picture>'));
 });
+
+test('lenguajes: los que no llegan al 0,5 % van a «otros» y los repos llevan separador de miles', () => {
+  const { topLanguages, render } = require('../server/cards/langs');
+  const { T } = require('../server/cards/frame');
+  const { fixtureProfile } = require('./visual.helpers');
+  assert.deepStrictEqual(topLanguages([{ name: 'Go', size: 9970 }, { name: 'Shell', size: 20 }, { name: 'Make', size: 10 }], 'otros'),
+    [{ name: 'Go', share: 99.7 }, { name: 'otros', share: 0.3, other: true }]);
+  const profile = { ...fixtureProfile(), publicRepos: 9999, languages: [{ name: 'Go', size: 9970 }, { name: 'Shell', size: 30 }] };
+  const { content } = render({ profile, tokens: T.get('ink'), lang: 'es' });
+  assert.ok(content.includes('9.999 repos'), 'separador de miles');
+  assert.ok(content.includes('&lt;0,5%') && !content.includes('0,0%'), 'nunca «0,0 %»');
+});

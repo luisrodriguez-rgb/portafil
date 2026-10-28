@@ -5,9 +5,9 @@
  */
 (() => {
   const USER_RE = /^[a-z\d](?:[a-z\d-]{0,38})$/i;
-  const LIGHT = new Set(['paper', 'light']);
+  const LIGHT = new Set(ThemeTokens.light);
   // Tema que acompaña a cada uno en el modo contrario de GitHub
-  const PARTNER = { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper' };
+  const PARTNER = ThemeTokens.partner;
   const THEMES = Object.keys(PARTNER);
 
   const TEXT = {
@@ -50,7 +50,7 @@
       'msg.down': 'GitHub no responde ahora mismo. Inténtalo en un momento.',
       'piece.add': 'Añadir al README', 'piece.copy': 'Copiar código', 'piece.copied': 'Copiado', 'piece.open': 'Abrir SVG',
       'tab.profile': 'Perfil', 'tab.games': 'Juegos', 'tab.pair': 'Frente a otro', 'tab.share': 'Compartir', 'tabs.label': 'Grupos de piezas',
-      'g.profile': 'Tu perfil', 'g.profileP': 'Las piezas básicas. La cabecera va a lo ancho y el resto de dos en dos.',
+      'g.profile': 'Tu perfil', 'g.profileP': 'Las piezas básicas. La cabecera va a lo ancho y el resto de dos en dos. Los datos se actualizan cada pocas horas y los días se cuentan en UTC, como en la API de GitHub.',
       'g.games': 'Juegos', 'g.gamesP': 'Tu gráfico de contribuciones convertido en partida, animada en un SVG. La serpiente duerme si llevas una semana sin contribuir y presume de tu racha si pasa de 7 días. Todos se pueden jugar en el estudio.',
       'g.pair': 'Frente a otro perfil', 'g.pairP': 'Compárate con alguien o rétalo a un duelo. El duelo enlaza a una página para compartir.',
       'g.share': 'Para compartir fuera de GitHub', 'g.shareP': 'Tu tarjeta de 1200×630 para LinkedIn, X o WhatsApp, con el estilo que elegiste. El enlace muestra la tarjeta al compartirlo y lleva a tus piezas.',
@@ -67,10 +67,10 @@
       speed: { normal: 'Normal', fast: 'Rápida', relaxed: 'Tranquila' },
       themes: { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub claro', cyberpunk: 'Cyberpunk', neon_cyan: 'Cian', amber_terminal: 'Ámbar' },
       pieces: {
-        header: ['Cabecera', 'Avatar, nombre, bio y cifras'],
+        header: ['Cabecera', 'Avatar, nombre, bio y cifras (repos con forks, como GitHub)'],
         stats: ['Estadísticas', 'Contribuciones, commits, PRs, issues, reviews'],
         streak: ['Racha', 'Actual, más larga y últimos 30 días'],
-        langs: ['Lenguajes', 'Por tamaño de código'],
+        langs: ['Lenguajes', 'Por tamaño de código, sin forks'],
         activity: ['Actividad', 'Contribuciones por semana'],
         kit: ['Todo en una imagen', 'Las cinco piezas en un solo SVG'],
         snake: ['Serpiente', 'Se come tu año de commits'],
@@ -121,7 +121,7 @@
       'msg.down': 'GitHub is not answering right now. Try again in a moment.',
       'piece.add': 'Add to README', 'piece.copy': 'Copy code', 'piece.copied': 'Copied', 'piece.open': 'Open SVG',
       'tab.profile': 'Profile', 'tab.games': 'Games', 'tab.pair': 'Versus', 'tab.share': 'Share', 'tabs.label': 'Piece groups',
-      'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two.',
+      'g.profile': 'Your profile', 'g.profileP': 'The basics. The header goes full width and the rest two by two. Data refreshes every few hours and days are counted in UTC, as in the GitHub API.',
       'g.games': 'Games', 'g.gamesP': 'Your contribution graph turned into a game, animated in an SVG. The snake sleeps after a week without contributions and shows off your streak once it passes 7 days. You can play all of them in the studio.',
       'g.pair': 'Against another profile', 'g.pairP': 'Compare yourself with someone or challenge them to a duel. The duel links to a page to share.',
       'g.share': 'For sharing outside GitHub', 'g.shareP': 'Your 1200×630 card for LinkedIn, X or WhatsApp, in the style you picked. The link shows the card when shared and leads to your pieces.',
@@ -138,10 +138,10 @@
       speed: { normal: 'Normal', fast: 'Fast', relaxed: 'Relaxed' },
       themes: { ink: 'Ink', paper: 'Paper', dark: 'Phosphor', light: 'GitHub light', cyberpunk: 'Cyberpunk', neon_cyan: 'Cyan', amber_terminal: 'Amber' },
       pieces: {
-        header: ['Header', 'Avatar, name, bio and numbers'],
+        header: ['Header', 'Avatar, name, bio and numbers (repos include forks, as on GitHub)'],
         stats: ['Stats', 'Contributions, commits, PRs, issues, reviews'],
         streak: ['Streak', 'Current, longest and last 30 days'],
-        langs: ['Languages', 'By code size'],
+        langs: ['Languages', 'By code size, no forks'],
         activity: ['Activity', 'Contributions per week'],
         kit: ['All in one image', 'The five pieces in a single SVG'],
         snake: ['Snake', 'Eats your year of commits'],

@@ -4,6 +4,9 @@
  * Script plano (sin import/export) para cargarse igual que el resto del motor.
  */
 
+// Temas del contrato: los mismos para la serpiente, los juegos y las tarjetas
+const CONTRACT_THEMES = ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'];
+
 const SnakeCore = {
   LEVELS: { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 },
 
@@ -12,7 +15,7 @@ const SnakeCore = {
   CONTRACT_VERSION: 1,
 
   OPTION_VALUES: {
-    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],
+    theme: CONTRACT_THEMES,
     speed: ['normal', 'fast', 'relaxed'],
     morph: ['matrix_viper', 'capsule', 'retro'],
     pause: ['fast', 'medium', 'none'],
@@ -25,7 +28,7 @@ const SnakeCore = {
   // Tarjetas del kit (/api/<pieza>/<usuario>.svg): solo tema e idioma, para que todas combinen
   CARD_KINDS: ['header', 'stats', 'streak', 'langs', 'activity', 'kit'],
   CARD_OPTION_VALUES: {
-    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal'],
+    theme: CONTRACT_THEMES,
     lang: ['en', 'es']
   },
 
