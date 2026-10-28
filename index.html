@@ -12,27 +12,32 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/site.css?v=4">
+  <link rel="stylesheet" href="css/site.css?v=6">
 </head>
 <body>
   <a class="skip" href="#main" data-i18n="skip">Ir al contenido</a>
+  <!-- Fondo: manchas difusas con los acentos de los estilos, detrás del vidrio -->
+  <div class="backdrop" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+
   <header class="top">
     <a class="brand" href="./" aria-label="Perfila">
       <img src="assets/brand/mark.svg" alt="" width="28" height="28">
       <span>perfila</span>
     </a>
     <nav class="nav">
-      <a href="play.html" data-i18n="nav.play">Estudio</a>
+      <a href="#examples" data-i18n="nav.examples">Ejemplos</a>
+      <a href="play.html" class="nav-play" id="navPlay"><span class="live-dot" aria-hidden="true"></span><span data-i18n="nav.play">Jugar</span></a>
       <button type="button" class="lang" id="langBtn" aria-label="English">EN</button>
     </nav>
   </header>
 
   <main id="main">
-    <section class="hero">
+    <section class="hero" id="hero">
       <div class="hero-text">
+        <p class="eyebrow" data-i18n="hero.eyebrow">Para el README de tu perfil de GitHub</p>
         <h1 data-i18n="hero.title">Tu perfil de GitHub, con un solo estilo.</h1>
-        <p class="lead" data-i18n="hero.lead">Cabecera, estadísticas, racha, lenguajes, actividad, la serpiente que se come tus commits y duelos contra otros perfiles. Escribe tu usuario y elige lo que quieras: sin YAML y sin configurar nada.</p>
-        <form id="userForm" class="user-form" novalidate>
+        <p class="lead" data-i18n="hero.lead">Cabecera, estadísticas, racha, lenguajes, actividad, juegos sobre tu gráfico de contribuciones y duelos contra otros perfiles. Escribe tu usuario y elige lo que quieras: sin YAML y sin configurar nada.</p>
+        <form id="userForm" class="user-form glass" novalidate>
           <label for="user" class="sr-only" data-i18n="form.label">Tu usuario de GitHub</label>
           <div class="field">
             <span class="prefix" aria-hidden="true">github.com/</span>
@@ -43,16 +48,47 @@
         <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
         <p class="hint"><span data-i18n="form.try">¿Sin ideas? Prueba con</span> <button type="button" class="link" data-try="torvalds">torvalds</button> · <button type="button" class="link" data-try="gaearon">gaearon</button> · <button type="button" class="link" data-try="midudev">midudev</button></p>
       </div>
-      <div class="hero-cells" id="heroCells" aria-hidden="true"></div>
+      <figure class="hero-preview glass" id="heroPreview">
+        <div class="hero-stage" id="heroStage"></div>
+        <figcaption><span id="heroCaption"></span><span class="hero-dots" id="heroDots" role="group"></span></figcaption>
+      </figure>
     </section>
 
     <section class="how" id="how" aria-labelledby="howTitle">
       <h2 id="howTitle" class="sr-only" data-i18n="how.title">Cómo funciona</h2>
       <ol class="steps">
-        <li><strong data-i18n="how.1t">Escribe tu usuario</strong><span data-i18n="how.1">Es lo único que te pedimos. Leemos tus datos públicos de GitHub.</span></li>
-        <li><strong data-i18n="how.2t">Elige estilo y piezas</strong><span data-i18n="how.2">Siete estilos. Todas las piezas cambian juntas para que tu perfil parezca un solo diseño.</span></li>
-        <li><strong data-i18n="how.3t">Copia y pega</strong><span data-i18n="how.3">Una pieza o todas. Se actualizan solas y cambian con el modo claro u oscuro de GitHub.</span></li>
+        <li class="step glass">
+          <span class="num">1</span>
+          <div class="step-visual"><span class="mock-input"><span class="muted">github.com/</span>tu-usuario<span class="caret"></span></span></div>
+          <strong data-i18n="how.1t">Escribe tu usuario</strong>
+          <span data-i18n="how.1">Es lo único que te pedimos. Leemos tus datos públicos de GitHub.</span>
+        </li>
+        <li class="step glass">
+          <span class="num">2</span>
+          <div class="step-visual"><span class="swatches" id="stepSwatches"></span></div>
+          <strong data-i18n="how.2t">Elige estilo y piezas</strong>
+          <span data-i18n="how.2">Siete estilos. Todas las piezas cambian juntas para que tu perfil parezca un solo diseño.</span>
+        </li>
+        <li class="step glass">
+          <span class="num">3</span>
+          <div class="step-visual"><code class="mock-code">&lt;picture&gt;…&lt;/picture&gt;</code><span class="mock-copy" aria-hidden="true">⧉</span></div>
+          <strong data-i18n="how.3t">Copia y pega</strong>
+          <span data-i18n="how.3">Una pieza o todas. Se actualizan solas y cambian con el modo claro u oscuro de GitHub.</span>
+        </li>
       </ol>
+    </section>
+
+    <section class="play-teaser glass" id="playTeaser" aria-labelledby="playTitle">
+      <div class="play-text">
+        <p class="eyebrow" data-i18n="play.eyebrow">Estudio</p>
+        <h2 id="playTitle" data-i18n="play.title">Y además, se juega.</h2>
+        <p data-i18n="play.lead">Tu gráfico de contribuciones es el tablero: la serpiente, Pac-Man, invasores, Tetris y el juego de la vida. Míralos jugar solos o toma el control, reta a otro perfil en un duelo en vivo y graba un clip para redes.</p>
+        <ul class="modes" aria-label="Modos">
+          <li data-i18n="play.m1">Serpiente</li><li>Pac-Man</li><li data-i18n="play.m3">Invasores</li><li>Tetris</li><li data-i18n="play.m5">Juego de la vida</li><li data-i18n="play.m6">Duelo en vivo</li>
+        </ul>
+        <a class="btn primary" id="playCta" href="play.html" data-i18n="play.cta">Abrir el estudio</a>
+      </div>
+      <figure class="play-preview"><img id="playPreview" alt="" loading="lazy" decoding="async" width="797" height="160"></figure>
     </section>
 
     <section class="examples" id="examples" aria-labelledby="examplesTitle">
@@ -62,30 +98,36 @@
     </section>
 
     <section class="results" id="results" hidden aria-labelledby="whoTitle">
-      <div class="toolbar">
+      <div class="toolbar glass">
         <div class="who">
-          <h2 id="whoTitle"><span data-i18n="res.for">Piezas de</span> <span id="who"></span></h2>
-          <button type="button" class="link" id="changeUser" data-i18n="res.change">Cambiar usuario</button>
+          <img class="who-avatar" id="whoAvatar" alt="" width="32" height="32">
+          <h2 id="whoTitle"><span class="sr-only" data-i18n="res.for">Piezas de</span> <span id="who"></span></h2>
+          <button type="button" class="link small-link" id="changeUser" data-i18n="res.change">Cambiar usuario</button>
         </div>
-        <div class="style-row">
-          <span class="label" id="themesLabel" data-i18n="res.style">Estilo</span>
-          <div class="themes" id="themes" role="radiogroup" aria-labelledby="themesLabel"></div>
+        <div class="style-pick">
+          <div class="themes" id="themes" role="radiogroup" aria-label="Estilo"></div>
+          <span class="theme-name" id="themeName"></span>
         </div>
-        <div class="style-row opts">
-          <label class="check"><input type="checkbox" id="adaptive" checked> <span data-i18n="res.adaptive">Cambiar con el modo claro u oscuro de GitHub</span></label>
-          <label class="inline" id="otherWrap"><span id="otherLabel"></span> <select id="otherTheme"></select></label>
+        <div class="toolbar-actions">
+          <button type="button" class="btn small" id="toolbarPreview" data-i18n="readme.preview">Vista previa</button>
+          <button type="button" class="btn small primary" id="toolbarCopy" data-i18n="res.copy">Copiar README</button>
         </div>
       </div>
+      <p class="data-note" id="dataNote" role="note" hidden></p>
 
       <div class="layout">
         <div class="gallery" id="gallery"></div>
 
-        <aside class="readme" aria-labelledby="readmeTitle">
+        <aside class="readme glass" aria-labelledby="readmeTitle">
           <div class="readme-head">
             <h2 id="readmeTitle" data-i18n="readme.title">Tu README</h2>
             <span class="count" id="count"></span>
           </div>
           <label class="inline tpl"><span data-i18n="readme.template">Plantilla</span> <select id="templateSelect"></select></label>
+          <div class="mode-opts">
+            <label class="check"><input type="checkbox" id="adaptive" checked> <span data-i18n="res.adaptive">Cambiar con el modo claro u oscuro de GitHub</span></label>
+            <label class="inline" id="otherWrap"><span id="otherLabel"></span> <select id="otherTheme"></select></label>
+          </div>
           <p class="muted" id="readmeHelp"></p>
           <pre class="code" id="readmeCode" tabindex="0"></pre>
           <div class="row">
@@ -95,7 +137,7 @@
           </div>
         </aside>
       </div>
-      <div class="dock" id="dock">
+      <div class="dock glass" id="dock">
         <span id="dockCount"></span>
         <a class="btn small" href="#readmeTitle" data-i18n="dock.see">Ver código</a>
         <button type="button" class="btn small primary" id="dockCopy" data-i18n="readme.copy">Copiar todo</button>
@@ -121,9 +163,9 @@
     <span data-i18n="foot.note">Todo es SVG con CSS: tu perfil no ejecuta JavaScript.</span>
   </footer>
 
-  <script src="shared/brand.js?v=4"></script>
-  <script src="shared/theme-tokens.js?v=4"></script>
-  <script src="shared/kit-snippet.js?v=4"></script>
-  <script src="js/site.js?v=4"></script>
+  <script src="shared/brand.js?v=6"></script>
+  <script src="shared/theme-tokens.js?v=6"></script>
+  <script src="shared/kit-snippet.js?v=6"></script>
+  <script src="js/site.js?v=6"></script>
 </body>
 </html>

@@ -12,8 +12,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <!-- ?v= obliga al navegador a descargar CSS/JS nuevos tras cada despliegue: cambiar el valor en cada release -->
-  <link rel="stylesheet" href="css/site.css?v=20261028-studio">
-  <link rel="stylesheet" href="css/studio.css?v=20261028-studio">
+  <link rel="stylesheet" href="css/site.css?v=20261028-studio3">
+  <link rel="stylesheet" href="css/studio.css?v=20261028-studio3">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <!-- URL base de la API de Perfila. Vacío = el mismo dominio que la web (despliegue en Vercel) -->
   <meta name="snake-api" content="">
@@ -68,6 +68,18 @@
     </section>
 
     <section class="card board" aria-label="Tablero">
+      <!-- Modos: pestañas sobre el tablero (el select oculto guarda el valor para el resto del estudio) -->
+      <div class="mode-row">
+        <div class="mode-tabs" id="gameTabs" role="tablist" aria-label="Juego"></div>
+        <select id="gameSelect" hidden aria-hidden="true">
+          <option value="snake" selected>Serpiente</option>
+          <option value="life">Juego de la vida</option>
+          <option value="pacman">Pac-Man</option>
+          <option value="invaders">Invasores</option>
+          <option value="tetris">Tetris</option>
+        </select>
+        <label class="check" id="arcadePlayerWrap" hidden><input type="checkbox" id="arcadePlayer"> <span>Juegas tú</span></label>
+      </div>
       <div class="board-head" id="activeProfileCard">
         <div class="who-row">
           <img id="activeAvatar" src="https://github.com/torvalds.png?size=100" alt="" class="avatar" width="48" height="48">
@@ -84,16 +96,6 @@
           </div>
         </div>
         <div class="board-opts">
-          <label class="inline"><span>Juego</span>
-            <select id="gameSelect">
-              <option value="snake" selected>Serpiente</option>
-              <option value="life">Juego de la vida</option>
-              <option value="pacman">Pac-Man</option>
-              <option value="invaders">Invasores</option>
-              <option value="tetris">Tetris</option>
-            </select>
-          </label>
-          <label class="check" id="arcadePlayerWrap" hidden><input type="checkbox" id="arcadePlayer"> <span>Juegas tú</span></label>
           <label class="inline"><span>Estilo</span>
             <select id="themeSelect">
               <option value="ink" selected>Tinta</option>
@@ -105,7 +107,7 @@
               <option value="amber_terminal">Ámbar</option>
             </select>
           </label>
-          <label class="inline"><span>Forma</span>
+          <label class="inline" id="morphWrap"><span>Forma</span>
             <select id="snakeStyleSelect">
               <option value="matrix_viper" selected>Víbora</option>
               <option value="capsule">Cápsula</option>
@@ -634,25 +636,25 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/i18n.js?v=20261028-studio"></script>
-  <script src="js/calendar.js?v=20261028-studio"></script>
-  <script src="js/analytics.js?v=20261028-studio"></script>
-  <script src="js/audio.js?v=20261028-studio"></script>
-  <script src="js/recorder.js?v=20261028-studio"></script>
-  <script src="js/templates.js?v=20261028-studio"></script>
-  <script src="js/achievements.js?v=20261028-studio"></script>
-  <script src="shared/brand.js?v=20261028-studio"></script>
-  <script src="shared/theme-tokens.js?v=20261028-studio"></script>
-  <script src="js/exporter.js?v=20261028-studio"></script>
-  <script src="js/github.js?v=20261028-studio"></script>
-  <script src="js/pathfinding.js?v=20261028-studio"></script>
-  <script src="js/snake.js?v=20261028-studio"></script>
-  <script src="js/renderer.js?v=20261028-studio"></script>
-  <script src="js/duel.js?v=20261028-studio"></script>
-  <script src="shared/games.js?v=20261028-studio"></script>
-  <script src="js/video-studio.js?v=20261028-studio"></script>
-  <script src="js/app.js?v=20261028-studio"></script>
-  <script src="js/arcade.js?v=20261028-studio"></script>
+  <script src="js/i18n.js?v=20261028-studio3"></script>
+  <script src="js/calendar.js?v=20261028-studio3"></script>
+  <script src="js/analytics.js?v=20261028-studio3"></script>
+  <script src="js/audio.js?v=20261028-studio3"></script>
+  <script src="js/recorder.js?v=20261028-studio3"></script>
+  <script src="js/templates.js?v=20261028-studio3"></script>
+  <script src="js/achievements.js?v=20261028-studio3"></script>
+  <script src="shared/brand.js?v=20261028-studio3"></script>
+  <script src="shared/theme-tokens.js?v=20261028-studio3"></script>
+  <script src="js/exporter.js?v=20261028-studio3"></script>
+  <script src="js/github.js?v=20261028-studio3"></script>
+  <script src="js/pathfinding.js?v=20261028-studio3"></script>
+  <script src="js/snake.js?v=20261028-studio3"></script>
+  <script src="js/renderer.js?v=20261028-studio3"></script>
+  <script src="js/duel.js?v=20261028-studio3"></script>
+  <script src="shared/games.js?v=20261028-studio3"></script>
+  <script src="js/video-studio.js?v=20261028-studio3"></script>
+  <script src="js/app.js?v=20261028-studio3"></script>
+  <script src="js/arcade.js?v=20261028-studio3"></script>
   <!-- Cloudflare Web Analytics -->
   <!-- End Cloudflare Web Analytics -->
 </body>

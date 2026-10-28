@@ -59,11 +59,13 @@ Node 20 o superior. Una sola dependencia, `@resvg/resvg-js`, para convertir las 
 npm run dev
 ```
 
-Levanta la web y la API en `http://localhost:3000` con datos de prueba (cualquier usuario funciona; los que empiezan por `ghost` no existen). Con datos reales:
+Levanta la web y la API en `http://localhost:3000` con datos reales de GitHub. Sin token usa las API públicas (perfil, calendario, seguidores y estrellas exactos; commits, PRs y lenguajes aproximados, y la web lo avisa). Con token, igual que en producción:
 
 ```bash
-GITHUB_TOKEN=<token sin permisos> npm run dev:live
+GITHUB_TOKEN=<token sin permisos> npm run dev
 ```
+
+`npm run dev:fixture` usa datos de prueba inventados, sin red (lo usan las pruebas visuales); la web también lo avisa.
 
 ```bash
 npm test

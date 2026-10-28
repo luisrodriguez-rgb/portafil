@@ -4,6 +4,9 @@
  * con "Juegas tú" desactivado juega la IA, la misma partida que verías en tu perfil; activado, la juegas tú.
  * Dibuja en un canvas con las medidas y colores de las piezas (797×160, tema del selector "Estilo").
  */
+// Se leen antes de que arranque el estudio: al cargar el perfil, app.js reescribe la URL sin estos parámetros
+const arcadeLinkParams = new URLSearchParams(location.search);
+
 document.addEventListener('DOMContentLoaded', () => {
   const studio = window.PerfilaStudio;
   if (!studio || typeof GameModes === 'undefined') return;
@@ -126,6 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
     studio.setArcade(on);
     canvas.hidden = !on;
     snakeCanvas.hidden = on;
+    // Lo que solo tiene sentido para la serpiente: su barra de progreso y la longitud
+    document.querySelector('.board .progress').hidden = on;
+    $('cardP2').hidden = on;
     hint.hidden = !on;
     playerWrap.hidden = !on || mode === 'life';
     canvas.classList.toggle('clickable', mode === 'life');
@@ -225,7 +231,49 @@ document.addEventListener('DOMContentLoaded', () => {
     paused = true;
     GameModes.step(state, inputFor());
   });
-  select.addEventListener('change', () => activate(select.value));
+  select.addEventListener('change', () => {
+    activate(select.value);
+    syncTabs();
+  });
+
+  // Pestañas de modo, a partir de las opciones del select (sus textos los traduce i18n)
+  const tabs = $('gameTabs');
+  function buildTabs() {
+    tabs.innerHTML = '';
+    for (const opt of select.options) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.dataset.mode = opt.value;
+      b.textContent = opt.textContent;
+      b.addEventListener('click', () => {
+        if (select.value === opt.value) return;
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change'));
+      });
+      tabs.appendChild(b);
+    }
+    syncTabs();
+  }
+  function syncTabs() {
+    tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === select.value)));
+    $('morphWrap').hidden = select.value !== 'snake';
+  }
+  buildTabs();
+  window.addEventListener('languagechange-app', () => setTimeout(buildTabs, 0));
+
+  // Enlaces desde la web: ?game= abre ese modo y ?t= ese estilo
+  const params = arcadeLinkParams;
+  const theme = params.get('t');
+  const themeSelect = $('themeSelect');
+  if (theme && [...themeSelect.options].some(o => o.value === theme)) {
+    themeSelect.value = theme;
+    themeSelect.dispatchEvent(new Event('change'));
+  }
+  if (GameModes.MODES.includes(params.get('game'))) {
+    select.value = params.get('game');
+    select.dispatchEvent(new Event('change'));
+  }
   playerBox.addEventListener('change', () => { if (mode !== 'snake') start(); });
   window.addEventListener('languagechange-app', updateHint);
   window.addEventListener('resize', () => { if (mode !== 'snake') resize(); });

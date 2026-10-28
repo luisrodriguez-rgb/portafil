@@ -59,11 +59,13 @@ Node 20 or later. A single dependency, `@resvg/resvg-js`, turns the social cards
 npm run dev
 ```
 
-Serves the web and the API at `http://localhost:3000` with fixture data (any username works; those starting with `ghost` do not exist). With real data:
+Serves the web and the API at `http://localhost:3000` with real GitHub data. Without a token it uses the public APIs (profile, calendar, followers and stars exact; commits, PRs and languages approximate, and the web says so). With a token, same as production:
 
 ```bash
-GITHUB_TOKEN=<token with no scopes> npm run dev:live
+GITHUB_TOKEN=<token with no scopes> npm run dev
 ```
+
+`npm run dev:fixture` uses made-up test data without network (the visual tests use it); the web says so too.
 
 ```bash
 npm test

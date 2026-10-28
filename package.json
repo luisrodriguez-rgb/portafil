@@ -3,8 +3,8 @@
   "private": true,
   "description": "Un solo estilo para todo tu perfil de GitHub: cabecera, estadísticas, racha, lenguajes, actividad, serpiente, versus y duelo.",
   "scripts": {
-    "dev": "node scripts/dev-server.js --fixture",
-    "dev:live": "node scripts/dev-server.js",
+    "dev": "node scripts/dev-server.js",
+    "dev:fixture": "node scripts/dev-server.js --fixture",
     "test": "node --test tests/*.test.js",
     "snapshots": "UPDATE_SNAPSHOTS=1 node --test tests/visual.test.js"
   },

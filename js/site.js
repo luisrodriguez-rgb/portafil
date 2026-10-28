@@ -13,9 +13,17 @@
   const TEXT = {
     es: {
       skip: 'Ir al contenido',
-      'nav.play': 'Estudio',
+      'nav.play': 'Jugar', 'nav.examples': 'Ejemplos',
+      'hero.eyebrow': 'Para el README de tu perfil de GitHub',
+      'hero.caption': (u, t) => `@${u} · ${t}`,
+      'play.eyebrow': 'Estudio', 'play.title': 'Y además, se juega.', 'play.cta': 'Abrir el estudio',
+      'play.lead': 'Tu gráfico de contribuciones es el tablero: la serpiente, Pac-Man, invasores, Tetris y el juego de la vida. Míralos jugar solos o toma el control, reta a otro perfil en un duelo en vivo y graba un clip para redes.',
+      'play.m1': 'Serpiente', 'play.m3': 'Invasores', 'play.m5': 'Juego de la vida', 'play.m6': 'Duelo en vivo',
+      'res.copy': 'Copiar README', 'piece.play': 'Jugar',
+      'data.fixture': (u) => `<strong>Datos de prueba.</strong> El servidor local se inició con --fixture: lo que ves no son los datos de @${u}. Inícialo con npm run dev para ver los reales.`,
+      'data.public': '<strong>Datos reales de GitHub, leídos sin token.</strong> Perfil, contribuciones, rachas, seguidores y estrellas son exactos; commits, PRs y lenguajes son aproximados. En la web publicada todo sale de la API oficial.',
       'hero.title': 'Tu perfil de GitHub, con un solo estilo.',
-      'hero.lead': 'Cabecera, estadísticas, racha, lenguajes, actividad, la serpiente que se come tus commits y duelos contra otros perfiles. Escribe tu usuario y elige lo que quieras: sin YAML y sin configurar nada.',
+      'hero.lead': 'Cabecera, estadísticas, racha, lenguajes, actividad, juegos sobre tu gráfico de contribuciones y duelos contra otros perfiles. Escribe tu usuario y elige lo que quieras: sin YAML y sin configurar nada.',
       'form.label': 'Tu usuario de GitHub',
       'form.placeholder': 'tu-usuario',
       'form.cta': 'Ver mis piezas',
@@ -74,9 +82,17 @@
     },
     en: {
       skip: 'Skip to content',
-      'nav.play': 'Studio',
+      'nav.play': 'Play', 'nav.examples': 'Examples',
+      'hero.eyebrow': 'For your GitHub profile README',
+      'hero.caption': (u, t) => `@${u} · ${t}`,
+      'play.eyebrow': 'Studio', 'play.title': 'And you can play it.', 'play.cta': 'Open the studio',
+      'play.lead': 'Your contribution graph is the board: the snake, Pac-Man, invaders, Tetris and the Game of Life. Watch them play on their own or take control, challenge another profile to a live duel and record a clip for social media.',
+      'play.m1': 'Snake', 'play.m3': 'Invaders', 'play.m5': 'Game of Life', 'play.m6': 'Live duel',
+      'res.copy': 'Copy README', 'piece.play': 'Play',
+      'data.fixture': (u) => `<strong>Test data.</strong> The local server was started with --fixture: this is not @${u}'s data. Start it with npm run dev to see the real one.`,
+      'data.public': '<strong>Real GitHub data, read without a token.</strong> Profile, contributions, streaks, followers and stars are exact; commits, PRs and languages are approximate. The published site uses the official API for everything.',
       'hero.title': 'One style for your whole GitHub profile.',
-      'hero.lead': 'Header, stats, streak, languages, activity, the snake that eats your commits and duels against other profiles. Type your username and pick what you like: no YAML, nothing to configure.',
+      'hero.lead': 'Header, stats, streak, languages, activity, games on your contribution graph and duels against other profiles. Type your username and pick what you like: no YAML, nothing to configure.',
       'form.label': 'Your GitHub username',
       'form.placeholder': 'your-user',
       'form.cta': 'See my pieces',
@@ -207,20 +223,70 @@
     $('langBtn').setAttribute('aria-label', state.ui === 'es' ? 'English' : 'Español');
   }
 
-  // --- Celdas decorativas de la portada (patrón fijo, en la rampa neutra) ---
-  function drawHeroCells() {
-    let html = '';
-    for (let i = 0; i < 17 * 7; i++) {
-      const w = Math.floor(i / 7);
-      const v = (w * 7 + (i % 7) * 3) % 11;
-      const level = v < 3 || w % 9 === 4 ? 0 : Math.min(4, 1 + Math.floor((v * (1 + (w % 4))) / 10));
-      html += `<i data-l="${level}"></i>`;
-    }
-    // Columnas por filas: el grid se llena por filas, así que se transpone a 7 filas × 17 columnas
-    const cells = html.match(/<i[^>]*><\/i>/g);
-    const rows = [];
-    for (let r = 0; r < 7; r++) for (let c = 0; c < 17; c++) rows.push(cells[c * 7 + r]);
-    $('heroCells').innerHTML = rows.join('');
+  // --- Portada: el perfil de demostración cambiando de estilo, como vista de lo que obtienes ---
+  let heroTimer = null;
+  let heroIndex = 0;
+  function showHero(i) {
+    heroIndex = (i + THEMES.length) % THEMES.length;
+    $('heroStage').querySelectorAll('img').forEach((img, k) => img.classList.toggle('on', k === heroIndex));
+    $('heroDots').querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-pressed', String(k === heroIndex)));
+    $('heroCaption').textContent = T('hero.caption', Brand.demoUser, T('themes')[THEMES[heroIndex]]);
+  }
+
+  function buildHero() {
+    const stage = $('heroStage');
+    const dots = $('heroDots');
+    stage.innerHTML = '';
+    dots.innerHTML = '';
+    THEMES.forEach((theme, i) => {
+      const t = ThemeTokens.get(theme);
+      const img = document.createElement('img');
+      img.alt = `@${Brand.demoUser} · ${T('themes')[theme]}`;
+      img.decoding = 'async';
+      img.width = 797;
+      img.height = 474;
+      img.src = `${previewBase}/api/kit/${Brand.demoUser}.svg?theme=${theme}${state.ui === 'es' ? '&lang=es' : ''}`;
+      stage.appendChild(img);
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.style.setProperty('--a', t.bg);
+      dot.style.setProperty('--b', t.l4);
+      dot.setAttribute('aria-label', T('themes')[theme]);
+      dot.addEventListener('click', () => { showHero(i); restartHero(); });
+      dots.appendChild(dot);
+    });
+    showHero(heroIndex);
+    restartHero();
+  }
+
+  function restartHero() {
+    clearInterval(heroTimer);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    heroTimer = setInterval(() => { if (!document.hidden && $('results').hidden) showHero(heroIndex + 1); }, 3200);
+  }
+
+  function buildSwatches() {
+    $('stepSwatches').innerHTML = THEMES.map(theme => {
+      const t = ThemeTokens.get(theme);
+      return `<i style="--a:${t.bg};--b:${t.l4}" title="${T('themes')[theme]}"></i>`;
+    }).join('');
+  }
+
+  /** Enlaces al estudio: con el usuario escrito (o cargado), el estudio abre directamente su gráfico */
+  function studioUrl(extra = {}) {
+    const typed = cleanUser($('user').value);
+    const user = state.user || (USER_RE.test(typed) ? typed : '');
+    const p = new URLSearchParams();
+    if (user) p.set('u', user);
+    if (state.theme !== 'ink') p.set('t', state.theme);
+    for (const [k, v] of Object.entries(extra)) p.set(k, v);
+    const q = p.toString();
+    return `play.html${q ? `?${q}` : ''}`;
+  }
+
+  function updateStudioLinks() {
+    $('playCta').href = studioUrl();
+    $('navPlay').href = studioUrl();
   }
 
   // --- Ejemplos: el perfil de demostración en cada estilo ---
@@ -339,7 +405,7 @@
       <div class="preview"></div>
       <div class="piece-foot">
         <label class="check"><input type="checkbox" data-pick${state.picked.has(kind) ? ' checked' : ''}> ${T('piece.add')}</label>
-        <div class="piece-actions"><a target="_blank" rel="noopener noreferrer" data-open>${T('piece.open')}</a><button type="button" class="btn small" data-copy>${T('piece.copy')}</button></div>
+        <div class="piece-actions"><a target="_blank" rel="noopener noreferrer" data-open>${T('piece.open')}</a>${meta.game ? `<a class="btn small" data-play>${T('piece.play')}</a>` : ''}<button type="button" class="btn small" data-copy>${T('piece.copy')}</button></div>
       </div>`;
     card.querySelector('[data-pick]').addEventListener('change', (e) => {
       if (e.target.checked) state.picked.add(kind); else state.picked.delete(kind);
@@ -382,8 +448,11 @@
 
   function updatePreviews() {
     updateShare();
+    updateStudioLinks();
     document.querySelectorAll('.piece').forEach(card => {
       const kind = card.dataset.kind;
+      const play = card.querySelector('[data-play]');
+      if (play) play.href = studioUrl({ game: KitSnippet.PIECES[kind].game });
       const box = card.querySelector('.preview');
       const ready = !KitSnippet.PIECES[kind].pair || state.rival;
       card.querySelector('[data-copy]').disabled = !ready;
@@ -458,7 +527,9 @@
       btn.className = 'theme';
       btn.setAttribute('role', 'radio');
       btn.setAttribute('aria-checked', String(theme === state.theme));
-      btn.innerHTML = `<span class="swatch" style="--a:${t.bg};--b:${t.l4}"></span>${T('themes')[theme]}`;
+      btn.setAttribute('aria-label', T('themes')[theme]);
+      btn.title = T('themes')[theme];
+      btn.innerHTML = `<span class="swatch" style="--a:${t.bg};--b:${t.l4}"></span>`;
       btn.addEventListener('click', () => {
         state.theme = theme;
         state.other = '';
@@ -466,6 +537,7 @@
       });
       box.appendChild(btn);
     }
+    $('themeName').textContent = T('themes')[state.theme];
     const other = $('otherTheme');
     other.innerHTML = THEMES.filter(t => LIGHT.has(t) !== LIGHT.has(state.theme)).map(t => `<option value="${t}"${t === otherTheme() ? ' selected' : ''}>${T('themes')[t]}</option>`).join('');
     $('otherLabel').textContent = LIGHT.has(state.theme) ? T('res.inDark') : T('res.inLight');
@@ -498,10 +570,12 @@
     msg.textContent = T('msg.checking', user);
     $('userBtn').disabled = true;
     let status = 0;
+    let dataSource = '';
     try {
       // La cabecera necesita perfil y calendario: si responde, todas las piezas tienen sus datos en caché
       const res = await fetch(`${previewBase}/api/header/${user}.svg`, { method: 'HEAD' });
       status = res.status;
+      dataSource = res.headers.get('X-Perfila-Data') || '';
     } catch (e) {
       status = 0;
     }
@@ -520,10 +594,16 @@
     if (state.user.toLowerCase() !== user.toLowerCase() && state.rival.toLowerCase() === user.toLowerCase()) state.rival = '';
     state.user = user;
     $('who').textContent = `@${user}`;
+    $('whoAvatar').src = `https://github.com/${user}.png?size=64`;
+    // Fuera de producción, avisa de dónde salen los datos (server dev: --fixture o sin token)
+    const note = dataSource === 'fixture' ? T('data.fixture', user) : dataSource === 'public' ? T('data.public') : '';
+    $('dataNote').innerHTML = note;
+    $('dataNote').hidden = !note;
     track('user');
     $('results').hidden = false;
     $('how').hidden = true;
     $('examples').hidden = true;
+    $('playTeaser').hidden = true;
     buildGallery();
     refresh();
     $('results').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -579,6 +659,9 @@
     }
     updateReadme();
   });
+  $('toolbarCopy').addEventListener('click', copyAll);
+  $('toolbarPreview').addEventListener('click', () => $('previewBtn').click());
+  $('user').addEventListener('input', updateStudioLinks);
   $('previewBtn').addEventListener('click', () => {
     track('preview');
     renderPreview();
@@ -596,6 +679,8 @@
     applyStaticText();
     buildTemplates();
     buildExamples();
+    buildHero();
+    buildSwatches();
     if (state.user) {
       buildGallery();
       refresh();
@@ -605,7 +690,10 @@
   applyStaticText();
   buildTemplates();
   buildExamples();
-  drawHeroCells();
+  buildHero();
+  buildSwatches();
+  $('playPreview').src = `${previewBase}/api/${Brand.demoUser}.svg?game=pacman`;
+  updateStudioLinks();
   const rivalParam = cleanUser(params.get('r'));
   if (USER_RE.test(rivalParam)) state.rival = rivalParam;
   if (params.get('u')) loadUser(params.get('u'));

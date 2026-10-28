@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /**
  * Servidor local: la web estática y la API con las mismas reescrituras que vercel.json.
- *   node scripts/dev-server.js --fixture      datos de prueba, sin token ni red (npm run dev)
- *   GITHUB_TOKEN=... node scripts/dev-server.js   datos reales de GitHub
- * Opción --port <n> (por defecto 3000).
+ *   GITHUB_TOKEN=... node scripts/dev-server.js   datos reales con la API oficial, como en producción
+ *   node scripts/dev-server.js                    sin token: datos reales públicos (algunas cifras aproximadas)
+ *   node scripts/dev-server.js --fixture          datos de prueba inventados, sin red (para las pruebas visuales)
+ * Opción --port <n> (por defecto 3000). Cada respuesta de la API lleva X-Perfila-Data con el origen de los datos,
+ * y la web avisa cuando no son los oficiales.
  */
 
 const http = require('http');
@@ -14,13 +16,17 @@ const ROOT = path.join(__dirname, '..');
 const args = process.argv.slice(2);
 const port = Number(args[args.indexOf('--port') + 1]) || Number(process.env.PORT) || 3000;
 
+let dataSource = 'github';
 if (args.includes('--fixture')) {
   const { fixtureFetch } = require('./fixture-github');
   global.fetch = fixtureFetch(global.fetch);
   process.env.GITHUB_TOKEN = 'fixture';
+  dataSource = 'fixture';
 } else if (!process.env.GITHUB_TOKEN) {
-  console.error('Falta GITHUB_TOKEN. Para probar sin token: node scripts/dev-server.js --fixture');
-  process.exit(1);
+  const { publicFetch } = require('./public-github');
+  global.fetch = publicFetch(global.fetch);
+  process.env.GITHUB_TOKEN = 'public';
+  dataSource = 'public';
 }
 
 const TYPES = {
@@ -88,6 +94,7 @@ http.createServer(async (req, res) => {
       return res.end('404');
     }
     req.url = url.pathname + url.search;
+    if (dataSource !== 'github') res.setHeader('X-Perfila-Data', dataSource);
     try {
       await handler(req, res);
     } catch (err) {
@@ -99,5 +106,6 @@ http.createServer(async (req, res) => {
   }
   serveStatic(url.pathname, res);
 }).listen(port, () => {
-  console.log(`Perfila en http://localhost:${port}${args.includes('--fixture') ? ' (datos de prueba)' : ''}`);
+  const notes = { github: 'datos reales (API oficial)', public: 'datos reales públicos sin token: commits, PRs y lenguajes aproximados', fixture: 'DATOS DE PRUEBA inventados' };
+  console.log(`Perfila en http://localhost:${port} · ${notes[dataSource]}`);
 });
