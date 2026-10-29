@@ -40,9 +40,10 @@ test('juego de la vida: reglas de Conway en un toro, un blinker oscila y un bloq
   const blinker = GameModes.simulateLife(gridOf([[10, 2, 3], [10, 3, 3], [10, 4, 3]]), { minGens: 6 });
   assert.strictEqual(blinker.end, 'cycle');
   assert.deepStrictEqual([...blinker.population].slice(0, 4), [3, 3, 3, 3]);
-  // En la generación 1 el blinker queda horizontal: (9,3) y (11,3) nacen
-  assert.deepStrictEqual([...blinker.cellChanges['9_3'][0]], [1, 2]);
-  assert.deepStrictEqual([...blinker.cellChanges['10_2'][0]], [1, 0]);
+  // Entrada: los pasos 0-1 son el gráfico y el 2 la semilla. En la generación 1 (paso 3) el blinker queda
+  // horizontal: (9,3) nace y brilla (4) y (10,2) muere dejando estela (1); en la 2 (paso 4) vuelve a nacer
+  assert.deepStrictEqual([...blinker.cellChanges['9_3'][0]], [3, 4]);
+  assert.deepStrictEqual([...blinker.cellChanges['10_2']].slice(0, 2).map(c => [...c]), [[3, 1], [4, 4]]);
 
   const block = GameModes.simulateLife(gridOf([[5, 1, 2], [6, 1, 2], [5, 2, 2], [6, 2, 2]]));
   assert.strictEqual(block.end, 'stable');
@@ -50,6 +51,16 @@ test('juego de la vida: reglas de Conway en un toro, un blinker oscila y un bloq
   const lonely = GameModes.simulateLife(gridOf([[20, 3, 4]]));
   assert.strictEqual(lonely.end, 'extinct');
   assert.strictEqual(lonely.generations, 1);
+});
+
+test('juego de la vida: con un perfil muy activo la semilla son los días intensos y la partida dura', () => {
+  // 90 % de días activos: con todos vivos moría por sobrepoblación en la primera generación
+  const cells = [];
+  for (let x = 0; x < 53; x++) for (let y = 0; y < 7; y++) if ((x * 7 + y) % 10) cells.push([x, y, 1 + ((x * 3 + y * 5) % 4)]);
+  const sim = GameModes.simulateLife(gridOf(cells));
+  assert.ok(sim.seedLevel > 1, `semilla desde el nivel ${sim.seedLevel}`);
+  assert.ok(sim.population[0] <= 53 * 7 * GameModes.LIFE_SEED_DENSITY, `${sim.population[0]} vivas al empezar`);
+  assert.ok(sim.generations >= 5, `${sim.generations} generaciones`);
 });
 
 test('juego de la vida: respeta el presupuesto de peso', () => {

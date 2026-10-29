@@ -98,6 +98,9 @@ a { color: inherit; }
   .b3 { animation-duration: 31s; }
   @keyframes drift { to { transform: translate(40px, 30px) scale(1.08); } }
 }
+/* Con resultados o vista previa a la vista, las manchas se quedan quietas: moverlas obliga a recalcular su desenfoque
+   y el de los paneles de vidrio en cada fotograma, y en Safari eso competía con las piezas animadas */
+body.calm .blob { animation-play-state: paused; }
 
 /* --- Cabecera --- */
 .top, main, .foot { max-width: 1160px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
@@ -232,6 +235,8 @@ select { font: inherit; font-size: 14px; color: var(--text); background: var(--s
 
 .piece, .share { background: var(--glass-strong); border: 1px solid var(--glass-edge); box-shadow: var(--glass-highlight); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; min-width: 0; }
 .piece.full { grid-column: 1 / -1; }
+/* Las piezas fuera de pantalla no se pintan ni se animan: menos trabajo con 13 SVG animados en la galería */
+.piece { content-visibility: auto; contain-intrinsic-size: auto 300px; }
 .piece.picked { border-color: var(--strong); box-shadow: inset 0 0 0 1px var(--strong); }
 .piece-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .piece-head h4 { margin: 0; font-size: 15px; letter-spacing: -0.01em; }
@@ -314,7 +319,8 @@ select { font: inherit; font-size: 14px; color: var(--text); background: var(--s
 
 /* Vista previa del README, con el aspecto de GitHub en claro y en oscuro */
 .preview-dialog { width: min(980px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--text); }
-.preview-dialog::backdrop { background: rgba(10, 11, 13, 0.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+/* Sin desenfoque: con piezas animadas detrás, Safari lo recalculaba en cada fotograma y la vista previa iba a saltos */
+.preview-dialog::backdrop { background: rgba(10, 11, 13, 0.62); }
 .preview-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--surface); border-bottom: 1px solid var(--line); }
 .preview-head h2 { font-size: 16px; flex: 1; }
 .preview-note { margin: 12px 18px 0; font-size: 13px; }
@@ -329,5 +335,7 @@ select { font: inherit; font-size: 14px; color: var(--text); background: var(--s
 .gh a { color: #0969da; }
 .gh[data-mode="dark"] a { color: #4493f8; }
 .gh img { max-width: 100%; vertical-align: middle; }
+/* Solo se pintan (y animan) los bloques que se ven al desplazarse por la vista previa */
+.gh > * { content-visibility: auto; contain-intrinsic-size: auto 180px; }
 .gh p[align="center"] { text-align: center; }
 .gh code { font-family: var(--mono); font-size: 85%; padding: 0.2em 0.4em; border-radius: 6px; background: rgba(129, 139, 152, 0.15); }

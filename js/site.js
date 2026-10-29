@@ -753,6 +753,8 @@
     track('user');
     refreshProfileRepo();
     $('results').hidden = false;
+    // Con las piezas animadas a la vista, el fondo se queda quieto (en Safari sus desenfoques competían con ellas)
+    document.body.classList.add('calm');
     $('how').hidden = true;
     $('examples').hidden = true;
     $('playTeaser').hidden = true;
@@ -841,6 +843,7 @@
     track('preview');
     renderPreview();
     $('previewDialog').showModal();
+    document.body.classList.add('calm');
   });
   $('previewClose').addEventListener('click', () => $('previewDialog').close());
   $('previewDialog').addEventListener('click', (e) => { if (e.target === $('previewDialog')) $('previewDialog').close(); });

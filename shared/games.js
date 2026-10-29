@@ -145,7 +145,7 @@ const GameModes = {
         let frames = changes.map(([step, level]) => `${t.pct(step)}%{fill:${colors[level]}}`).join('');
         if (restoreWave) frames += `${Math.max(restorePct, t.pct(changes[changes.length - 1][0]) + 0.001)}%,100%{fill:${colors[orig]}}`;
         cells += `<rect class="${cls}" ${attrs}/>`;
-        cellCss += `.${cls}{animation:${cls} ${t.total}s infinite steps(1,end)}@keyframes ${cls}{${frames}}`;
+        cellCss += `.${cls}{animation-name:${cls}}@keyframes ${cls}{${frames}}`;
       }
     }
 
@@ -167,11 +167,13 @@ const GameModes = {
     const header = `<text x="${L.pad}" y="${L.pad + 10}" font-family="${font}" font-size="12" font-weight="700" fill="${tokens.text}">${this.escapeXml(title)}</text>`
       + `<rect x="${barX}" y="${L.pad + 2}" width="${barW}" height="8" rx="4" fill="${tokens.empty}"/>`
       + `<rect class="pb" x="${barX}" y="${L.pad + 2}" width="${barW}" height="8" rx="4" fill="${tokens.body}"/>`;
+    // Todas las celdas animadas comparten duración y ritmo; cada una solo nombra sus fotogramas (ahorra ~15 KB)
+    const sharedCss = cellCss ? `.gc>[class]{animation-duration:${t.total}s;animation-iteration-count:infinite;animation-timing-function:steps(1,end)}` : '';
     const headerCss = `.pb{transform-box:fill-box;transform-origin:left;animation:p ${t.total}s infinite linear}@keyframes p{${barFrames}}`;
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L.width} ${L.height}" width="${L.width}" height="${L.height}"><title>${this.escapeXml(credit)}</title>`
-      + `<style>svg{background:${tokens.bg};border-radius:12px;border:1px solid ${tokens.border}}${headerCss}${cellCss}${typeof css === 'function' ? css(t) : css}</style>`
-      + `${header}<g${gridClass ? ` class="${gridClass}"` : ''}>${cells}</g>${typeof body === 'function' ? body(t) : body}</svg>`;
+      + `<style>svg{background:${tokens.bg};border-radius:12px;border:1px solid ${tokens.border}}${headerCss}${sharedCss}${cellCss}${typeof css === 'function' ? css(t) : css}</style>`
+      + `${header}<g class="gc${gridClass ? ` ${gridClass}` : ''}">${cells}</g>${typeof body === 'function' ? body(t) : body}</svg>`;
   },
 
   levelsOf(grid) {
@@ -186,71 +188,97 @@ const GameModes = {
 
   // ---------- Juego de la vida ----------
 
+  // Con más de ~35 % de celdas vivas Conway muere por sobrepoblación en una generación: un perfil muy activo
+  // (90 % de días con contribuciones) se apagaba entero en el primer paso. La semilla son tus días más intensos.
+  LIFE_SEED_DENSITY: 0.35,
+  // Entrada: tu gráfico tal cual en los pasos 0-1 y la semilla en el 2; la generación g va en el paso g + 2
+  LIFE_INTRO: 2,
+  // Cambios de celda que caben en 120 KB con la estela de las que mueren (cada una añade un cambio)
+  LIFE_MAX_CHANGES: 3000,
+
   /**
-   * Conway (B3/S23) sobre un toro de 53×7 que arranca desde tus contribuciones. Las celdas vivas se
-   * colorean por edad (recién nacidas tenues, veteranas intensas). Para al extinguirse, al estabilizarse,
-   * a las maxGens generaciones o al agotar el presupuesto de peso; a los osciladores los deja latir hasta minGens.
+   * Conway (B3/S23) sobre un toro de 53×7 que arranca desde tus contribuciones. Colores con significado:
+   * las que nacen brillan (nivel 4), las que sobreviven quedan en tono medio (3) y las que mueren dejan una
+   * estela tenue (1) durante una generación, para que se vea el movimiento. Para al extinguirse, al
+   * estabilizarse, a las maxGens generaciones o al agotar el presupuesto de peso; a los osciladores los deja
+   * latir hasta minGens.
    */
-  lifeCreate(grid, { maxGens = 60, minGens = 30, budget = this.MAX_CELL_CHANGES } = {}) {
-    const alive = this.levelsOf(grid).map(col => col.map(level => level > 0));
+  lifeCreate(grid, { maxGens = 60, minGens = 30, budget = this.LIFE_MAX_CHANGES, wrap = true } = {}) {
+    const levels = this.levelsOf(grid);
+    let seedLevel = 1;
+    const count = (min) => levels.flat().filter(l => l >= min).length;
+    while (seedLevel < 4 && count(seedLevel) > this.COLS * this.ROWS * this.LIFE_SEED_DENSITY) seedLevel++;
+    const alive = levels.map(col => col.map(level => level >= seedLevel));
     return {
-      mode: 'life', done: false, tick: 0, maxGens, minGens, budget,
-      alive, age: alive.map(col => col.map(() => 0)), shown: this.levelsOf(grid),
-      cellChanges: {}, population: [alive.flat().filter(Boolean).length],
+      mode: 'life', done: false, tick: 0, maxGens, minGens, budget, wrap, seedLevel, seeded: false,
+      alive, shown: levels, cellChanges: {}, population: [alive.flat().filter(Boolean).length],
       seen: new Map([[alive.flat().map(Number).join(''), 0]]), used: 0, gens: 0, end: 'limit'
     };
   },
 
-  /** Una generación. En el estudio, input.toggle = [x, y] enciende o apaga una celda sin avanzar */
+  /** Muestra los niveles que da level(x, y) en el paso actual; false si no caben en el presupuesto de peso */
+  lifeShow(s, level) {
+    const changes = [];
+    for (let x = 0; x < this.COLS; x++) {
+      for (let y = 0; y < this.ROWS; y++) {
+        const l = level(x, y);
+        if (l !== s.shown[x][y]) changes.push([x, y, l]);
+      }
+    }
+    if (s.used + changes.length > s.budget) return false;
+    for (const [x, y, l] of changes) {
+      (s.cellChanges[`${x}_${y}`] = s.cellChanges[`${x}_${y}`] || []).push([s.tick, l]);
+      s.shown[x][y] = l;
+    }
+    s.used += changes.length;
+    return true;
+  },
+
+  /** Un paso. En el estudio, input.toggle = [x, y] enciende o apaga una celda sin avanzar */
   lifeStep(s, input) {
     const W = this.COLS;
     const H = this.ROWS;
     if (input && input.toggle) {
       const [x, y] = input.toggle;
       s.alive[x][y] = !s.alive[x][y];
-      s.age[x][y] = 0;
-      s.shown[x][y] = s.alive[x][y] ? 2 : 0;
+      s.shown[x][y] = s.alive[x][y] ? 4 : 0;
+      s.seeded = true;
       s.seen = new Map();
+      return;
+    }
+    // Entrada: primero tu gráfico y luego solo la semilla, antes de la primera generación
+    if (!s.seeded) {
+      s.tick++;
+      if (s.tick < this.LIFE_INTRO) return;
+      s.seeded = true;
+      if (!this.lifeShow(s, (x, y) => (s.alive[x][y] ? 3 : 0))) s.done = true;
       return;
     }
     const g = s.gens + 1;
     if (g > s.maxGens) { s.done = true; return; }
+    const isAlive = (x, y) => {
+      if (s.wrap) return s.alive[(x + W) % W][(y + H) % H];
+      return x >= 0 && y >= 0 && x < W && y < H && s.alive[x][y];
+    };
     const next = [];
-    const nextAge = [];
     for (let x = 0; x < W; x++) {
       next.push([]);
-      nextAge.push([]);
       for (let y = 0; y < H; y++) {
         let n = 0;
         for (let dx = -1; dx <= 1; dx++) {
           for (let dy = -1; dy <= 1; dy++) {
-            if ((dx || dy) && s.alive[(x + dx + W) % W][(y + dy + H) % H]) n++;
+            if ((dx || dy) && isAlive(x + dx, y + dy)) n++;
           }
         }
-        const lives = s.alive[x][y] ? n === 2 || n === 3 : n === 3;
-        next[x].push(lives);
-        nextAge[x].push(lives ? (s.alive[x][y] ? s.age[x][y] + 1 : 0) : 0);
+        next[x].push(s.alive[x][y] ? n === 2 || n === 3 : n === 3);
       }
     }
-
-    // Cambios visibles de esta generación; si no caben en el presupuesto, se para antes
-    const genChanges = [];
-    for (let x = 0; x < W; x++) {
-      for (let y = 0; y < H; y++) {
-        const level = next[x][y] ? Math.min(4, 2 + nextAge[x][y]) : 0;
-        if (level !== s.shown[x][y]) genChanges.push([x, y, level]);
-      }
-    }
-    if (s.used + genChanges.length > s.budget) { s.done = true; return; }
-    for (const [x, y, level] of genChanges) {
-      (s.cellChanges[`${x}_${y}`] = s.cellChanges[`${x}_${y}`] || []).push([g, level]);
-      s.shown[x][y] = level;
-    }
-    s.used += genChanges.length;
+    s.tick++;
+    const was = s.alive;
+    const shown = this.lifeShow(s, (x, y) => (next[x][y] ? (was[x][y] ? 3 : 4) : (was[x][y] ? 1 : 0)));
+    if (!shown) { s.tick--; s.done = true; return; }
     s.alive = next;
-    s.age = nextAge;
     s.gens = g;
-    s.tick = g;
     const count = s.alive.flat().filter(Boolean).length;
     s.population.push(count);
     if (count === 0) { s.end = 'extinct'; s.done = true; return; }
@@ -269,7 +297,7 @@ const GameModes = {
 
   simulateLife(grid, options) {
     const s = this.run('life', grid, options);
-    return { steps: Math.max(1, s.gens), generations: s.gens, cellChanges: s.cellChanges, population: s.population, end: s.end, changes: s.used };
+    return { steps: Math.max(1, s.tick), generations: s.gens, cellChanges: s.cellChanges, population: s.population, end: s.end, changes: s.used, seedLevel: s.seedLevel };
   },
 
   buildLifeSvg(grid, options = {}) {
@@ -279,13 +307,13 @@ const GameModes = {
     const sim = this.simulateLife(grid);
     const user = options.user ? String(options.user) : '';
     const progress = [];
-    for (let g = 1; g <= sim.generations; g++) progress.push([g, g / sim.generations]);
+    for (let g = 1; g <= sim.generations; g++) progress.push([g + this.LIFE_INTRO, g / sim.generations]);
     return this.frame({
       grid, tokens,
       title: [user ? `@${user}` : '', T.life, T.generations(sim.generations)].filter(Boolean).join(' · '),
       credit: `game of life from ${user ? `@${user}` : 'a GitHub'} contributions by Portafil`,
       // Las partidas cortas (se estabiliza enseguida) van más despacio para que se puedan seguir
-      steps: sim.steps, stepDuration: sim.generations < 12 ? 0.8 : 0.4, pauseDuration: 2.5,
+      steps: sim.steps, stepDuration: sim.generations < 12 ? 0.8 : 0.5, pauseDuration: 2.5,
       cellChanges: sim.cellChanges, restoreWave: false, progress
     });
   },
