@@ -4,13 +4,10 @@
  * generar un SVG cuesta ~25-50 ms de CPU, más de lo que permite el plan gratuito de Cloudflare Workers (10 ms).
  */
 
-const { engine, USER_RE, calendarCache, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
+const { engine, USER_RE, CACHE_OK, calendarCache, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
 const { logRender } = require('./metrics');
 const { messageCard, T } = require('./cards/frame');
 
-// GitHub actualiza el calendario a lo largo del día: 6 h de caché en la CDN y 1 día sirviendo la copia vieja mientras se regenera.
-// max-age de 4 h para el proxy de imágenes de GitHub (camo): cada recarga del README no llega a Vercel
-const CACHE_OK = 'public, max-age=14400, s-maxage=21600, stale-while-revalidate=86400';
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 
 // Una sola instancia: memoriza la simulación por matriz, así cada estilo extra de un perfil cuesta solo el SVG

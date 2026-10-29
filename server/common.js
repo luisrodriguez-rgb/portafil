@@ -9,6 +9,11 @@ const { cached } = require('./cache');
 const { SVG_CSP, pageCsp, inlineScripts } = require('./security');
 
 const USER_RE = /^[a-z\d](?:[a-z\d-]{0,38})$/i;
+
+// Caché de las piezas: 30 min en el navegador y 1 h en las cachés compartidas (la CDN de Vercel y el proxy de
+// imágenes de GitHub, camo, que respeta s-maxage). Con más, un perfil enseñaba la racha o el «hoy» de hace horas.
+// Mientras se regenera se sirve la copia anterior hasta 1 día; los datos de GitHub ya van en caché (server/cache.js).
+const CACHE_OK = 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400';
 const engine = loadEngine();
 
 // Calendario de cada usuario en la caché de dos niveles (server/cache.js): varios estilos del SVG y el JSON de la web
@@ -56,4 +61,4 @@ function userFromRequest(req, ext) {
   return { url, user: url.searchParams.get('user') || (fromPath ? fromPath[1] : '') };
 }
 
-module.exports = { engine, USER_RE, calendarCache, getCalendarWeeks, securityHeaders, sendCompressed, userFromRequest };
+module.exports = { engine, USER_RE, CACHE_OK, calendarCache, getCalendarWeeks, securityHeaders, sendCompressed, userFromRequest };

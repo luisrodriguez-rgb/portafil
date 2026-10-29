@@ -43,7 +43,7 @@ La web envía a `POST /api/event` (`server/event.js`) unos pocos eventos, sin co
 
 **Puerta de la Fase 4** (publicar el perfil en menos de dos minutos): la mediana de `ms` del primer `copy` de cada visita, por debajo de 120000. Como aproximación de "publicado", cruzarlo con perfiles nuevos en los logs de render en las horas siguientes.
 
-La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 6 h), así que estas cifras cuentan **perfiles**, no visitas al perfil.
+La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 1 h), así que estas cifras cuentan **perfiles**, no visitas al perfil.
 
 ## 2. Repositorio (alcance)
 

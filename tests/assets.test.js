@@ -42,3 +42,14 @@ test('examples/ está al día con las plantillas y los estilos', () => {
     assert.strictEqual(fs.readFileSync(file, 'utf8'), content, `examples/${name} desactualizado: node scripts/build-examples.js`);
   }
 });
+
+test('las redes ven la imagen: og:image y twitter:image con URL completa del dominio publicado', () => {
+  const { Brand } = require('../action/lib').loadEngine();
+  for (const page of ['index.html', 'play.html']) {
+    const html = fs.readFileSync(path.join(__dirname, '..', page), 'utf8');
+    for (const meta of [/property="og:image" content="([^"]+)"/, /name="twitter:image" content="([^"]+)"/, /property="og:url" content="([^"]+)"/]) {
+      const value = (html.match(meta) || [])[1];
+      assert.ok(value && value.startsWith(`${Brand.site}/`), `${page}: ${meta.source} = ${value}`);
+    }
+  }
+});

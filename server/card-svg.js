@@ -4,13 +4,12 @@
  * la validación, la caché del calendario, la compresión y la política de caché en CDN.
  */
 
-const { engine, USER_RE, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
+const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
 const { getProfile } = require('./profile');
 const { KINDS, renderCard } = require('./cards');
 const { messageCard, T } = require('./cards/frame');
 const { logRender } = require('./metrics');
 
-const CACHE_OK = 'public, max-age=14400, s-maxage=21600, stale-while-revalidate=86400';
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 
 function svgResponse(status, body, cacheControl) {

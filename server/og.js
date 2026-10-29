@@ -6,14 +6,13 @@
  * Las redes leen las etiquetas og:image de la página; una persona que abre el enlace va directa a sus piezas.
  */
 
-const { engine, USER_RE, getCalendarWeeks, sendCompressed } = require('./common');
+const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed } = require('./common');
 const { getProfile } = require('./profile');
 const { parsePair, runDuel } = require('./duel');
 const { profileCardSvg, duelCardSvg, toPng } = require('./social');
 const { T, escapeXml } = require('./cards/frame');
 const { logRender } = require('./metrics');
 
-const CACHE_OK = 'public, max-age=14400, s-maxage=21600, stale-while-revalidate=86400';
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 const SITE_HOST = new URL(engine.Brand.site).host;
 

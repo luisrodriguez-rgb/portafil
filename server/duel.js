@@ -8,7 +8,7 @@
  * así que el mismo enlace da el mismo ganador en el README, en la web y en el clip.
  */
 
-const { engine, USER_RE, getCalendarWeeks, sendCompressed } = require('./common');
+const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed } = require('./common');
 const { getProfile } = require('./profile');
 const { T, LABELS, escapeXml, fmtNumber, text, framed, toSvg, messageCard } = require('./cards/frame');
 const versus = require('./cards/versus');
@@ -16,7 +16,6 @@ const { logRender } = require('./metrics');
 
 const { Brand } = engine;
 const SITE_HOST = new URL(Brand.site).host;
-const CACHE_OK = 'public, max-age=14400, s-maxage=21600, stale-while-revalidate=86400';
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 
 // Ritmo del SVG: rápido para que un duelo de 480 ticks dure ~34 s, y pausa media para leer el resultado

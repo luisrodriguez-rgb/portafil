@@ -5,11 +5,9 @@
  * y no dibuja nada, así que cuesta muy poca CPU; la CDN lo cachea por usuario.
  */
 
-const { engine, USER_RE, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
+const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
 const { logRender } = require('./metrics');
 
-// La web lo pide en cada carga de perfil: 1 h en el navegador, 6 h en la CDN y 1 día de copia vieja mientras se regenera
-const CACHE_OK = 'public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400';
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 
 function jsonResponse(status, data, cacheControl) {
