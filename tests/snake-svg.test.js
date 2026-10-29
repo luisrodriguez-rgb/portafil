@@ -36,7 +36,7 @@ test('devuelve el SVG animado con el tema pedido y caché de CDN', async () => {
   });
   assert.strictEqual(res.status, 200);
   assert.match(res.headers['Content-Type'], /^image\/svg\+xml/);
-  assert.match(res.headers['Cache-Control'], /max-age=1800, s-maxage=3600/);
+  assert.match(res.headers['Cache-Control'], /max-age=1800, s-maxage=1800/);
   assert.ok(res.body.includes('#090614'), 'usa la paleta cyberpunk');
   assert.strictEqual(sentAuth, 'bearer tkn');
 });

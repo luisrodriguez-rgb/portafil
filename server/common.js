@@ -10,10 +10,20 @@ const { SVG_CSP, pageCsp, inlineScripts } = require('./security');
 
 const USER_RE = /^[a-z\d](?:[a-z\d-]{0,38})$/i;
 
-// Caché de las piezas: 30 min en el navegador y 1 h en las cachés compartidas (la CDN de Vercel y el proxy de
-// imágenes de GitHub, camo, que respeta s-maxage). Con más, un perfil enseñaba la racha o el «hoy» de hace horas.
+// Caché de las piezas, en dos niveles:
+//  - CACHE_OK, para el navegador y el proxy de imágenes de GitHub (camo): 30 min. Con más, un perfil enseñaba la
+//    racha o el «hoy» de hace horas.
+//  - CDN_CACHE, solo para la CDN de Vercel (Vercel-CDN-Cache-Control, no llega a nadie más): 2 h. Camo vuelve cada
+//    30 min, pero la pieza solo se regenera cada 2 h: la mitad de invocaciones que con 1 h, que en el plan
+//    Hobby (1 M al mes) es el límite que antes se agota.
 // Mientras se regenera se sirve la copia anterior hasta 1 día; los datos de GitHub ya van en caché (server/cache.js).
-const CACHE_OK = 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400';
+const CACHE_OK = 'public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400';
+const CDN_CACHE = 'max-age=7200, stale-while-revalidate=86400';
+
+/** Cabeceras de una respuesta con la caché de la CDN de Vercel añadida si es una pieza servible (CACHE_OK) */
+function withCdnCache(headers) {
+  return headers['Cache-Control'] === CACHE_OK ? { ...headers, 'Vercel-CDN-Cache-Control': CDN_CACHE } : headers;
+}
 const engine = loadEngine();
 
 // Calendario de cada usuario en la caché de dos niveles (server/cache.js): varios estilos del SVG y el JSON de la web
@@ -38,7 +48,7 @@ function securityHeaders(result) {
 /** Envía { status, headers, body } comprimido con brotli (calidad 5, ~2 ms) o gzip según Accept-Encoding */
 function sendCompressed(req, res, result) {
   res.statusCode = result.status;
-  for (const [name, value] of Object.entries(securityHeaders(result))) res.setHeader(name, value);
+  for (const [name, value] of Object.entries(withCdnCache(securityHeaders(result)))) res.setHeader(name, value);
 
   let body = Buffer.from(result.body);
   const accepted = String((req.headers && req.headers['accept-encoding']) || '');
@@ -61,4 +71,4 @@ function userFromRequest(req, ext) {
   return { url, user: url.searchParams.get('user') || (fromPath ? fromPath[1] : '') };
 }
 
-module.exports = { engine, USER_RE, CACHE_OK, calendarCache, getCalendarWeeks, securityHeaders, sendCompressed, userFromRequest };
+module.exports = { engine, USER_RE, CACHE_OK, CDN_CACHE, withCdnCache, calendarCache, getCalendarWeeks, securityHeaders, sendCompressed, userFromRequest };

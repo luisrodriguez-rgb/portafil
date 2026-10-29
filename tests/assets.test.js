@@ -53,3 +53,14 @@ test('las redes ven la imagen: og:image y twitter:image con URL completa del dom
     }
   }
 });
+
+test('CSS y JS con versión en la URL y caché de un año en el navegador', () => {
+  const rules = require('../vercel.json').headers;
+  const rule = rules.find(r => r.source === '/(css|js|shared)/(.*)');
+  assert.ok(rule && rule.headers.some(h => h.key === 'Cache-Control' && /immutable/.test(h.value)));
+  // Sin ?v= un archivo cambiado no llegaría a quien ya visitó la web: todos los CSS y JS de las páginas lo llevan
+  for (const page of PAGES) {
+    const html = fs.readFileSync(path.join(ROOT, page), 'utf8');
+    for (const [, src] of html.matchAll(/(?:src|href)="((?:css|js|shared)\/[^"]+)"/g)) assert.match(src, /\?v=/, `${page}: ${src}`);
+  }
+});

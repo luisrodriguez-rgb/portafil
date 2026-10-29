@@ -63,7 +63,7 @@ test('cada pieza responde 200 con el tema pedido, sin JavaScript ni recursos ext
     const res = await renderCardSvg({ kind, user: 'octocat', query: '?kind=x&user=octocat&theme=cyberpunk', token: 't', fetchImpl });
     assert.strictEqual(res.status, 200, kind);
     assert.match(res.headers['Content-Type'], /^image\/svg\+xml/);
-    assert.match(res.headers['Cache-Control'], /max-age=1800, s-maxage=3600/);
+    assert.match(res.headers['Cache-Control'], /max-age=1800, s-maxage=1800/);
     assert.ok(res.body.startsWith('<svg'), kind);
     assert.ok(res.body.includes('#090614'), `${kind} usa el fondo cyberpunk`);
     // Solo lo que sobrevive al proxy de imágenes de GitHub

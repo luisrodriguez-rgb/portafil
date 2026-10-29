@@ -6,7 +6,7 @@
  * Las redes leen las etiquetas og:image de la página; una persona que abre el enlace va directa a sus piezas.
  */
 
-const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed } = require('./common');
+const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed, withCdnCache } = require('./common');
 const { getProfile } = require('./profile');
 const { parsePair, runDuel } = require('./duel');
 const { profileCardSvg, duelCardSvg, toPng } = require('./social');
@@ -143,7 +143,7 @@ async function handler(req, res) {
   } else if (Buffer.isBuffer(result.body)) {
     // El PNG ya está comprimido: se envía tal cual
     res.statusCode = result.status;
-    for (const [k, v] of Object.entries(result.headers)) res.setHeader(k, v);
+    for (const [k, v] of Object.entries(withCdnCache(result.headers))) res.setHeader(k, v);
     res.setHeader('Content-Length', result.body.length);
     res.end(req.method === 'HEAD' ? undefined : result.body);
   } else {

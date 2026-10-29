@@ -75,3 +75,13 @@ test('caché: con almacén compartido, una instancia nueva usa lo que guardó ot
     delete process.env.KV_REST_API_TOKEN;
   }
 });
+
+test('caché HTTP: 30 min para camo y navegadores, 2 h solo para la CDN de Vercel', () => {
+  const { CACHE_OK, CDN_CACHE, withCdnCache } = require('../server/common');
+  assert.match(CACHE_OK, /max-age=1800/);
+  const piece = withCdnCache({ 'Cache-Control': CACHE_OK, 'Content-Type': 'image/svg+xml' });
+  assert.strictEqual(piece['Vercel-CDN-Cache-Control'], CDN_CACHE);
+  assert.match(CDN_CACHE, /max-age=7200/);
+  // Los errores no se guardan 2 h en la CDN
+  assert.strictEqual(withCdnCache({ 'Cache-Control': 'no-store' })['Vercel-CDN-Cache-Control'], undefined);
+});
