@@ -16,7 +16,7 @@ const Brand = {
   actionRef: 'luisrodriguez-rgb/portafil@v1',
   userAgent: 'portafil',
   // Token de Cloudflare Web Analytics (visitas sin cookies); vacío = no se mide. Ver docs/metrics.md
-  cloudflareAnalytics: ''
+  cloudflareAnalytics: '76f265341d4b41d7b176c0826e8ad8b9'
 };
 
 window.Brand = Brand;
