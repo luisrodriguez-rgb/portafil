@@ -1,6 +1,6 @@
 # Métricas
 
-La señal principal es **cuántos perfiles reales usan el endpoint**, no las estrellas. Hay dos fuentes:
+La señal principal es **cuántos perfiles reales usan el endpoint**, no las estrellas. Hay tres fuentes:
 
 ## 1. Logs de la función (adopción real)
 
@@ -37,6 +37,7 @@ La web envía a `POST /api/event` (`server/event.js`) unos pocos eventos, sin co
 | `copy` | se copia el bloque README completo (`pieces`: cuántas piezas) |
 | `copy-piece` | se copia una pieza suelta (`kind`) |
 | `open-readme` | se pulsa el botón que abre (o crea) el README en GitHub, con el código ya copiado |
+| `feedback` | respuesta a «¿Te resultó fácil?» tras copiar (`value`: `yes` o `no`); se pregunta una vez por navegador |
 | `preview` | se abre la vista previa del README |
 | `share` | se copia el enlace o se descarga la tarjeta para redes |
 
@@ -47,7 +48,17 @@ La CDN sirve la mayoría de las visitas sin llegar a la función (caché de 6 h)
 ## 2. Repositorio (alcance)
 
 ```bash
-GITHUB_TOKEN=ghp_xxx node scripts/baseline.js luisrodriguez-rgb/Perfila
+GITHUB_TOKEN=ghp_xxx node scripts/baseline.js luisrodriguez-rgb/portafil
 ```
 
 Guarda `docs/metrics/baseline-<fecha>.json` con estrellas, forks, visitas y clones de 14 días, principales referentes, y una aproximación de adopción por búsqueda de código (READMEs que enlazan el endpoint y workflows que usan la Action). Ejecutarlo al cerrar cada fase para comparar.
+
+## 3. Visitas a la web (Cloudflare Web Analytics)
+
+Visitas, páginas, países, dispositivos y de dónde llega la gente (X, LinkedIn, GitHub...), sin cookies ni datos personales. Sirve para saber qué publicación trae visitas; los eventos de la sección 1 dicen cuántas acaban en un README.
+
+1. En Cloudflare: *Analytics & Logs → Web Analytics → Add a site*. Hostname: `perfila-lr.vercel.app` (el de `Brand.site`). No hace falta que el dominio esté en Cloudflare.
+2. Copia el **token** del fragmento que muestra (el valor de `"token"` dentro de `data-cf-beacon`). Es público: va en la página.
+3. Pégalo en `shared/brand.js` → `cloudflareAnalytics`, haz commit y push.
+
+`js/shell.js` carga el script de Cloudflare en la web y en el estudio solo si hay token, solo en el dominio publicado (no en local) y respetando Do Not Track y Global Privacy Control. La política de seguridad de `vercel.json` ya permite `static.cloudflareinsights.com` y `cloudflareinsights.com`.

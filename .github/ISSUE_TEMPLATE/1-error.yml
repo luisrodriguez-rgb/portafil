@@ -1,0 +1,23 @@
+name: Algo no funciona · Something is broken
+description: Una pieza que no carga, datos que no cuadran o un fallo en la web o el estudio · A piece that does not load, wrong data or a bug in the web or the studio
+labels: [error]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: URL de la pieza o de la página · URL of the piece or page
+      placeholder: https://perfila-lr.vercel.app/api/stats/tu-usuario.svg?theme=ink
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Qué esperabas y qué pasó · What you expected and what happened
+      description: Si son datos, di cuáles no coinciden con tu perfil de GitHub · If it is data, say which numbers do not match your GitHub profile
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Dónde lo ves · Where you see it
+      placeholder: README en GitHub (web / app móvil), Safari en iPhone, Chrome...

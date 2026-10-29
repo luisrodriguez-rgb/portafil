@@ -1,0 +1,15 @@
+name: Idea o pieza nueva · Idea or new piece
+description: Una pieza, un tema, un juego o algo que te habría hecho más fácil tu perfil · A piece, theme, game or anything that would have made your profile easier
+labels: [idea]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Qué te gustaría · What you would like
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Para qué la usarías · What you would use it for
+      description: Un perfil de ejemplo o una captura ayudan mucho · An example profile or a screenshot helps a lot

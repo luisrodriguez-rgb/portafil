@@ -12,7 +12,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/site.css?v=13">
+  <link rel="stylesheet" href="css/site.css?v=14">
 </head>
 <body>
   <a class="skip" href="#main" data-i18n="skip">Ir al contenido</a>
@@ -26,6 +26,7 @@
     </a>
     <nav class="nav">
       <a href="#examples" data-i18n="nav.examples">Ejemplos</a>
+      <a class="nav-star" data-repo-link href="https://github.com/luisrodriguez-rgb/portafil" target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><span class="nav-star-label" data-i18n="nav.star">Estrella</span><span class="star-count" data-star-count hidden></span></a>
       <a href="play.html" class="nav-play" id="navPlay"><span class="live-dot" aria-hidden="true"></span><span data-i18n="nav.play">Jugar</span></a>
       <button type="button" class="lang" id="langBtn" aria-label="EN · English">EN</button>
     </nav>
@@ -136,6 +137,12 @@
             <button type="button" class="btn" id="previewBtn" data-i18n="readme.preview">Vista previa</button>
             <a class="btn" id="openProfile" target="_blank" rel="noopener noreferrer">Abrir mi repositorio de perfil</a>
           </div>
+          <div class="feedback" id="feedback" hidden>
+            <span data-i18n="fb.ask">¿Te resultó fácil?</span>
+            <button type="button" class="btn small" data-feedback="yes" data-i18n="fb.yes">Sí</button>
+            <button type="button" class="btn small" data-feedback="no" data-i18n="fb.no">No del todo</button>
+          </div>
+          <p class="feedback-thanks muted" id="feedbackThanks" hidden><span data-i18n="fb.thanks">¡Gracias! Si algo faltó o tienes una idea, cuéntalo:</span> <a data-repo-feedback href="https://github.com/luisrodriguez-rgb/portafil/issues/new/choose" target="_blank" rel="noopener noreferrer" data-i18n="fb.tell">abrir una issue en GitHub</a></p>
         </aside>
       </div>
       <div class="dock glass" id="dock">
@@ -162,11 +169,13 @@
   <footer class="foot">
     <span class="brand small"><img src="assets/brand/mark.svg" alt="" width="18" height="18"> portafil</span>
     <span data-i18n="foot.note">Todo es SVG con CSS: tu perfil no ejecuta JavaScript.</span>
+    <span class="foot-links"><a data-repo-link href="https://github.com/luisrodriguez-rgb/portafil" target="_blank" rel="noopener noreferrer" data-i18n="foot.code">Código en GitHub</a> · <a data-repo-feedback href="https://github.com/luisrodriguez-rgb/portafil/issues/new/choose" target="_blank" rel="noopener noreferrer" data-i18n="foot.feedback">Ideas y errores</a></span>
   </footer>
 
-  <script src="shared/brand.js?v=13"></script>
-  <script src="shared/theme-tokens.js?v=13"></script>
-  <script src="shared/kit-snippet.js?v=13"></script>
-  <script src="js/site.js?v=13"></script>
+  <script src="shared/brand.js?v=14"></script>
+  <script src="shared/theme-tokens.js?v=14"></script>
+  <script src="shared/kit-snippet.js?v=14"></script>
+  <script src="js/site.js?v=14"></script>
+  <script src="js/shell.js?v=14"></script>
 </body>
 </html>

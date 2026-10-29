@@ -1,0 +1,22 @@
+name: Mi perfil con Portafil · My profile with Portafil
+description: "Enséñanos tu perfil: los mejores salen en el README · Show us your profile: the best ones get featured in the README"
+labels: [showcase]
+body:
+  - type: input
+    id: profile
+    attributes:
+      label: Tu perfil de GitHub · Your GitHub profile
+      placeholder: https://github.com/tu-usuario
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Qué piezas y estilos usaste (opcional) · Which pieces and styles you used (optional)
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Permiso · Permission
+      options:
+        - label: Se puede mostrar mi perfil como ejemplo en el README y en redes · My profile can be shown as an example in the README and on social media
+          required: true

@@ -168,5 +168,7 @@ test('seguridad: CSP sin scripts en los SVG y con el hash del script en la pági
   // La política de las páginas estáticas no admite scripts en línea ni de otros dominios
   const vercel = require('../vercel.json');
   const staticCsp = vercel.headers.flatMap(h => h.headers).find(h => h.key === 'Content-Security-Policy').value;
-  assert.match(staticCsp, /script-src 'self'(;|$)/);
+  // Solo scripts propios y el de Cloudflare Web Analytics: nada en línea
+  assert.match(staticCsp, /script-src 'self' https:\/\/static\.cloudflareinsights\.com;/);
+  assert.ok(!/unsafe-inline'[^;]*;/.test(staticCsp.split('script-src')[1].split(';')[0] + ';'), 'sin unsafe-inline en script-src');
 });

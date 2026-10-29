@@ -59,6 +59,10 @@ body[data-theme="amber_terminal"] {
 .pill-btn { white-space: nowrap; font: inherit; font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
 .pill-btn:hover { color: var(--text); }
 .lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.nav-star { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--text); font-size: 14px; font-weight: 600; padding: 6px 10px; border-radius: 999px; }
+.nav-star:hover { background: var(--soft); }
+.nav-star svg { color: #e3b341; }
+.star-count { font-family: var(--mono); font-size: 13px; color: var(--muted); }
 .lang-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 0; padding: 5px 9px; cursor: pointer; }
 .lang-btn[aria-pressed="true"] { background: var(--strong); color: var(--on-strong); }
 

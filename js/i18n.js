@@ -91,6 +91,7 @@ const STATIC_EN = {
   ', tu navegador te mostrara una ventana para seleccionar que pestana compartir. Elige esta misma pestana y grabara con maxima fluidez a 60 FPS mostrando el usuario activo, avatar, controles de velocidad, estilo y el juego.':
     ', your browser will ask which tab to share. Pick this tab to record a smooth 60 FPS clip with the active user, avatar, speed controls, style and the game.',
   'Iniciar grabación': 'Start Recording',
+  'Estrella': 'Star',
   'Gira el móvil para ver el tablero más grande.': 'Turn your phone sideways for a bigger board.',
 
   // Modal de exportar SVG

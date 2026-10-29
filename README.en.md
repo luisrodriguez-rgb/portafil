@@ -4,6 +4,13 @@
 
 <p align="center"><b>English</b> · <a href="README.md">Español</a></p>
 
+<p align="center">
+  <a href="https://github.com/luisrodriguez-rgb/portafil/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/luisrodriguez-rgb/portafil?style=flat&color=e3b341"></a>
+  <a href="https://perfila-lr.vercel.app"><img alt="Web" src="https://img.shields.io/badge/web-perfila--lr.vercel.app-111214?style=flat"></a>
+  <a href="#github-action"><img alt="GitHub Action" src="https://img.shields.io/github/v/tag/luisrodriguez-rgb/portafil?label=action&style=flat&color=111214"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/luisrodriguez-rgb/portafil?style=flat&color=111214"></a>
+</p>
+
 # Portafil
 
 **One style for your whole GitHub profile.** Header, stats, streak, languages, activity, the snake that eats your commits, versus and duels against other profiles: every piece shares theme, type and sizes, so your profile looks like one design instead of a collage of widgets.
@@ -37,6 +44,8 @@ That is @luisrodriguez-rgb real data served live, light or dark to match your Gi
 2. Pick the style and the pieces (or a profile template).
 3. Press **«Open my README on GitHub»**: the code is copied, or already written if you have no README yet. Press «Commit changes» and you are done.
 
+**Like it?** Give the repository a ⭐: it helps more people find it. And if you already use it, [show your profile](https://github.com/luisrodriguez-rgb/portafil/issues/new?template=3-mi-perfil.yml) to be featured here.
+
 ## Pieces
 
 | Piece | URL | Shows |
@@ -57,13 +66,15 @@ That is @luisrodriguez-rgb real data served live, light or dark to match your Gi
 
 All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`: with `mood=auto` (the default) it sleeps after a week without contributions and shows off your streak once it passes 7 days. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
+On the web, each piece can have its own style (the header in Ink, the streak in Phosphor, the snake in Cyberpunk...). Ink/Paper and Phosphor/GitHub light follow GitHub light or dark mode; Cyberpunk, Cyan and Amber always look the same.
+
 ## Sharing outside GitHub
 
 `/api/og/<user>.png` is your 1200×630 card for LinkedIn or X, and `/u/<user>` is the link that shows it when shared. Duels have their own at `/api/og/duel/<a>-vs-<b>.png`. The web also has profile templates with text (developer, student, maintainer) and a preview of the README as it will look on GitHub.
 
 ## Studio
 
-`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok.
+`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok. «Download SVG» and «Social clip» export the mode you are playing.
 
 ## GitHub Action
 
@@ -77,6 +88,10 @@ If you would rather not depend on the server, the Action generates the snake in 
       dist/portafil-snake.svg?theme=paper
       dist/portafil-snake-dark.svg?theme=ink
 ```
+
+## Feedback
+
+Bugs, ideas or pieces you miss: [open an issue](https://github.com/luisrodriguez-rgb/portafil/issues/new/choose) with the templates. The web also asks, in one click and without personal data, whether it was easy.
 
 ## Development
 

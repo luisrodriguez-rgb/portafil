@@ -4,6 +4,13 @@
 
 <p align="center"><a href="README.en.md">English</a> · <b>Español</b></p>
 
+<p align="center">
+  <a href="https://github.com/luisrodriguez-rgb/portafil/stargazers"><img alt="Estrellas" src="https://img.shields.io/github/stars/luisrodriguez-rgb/portafil?style=flat&color=e3b341"></a>
+  <a href="https://perfila-lr.vercel.app"><img alt="Web" src="https://img.shields.io/badge/web-perfila--lr.vercel.app-111214?style=flat"></a>
+  <a href="#github-action"><img alt="GitHub Action" src="https://img.shields.io/github/v/tag/luisrodriguez-rgb/portafil?label=action&style=flat&color=111214"></a>
+  <a href="LICENSE"><img alt="Licencia MIT" src="https://img.shields.io/github/license/luisrodriguez-rgb/portafil?style=flat&color=111214"></a>
+</p>
+
 # Portafil
 
 **Tu perfil de GitHub, con un solo estilo.** Cabecera, estadísticas, racha, lenguajes, actividad, la serpiente que se come tus commits, versus y duelos contra otros perfiles: todas las piezas comparten tema, tipografía y medidas, así que tu perfil parece un solo diseño y no un collage de widgets.
@@ -37,6 +44,8 @@ Son los datos reales de @luisrodriguez-rgb servidos en vivo, en claro u oscuro s
 2. Elige el estilo y las piezas (o una plantilla de perfil).
 3. Pulsa **«Abrir mi README en GitHub»**: el código va copiado, o ya escrito si aún no tienes README. Pulsa «Commit changes» y listo.
 
+**¿Te gusta?** Dale una ⭐ al repositorio: ayuda a que más gente lo encuentre. Y si ya lo usas, [enseña tu perfil](https://github.com/luisrodriguez-rgb/portafil/issues/new?template=3-mi-perfil.yml) para salir aquí como ejemplo.
+
 ## Piezas
 
 | Pieza | URL | Muestra |
@@ -57,13 +66,15 @@ Son los datos reales de @luisrodriguez-rgb servidos en vivo, en claro u oscuro s
 
 Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed`, `pause` y `mood`: con `mood=auto` (por defecto) duerme si llevas una semana sin contribuir y presume de tu racha cuando pasa de 7 días. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
+En la web, cada pieza puede llevar su propio estilo (la cabecera en Tinta, la racha en Fósforo, la serpiente en Cyberpunk...). Tinta/Papel y Fósforo/GitHub claro cambian con el modo claro u oscuro de GitHub; Cyberpunk, Cian y Ámbar se ven siempre igual.
+
 ## Para compartir fuera de GitHub
 
 `/api/og/<usuario>.png` es tu tarjeta de 1200×630 para LinkedIn o X, y `/u/<usuario>` es el enlace que la muestra al compartirlo. Los duelos tienen la suya en `/api/og/duel/<a>-vs-<b>.png`. En la web también hay plantillas de perfil con texto (desarrollador, estudiante, mantenedor) y una vista previa del README tal como se verá en GitHub.
 
 ## Estudio
 
-En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y clips de video para X, LinkedIn, Reels o TikTok.
+En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y clips de video para X, LinkedIn, Reels o TikTok. «Descargar SVG» y «Clip para redes» exportan el modo que estés jugando.
 
 ## GitHub Action
 
@@ -77,6 +88,10 @@ Si prefieres no depender del servidor, la Action genera la serpiente en tu propi
       dist/portafil-snake.svg?theme=paper
       dist/portafil-snake-dark.svg?theme=ink
 ```
+
+## Opiniones
+
+Errores, ideas o piezas que echas de menos: [abre una issue](https://github.com/luisrodriguez-rgb/portafil/issues/new/choose) con las plantillas. La web también pregunta, en un clic y sin datos personales, si te resultó fácil.
 
 ## Desarrollo
 

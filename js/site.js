@@ -13,7 +13,10 @@
   const TEXT = {
     es: {
       skip: 'Ir al contenido',
-      'nav.play': 'Jugar', 'nav.examples': 'Ejemplos',
+      'nav.play': 'Jugar', 'nav.examples': 'Ejemplos', 'nav.star': 'Estrella',
+      'foot.code': 'Código en GitHub', 'foot.feedback': 'Ideas y errores',
+      'fb.ask': '¿Te resultó fácil?', 'fb.yes': 'Sí', 'fb.no': 'No del todo',
+      'fb.thanks': '¡Gracias! Si algo faltó o tienes una idea, cuéntalo:', 'fb.tell': 'abrir una issue en GitHub',
       'hero.eyebrow': 'Para el README de tu perfil de GitHub',
       'hero.caption': (u, t) => `@${u} · ${t}`,
       'play.eyebrow': 'Estudio', 'play.title': 'Y además, se juega.', 'play.cta': 'Abrir el estudio',
@@ -92,7 +95,10 @@
     },
     en: {
       skip: 'Skip to content',
-      'nav.play': 'Play', 'nav.examples': 'Examples',
+      'nav.play': 'Play', 'nav.examples': 'Examples', 'nav.star': 'Star',
+      'foot.code': 'Code on GitHub', 'foot.feedback': 'Ideas and bugs',
+      'fb.ask': 'Was it easy?', 'fb.yes': 'Yes', 'fb.no': 'Not quite',
+      'fb.thanks': 'Thanks! If something was missing or you have an idea, tell us:', 'fb.tell': 'open an issue on GitHub',
       'hero.eyebrow': 'For your GitHub profile README',
       'hero.caption': (u, t) => `@${u} · ${t}`,
       'play.eyebrow': 'Studio', 'play.title': 'And you can play it.', 'play.cta': 'Open the studio',
@@ -790,15 +796,31 @@
     state.other = e.target.value;
     refresh();
   });
+  // Opinión en un clic justo después de copiar o de ir a GitHub: se cuenta como evento (sin datos personales)
+  // y quien quiera contar más va a las plantillas de issues. Solo se pregunta una vez por navegador.
+  const FEEDBACK_KEY = 'portafil.feedback';
+  function askFeedback() {
+    try { if (localStorage.getItem(FEEDBACK_KEY)) return; } catch (e) {}
+    if ($('feedbackThanks').hidden) $('feedback').hidden = false;
+  }
+  document.querySelectorAll('[data-feedback]').forEach(btn => btn.addEventListener('click', () => {
+    track('feedback', { value: btn.dataset.feedback });
+    try { localStorage.setItem(FEEDBACK_KEY, btn.dataset.feedback); } catch (e) {}
+    $('feedback').hidden = true;
+    $('feedbackThanks').hidden = false;
+  }));
+
   const copyAll = (e) => {
     copy(e.currentTarget, $('readmeCode').textContent);
     track('copy', { pieces: state.picked.size });
+    askFeedback();
   };
   $('copyAll').addEventListener('click', copyAll);
   // Al ir a GitHub el código va copiado: en el editor solo hay que pegarlo
   $('openProfile').addEventListener('click', () => {
     try { navigator.clipboard.writeText($('readmeCode').textContent); } catch (e) {}
     track('open-readme', { pieces: state.picked.size });
+    askFeedback();
   });
   // Quien crea el repositorio o el README en otra pestaña ve el siguiente paso al volver
   addEventListener('focus', () => { if (!$('results').hidden) refreshProfileRepo(); });

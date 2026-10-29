@@ -14,7 +14,9 @@ const Brand = {
   demoUser: 'luisrodriguez-rgb',
   // Referencia de la GitHub Action para el workflow generado
   actionRef: 'luisrodriguez-rgb/portafil@v1',
-  userAgent: 'portafil'
+  userAgent: 'portafil',
+  // Token de Cloudflare Web Analytics (visitas sin cookies); vacío = no se mide. Ver docs/metrics.md
+  cloudflareAnalytics: ''
 };
 
 window.Brand = Brand;

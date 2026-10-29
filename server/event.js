@@ -7,7 +7,7 @@
 
 const { engine } = require('./common');
 
-const EVENTS = ['user', 'copy', 'copy-piece', 'share', 'preview', 'open-readme'];
+const EVENTS = ['user', 'copy', 'copy-piece', 'share', 'preview', 'open-readme', 'feedback'];
 const MAX_BODY = 1024;
 // Una visita normal manda menos de diez eventos: por encima de esto por minuto e IP se descarta (429).
 // El contador vive en cada instancia de la función; basta para que nadie llene los logs desde un script.
@@ -57,7 +57,8 @@ function parseEvent(raw) {
     theme: pick(data.theme, SnakeCore.CARD_OPTION_VALUES.theme),
     template: pick(data.template, Object.keys(KitSnippet.TEMPLATES)),
     kind: pick(data.kind, Object.keys(KitSnippet.PIECES)),
-    lang: pick(data.lang, ['en', 'es'])
+    lang: pick(data.lang, ['en', 'es']),
+    value: pick(data.value, ['yes', 'no'])
   };
   for (const key of Object.keys(event)) if (event[key] === undefined) delete event[key];
   return event;
