@@ -1,24 +1,25 @@
-name: Portafil snake
-description: Genera el SVG animado de Portafil, una serpiente con IA (BFS + Flood Fill) que se come tu gráfico de contribuciones.
-author: Portafil
+name: Portafil
+description: Your contribution graph as an animated SVG for your GitHub profile - AI snake, Pac-Man, Tetris, invaders or Game of Life.
+author: Luis Rodriguez
 branding:
   icon: grid
   color: gray-dark
 
 inputs:
   github_user_name:
-    description: Usuario de GitHub cuyo grafico de contribuciones se anima.
+    description: GitHub username whose contribution graph is animated.
     required: true
   outputs:
     description: |
-      Una ruta .svg por linea, con opciones en formato query string. Ejemplo:
+      One .svg path per line, with options as a query string. Example:
         dist/portafil-snake.svg?theme=paper
         dist/portafil-snake-dark.svg?theme=ink&speed=fast
-      Opciones: theme (ink, paper, dark, light, cyberpunk, neon_cyan, amber_terminal),
-      speed (normal, fast, relaxed), morph (matrix_viper, capsule, retro), pause (fast, medium, none), lang (en, es).
+        dist/portafil-pacman.svg?game=pacman&theme=cyberpunk
+      Options: game (snake, life, pacman, invaders, tetris), theme (ink, paper, dark, light, cyberpunk, neon_cyan, amber_terminal),
+      lang (en, es), mood (auto, off) and, for the snake, speed (normal, fast, relaxed), morph (matrix_viper, capsule, retro), pause (fast, medium, none).
     required: true
   github_token:
-    description: Token para leer el calendario con la API GraphQL oficial. Vacio = API publica de terceros.
+    description: Token to read the calendar with the official GraphQL API. Empty = public third-party API.
     required: false
     default: ${{ github.token }}
 
