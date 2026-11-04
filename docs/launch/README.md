@@ -14,6 +14,7 @@ Estado al 28-10-2026: el repositorio luisrodriguez-rgb/portafil es público y ti
 | 👤 | Datos del repositorio en GitHub (descripción, web y temas), con el comando de abajo o desde la rueda de *About* | se ven en la portada del repositorio |
 | 👤 | Poner el perfil del autor con Portafil: hay una propuesta en `docs/launch/perfil-autor.md` | se ve en `github.com/luisrodriguez-rgb` |
 | 👤 | Probar en GitHub de verdad: las piezas de media anchura (390 px) en escritorio y en móvil, el modo claro y oscuro en la app de GitHub y el botón «Crear mi README en GitHub» con una cuenta sin README de perfil | — |
+| ✅ | Monitor: `.github/workflows/monitor.yml` comprueba producción cada 30 min (4 rutas) y una vez al día todas; si falla, GitHub avisa por correo. En *Settings → Notifications → Actions* conviene tener activado «Send notifications for failed workflows only» | pestaña *Actions → Monitor* |
 | 👤 | Medir la línea base: `GITHUB_TOKEN=ghp_xxx node scripts/baseline.js luisrodriguez-rgb/portafil` | `docs/metrics/baseline-<fecha>.json` |
 
 Datos del repositorio (con `gh auth login` hecho):

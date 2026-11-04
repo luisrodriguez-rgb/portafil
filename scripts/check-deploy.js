@@ -6,13 +6,17 @@
  *   npm run check:deploy                                  contra Brand.site (shared/brand.js)
  *   npm run check:deploy -- https://otro.vercel.app       contra otra URL
  *   npm run check:deploy -- https://otro.vercel.app torvalds
+ *   npm run check:deploy -- --quick                      solo la web y tres piezas (el monitor cada 30 min)
  */
 
 const { loadEngine } = require('../action/lib');
 
 const { Brand } = loadEngine();
-const base = (process.argv[2] || Brand.site).replace(/\/$/, '');
-const user = process.argv[3] || Brand.demoUser;
+const args = process.argv.slice(2);
+const quick = args.includes('--quick');
+const [baseArg, userArg] = args.filter(a => !a.startsWith('--'));
+const base = (baseArg || Brand.site).replace(/\/$/, '');
+const user = userArg || Brand.demoUser;
 const rival = user.toLowerCase() === 'torvalds' ? 'gaearon' : 'torvalds';
 
 const sample = { user, pair: `${user}-vs-${rival}` };
@@ -56,14 +60,19 @@ async function main() {
   // Los juegos y un tema que no es el de por defecto
   routes.push([`/api/${user}.svg?game=pacman&theme=paper`, { type: 'image/svg+xml', csp: true }]);
   routes.push([`/api/stats/${user}.svg?theme=cyberpunk&lang=es`, { type: 'image/svg+xml', csp: true }]);
+  routes.push([`/api/year/${user}.svg`, { type: 'image/svg+xml', csp: true }], [`/api/fingerprint/${user}.svg`, { type: 'image/svg+xml', csp: true }]);
 
+  // Modo rápido: lo que ve casi todo el mundo (la web, la serpiente, una tarjeta y Tu año)
+  const selected = quick
+    ? routes.filter(([path]) => path === '/' || path === `/api/${user}.svg` || path === `/api/header/${user}.svg` || path === `/api/year/${user}.svg`)
+    : routes;
   let failed = 0;
-  for (const [path, expect] of routes) {
+  for (const [path, expect] of selected) {
     const r = await check(path, expect);
     if (!r.ok) failed++;
     console.log(`${r.ok ? '✔' : '✖'} ${path}${r.ms ? `  ${r.ms} ms` : ''}${r.ok ? '' : `\n    ${r.why}`}`);
   }
-  console.log(failed ? `\n${failed} de ${routes.length} fallan` : `\nTodo bien: ${routes.length} rutas`);
+  console.log(failed ? `\n${failed} de ${selected.length} fallan` : `\nTodo bien: ${selected.length} rutas`);
   process.exit(failed ? 1 : 0);
 }
 

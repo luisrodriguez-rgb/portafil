@@ -1,0 +1,31 @@
+name: Monitor
+
+# Comprueba que la web y las piezas responden en producción. Si falla, GitHub avisa por correo a quien
+# administra el repositorio (Settings → Notifications → Actions). Cada 30 min una comprobación rápida de 4 rutas
+# y una vez al día la completa (todas las rutas de vercel.json). Un fallo puntual se reintenta al minuto.
+# Ojo: GitHub pausa los workflows programados de repositorios sin actividad en 60 días.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Comprobar producción
+        env:
+          MODE: ${{ github.event.schedule == '*/30 * * * *' && '--quick' || '' }}
+        run: node scripts/check-deploy.js $MODE || (sleep 60 && node scripts/check-deploy.js $MODE)
