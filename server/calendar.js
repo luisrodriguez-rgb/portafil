@@ -7,6 +7,8 @@
 
 const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
 const { logRender } = require('./metrics');
+const { getYear } = require('./year');
+const { summarizeYear, styleText } = require('./cards/year');
 
 const CACHE_ERROR = 'public, max-age=300, s-maxage=300';
 
@@ -51,13 +53,42 @@ async function renderCalendarJson({ user, token, fetchImpl = fetch }) {
   return jsonResponse(200, { user, source: 'github-graphql', contributions }, CACHE_OK);
 }
 
+/**
+ * «Tu año» en JSON para el clip del estudio: /api/year/<usuario>.json?lang=es (reescrito a ?scope=year).
+ * Los mismos datos y el mismo resumen que la tarjeta /api/year/<usuario>.svg, con el estilo ya traducido.
+ */
+async function renderYearJson({ user, lang = 'en', token, fetchImpl = fetch }) {
+  if (!user || !USER_RE.test(user)) return jsonResponse(400, { error: 'usuario de GitHub no válido' }, CACHE_ERROR);
+  if (!token) return jsonResponse(500, { error: 'falta GITHUB_TOKEN en el servidor' }, 'no-store');
+  let data;
+  try {
+    data = await getYear(user, token, fetchImpl);
+  } catch (err) {
+    if (err.code === 'NOT_FOUND') return jsonResponse(404, { error: `no existe el usuario ${user}` }, CACHE_ERROR);
+    if (err.status === 401) return jsonResponse(500, { error: 'GITHUB_TOKEN del servidor no válido o caducado' }, 'no-store');
+    return jsonResponse(502, { error: 'GitHub no respondió' }, 'no-store');
+  }
+  const s = summarizeYear(data);
+  return jsonResponse(200, {
+    user, ...data,
+    summary: {
+      byMonth: s.byMonth, bestMonth: s.bestMonth, bestDay: s.bestDay, favDay: s.favDay,
+      longest: s.longest, style: styleText(s, data, lang === 'es' ? 'es' : 'en')
+    }
+  }, CACHE_OK);
+}
+
 async function handler(req, res) {
   // /api/calendar/<usuario>.json se reescribe a /api/calendar?user=<usuario> (vercel.json)
   const start = Date.now();
   const { user } = userFromRequest(req, 'json');
-  const result = await renderCalendarJson({ user, token: process.env.GITHUB_TOKEN });
+  const url = new URL(req.url, 'http://localhost');
+  const year = url.searchParams.get('scope') === 'year';
+  const result = year
+    ? await renderYearJson({ user, lang: url.searchParams.get('lang'), token: process.env.GITHUB_TOKEN })
+    : await renderCalendarJson({ user, token: process.env.GITHUB_TOKEN });
   sendCompressed(req, res, result);
-  logRender({ endpoint: 'calendar', user, theme: null, status: result.status, start });
+  logRender({ endpoint: year ? 'year-json' : 'calendar', user, theme: null, status: result.status, start });
 }
 
-module.exports = { renderCalendarJson, handler };
+module.exports = { renderCalendarJson, renderYearJson, handler };

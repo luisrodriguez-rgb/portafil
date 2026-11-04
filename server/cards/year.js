@@ -25,13 +25,11 @@ function styleOf({ total, prevTotal, days, longest, byWeekday, bestMonthShare })
   return { key: 'steady', value: active };
 }
 
-function render({ year, tokens, lang, login }) {
-  const L = LABELS[lang];
-  const p = T.space.padding;
-  const data = year || { year: new Date().getUTCFullYear(), partial: true, until: '', days: [], total: 0, prevTotal: 0, commits: 0, topRepo: null };
-  const { days, total, prevTotal } = data;
-
-  // Ritmo del año
+/**
+ * Lo que cuenta «Tu año», igual en la tarjeta y en el clip del estudio: reparto por mes y por día de la semana,
+ * mejor mes y día, día favorito, racha más larga y estilo
+ */
+function summarizeYear({ days = [], total = 0, prevTotal = 0 }) {
   const byWeekday = Array(7).fill(0);
   const byMonth = Array(12).fill(0);
   let bestDay = null;
@@ -44,6 +42,23 @@ function render({ year, tokens, lang, login }) {
   const favDay = total ? byWeekday.indexOf(Math.max(...byWeekday)) : -1;
   const { longest } = streaks(days);
   const style = styleOf({ total, prevTotal, days, longest: longest.length, byWeekday, bestMonthShare: total ? byMonth[bestMonth] / total : 0 });
+  return { byWeekday, byMonth, bestMonth, bestDay, favDay, longest, style };
+}
+
+/** Nombre y frase del estilo en un idioma */
+function styleText(summary, data, lang) {
+  const [name, line] = LABELS[lang].styles[summary.style.key];
+  const month = summary.bestMonth >= 0 ? LABELS[lang].months[summary.bestMonth] : '';
+  return { key: summary.style.key, name, line: line(summary.style.value, { month, prev: data.year - 1 }) };
+}
+
+function render({ year, tokens, lang, login }) {
+  const L = LABELS[lang];
+  const p = T.space.padding;
+  const data = year || { year: new Date().getUTCFullYear(), partial: true, until: '', days: [], total: 0, prevTotal: 0, commits: 0, topRepo: null };
+  const { days, total, prevTotal } = data;
+
+  const { byMonth, bestMonth, bestDay, favDay, longest, style } = summarizeYear(data);
   const [styleName, styleLine] = L.styles[style.key];
 
   // Izquierda: total, comparación y estilo
@@ -120,4 +135,4 @@ function render({ year, tokens, lang, login }) {
   };
 }
 
-module.exports = { render, needs: ['year'], WIDTH, HEIGHT, styleOf };
+module.exports = { render, needs: ['year'], WIDTH, HEIGHT, styleOf, summarizeYear, styleText };
