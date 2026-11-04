@@ -263,8 +263,14 @@
   function showHero(i) {
     heroIndex = (i + THEMES.length) % THEMES.length;
     const imgs = $('heroStage').querySelectorAll('img');
-    // Solo se descargan la visible y la siguiente (cada dashboard pesa ~45 KB con el avatar incrustado)
-    [heroIndex, (heroIndex + 1) % imgs.length].forEach(k => { if (imgs[k] && !imgs[k].src) imgs[k].src = imgs[k].dataset.src; });
+    // Se descarga la visible y, cuando ya ha llegado, la siguiente: la primera no comparte la conexión con nadie
+    // (cada dashboard pesa ~45 KB con el avatar incrustado y es lo más grande de la portada, el LCP)
+    const load = (img) => { if (img && !img.src) img.src = img.dataset.src; };
+    const current = imgs[heroIndex];
+    const next = imgs[(heroIndex + 1) % imgs.length];
+    load(current);
+    if (current.complete && current.naturalWidth) load(next);
+    else current.addEventListener('load', () => load(next), { once: true });
     imgs.forEach((img, k) => img.classList.toggle('on', k === heroIndex));
     $('heroDots').querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-pressed', String(k === heroIndex)));
     $('heroCaption').textContent = T('hero.caption', Brand.demoUser, T('themes')[THEMES[heroIndex]]);
@@ -328,14 +334,22 @@
   }
 
   // --- Ejemplos: el perfil de demostración en cada estilo ---
+  let examplesObserver = null;
   function buildExamples() {
     const box = $('examplesGrid');
     box.innerHTML = '';
+    // Los ejemplos están más abajo: sus 7 dashboards se piden al acercarse (con loading="lazy" Chrome los pedía
+    // nada más abrir, a la vez que el de la portada, y le quitaban la conexión)
+    const reveal = (img) => { if (!img.src) img.src = img.dataset.src; };
+    if (examplesObserver) examplesObserver.disconnect();
+    const observer = examplesObserver = 'IntersectionObserver' in window
+      ? new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) { reveal(e.target); observer.unobserve(e.target); } }), { rootMargin: '400px 0px' })
+      : null;
     for (const theme of THEMES) {
       const card = document.createElement('article');
       card.className = 'example';
       const src = `${previewBase}/api/kit/${Brand.demoUser}.svg?theme=${theme}${state.ui === 'es' ? '&lang=es' : ''}`;
-      card.innerHTML = `<img src="${src}" alt="@${Brand.demoUser} · ${T('themes')[theme]}" loading="lazy" decoding="async" width="797" height="474">
+      card.innerHTML = `<img data-src="${src}" alt="@${Brand.demoUser} · ${T('themes')[theme]}" loading="lazy" decoding="async" width="797" height="474">
         <div class="example-foot"><strong>${T('themes')[theme]}</strong><button type="button" class="btn small">${T('ex.use')}</button></div>`;
       card.querySelector('button').addEventListener('click', () => {
         state.theme = theme;
@@ -352,6 +366,8 @@
         $('user').focus({ preventScroll: true });
       });
       box.appendChild(card);
+      const img = card.querySelector('img');
+      if (observer) observer.observe(img); else reveal(img);
     }
   }
 
