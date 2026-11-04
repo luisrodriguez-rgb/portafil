@@ -158,7 +158,7 @@ const STATIC_EN = {
   'Workflow en tu repositorio': 'Workflow in your repository',
   'Enlace directo (sin configurar nada)': 'Direct link (no setup)',
   '2. Pega esto en tu': '2. Paste this into your',
-  '. Se actualiza solo cada hora:': '. It refreshes on its own every hour:',
+  '. Se actualiza solo a lo largo del día:': '. It refreshes on its own during the day:',
   'Metodo': 'Method',
   'Copiar Markdown': 'Copy Markdown',
 
