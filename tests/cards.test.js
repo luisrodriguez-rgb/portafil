@@ -257,3 +257,23 @@ test('README: los temas de color no cambian con el modo y cada pieza puede lleva
   assert.match(md, /api\/octocat\.svg\?theme=ink/);
   assert.match(md, /api\/octocat\.svg\?theme=paper/);
 });
+
+test('tu huella: 53 semanas × 7 días en círculo, día y mes favoritos, y sin datos no se rompe', () => {
+  const { renderCard } = require('../server/cards');
+  const { T } = require('../server/cards/frame');
+  const { fixtureWeeks } = require('./visual.helpers');
+  const weeks = fixtureWeeks();
+  const svg = renderCard('fingerprint', { weeks, tokens: T.get('ruby'), lang: 'es', login: 'octocat' });
+  assert.match(svg, /viewBox="0 0 797 300"/);
+  assert.strictEqual((svg.match(/<path d="M[^"]+A[^"]+" stroke=/g) || []).length, 53 * 7, 'una celda por día');
+  for (const label of ['tu huella', 'día favorito', 'mes más activo', 'racha más larga', 'constancia', 'ritmo semanal']) assert.ok(svg.includes(label), label);
+  // El día favorito es el de la semana con más contribuciones
+  const byWeekday = Array(7).fill(0);
+  for (const w of weeks.slice(-53)) for (const d of w.contributionDays) byWeekday[d.weekday] += d.contributionCount;
+  const names = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  assert.ok(svg.includes(`>${names[byWeekday.indexOf(Math.max(...byWeekday))]}<`), 'día favorito');
+  // Perfil sin contribuciones: círculo vacío y guiones, sin errores
+  const empty = renderCard('fingerprint', { weeks: [], tokens: T.get('ink'), lang: 'en', login: 'nobody' });
+  assert.ok(empty.includes('—') && empty.includes('no streak yet'));
+  assert.ok(svg.length < 60 * 1024, `${svg.length} bytes`);
+});

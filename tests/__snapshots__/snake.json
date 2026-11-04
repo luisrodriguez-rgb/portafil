@@ -19,5 +19,8 @@
   "neon_cyan/retro": "80bf13eee3ddd36d",
   "amber_terminal/matrix_viper": "f2c4f85fa14187cc",
   "amber_terminal/capsule": "83b2e357b645cdf5",
-  "amber_terminal/retro": "ace864cc991c434d"
+  "amber_terminal/retro": "ace864cc991c434d",
+  "ruby/matrix_viper": "057cefaa70b51aa5",
+  "ruby/capsule": "ba6c3c4dc8faba2b",
+  "ruby/retro": "466ca1d9c0d37191"
 }

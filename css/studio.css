@@ -54,6 +54,12 @@ body[data-theme="amber_terminal"] {
   --matrix-green: #ffaa00; --canvas-bg: #0f0a02; --game-accent: #d98200;
 }
 
+body[data-theme="ruby"] {
+  --cell-empty: #26090c; --cell-l1: #4f0f16; --cell-l2: #8a1521; --cell-l3: #d11f31; --cell-l4: #ff3b47;
+  --snake-head: #ffffff; --snake-body: #ff3b47; --snake-glow: rgba(255, 59, 71, 0.85);
+  --matrix-green: #ff3b47; --canvas-bg: #0f0506; --game-accent: #d11f31;
+}
+
 /* --- Cabecera --- */
 .nav a[aria-current="page"] { color: var(--text); font-weight: 600; }
 .pill-btn { white-space: nowrap; font: inherit; font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }

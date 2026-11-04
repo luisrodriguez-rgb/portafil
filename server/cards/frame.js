@@ -23,6 +23,11 @@ const LABELS = {
     activity: 'activity', perWeek: 'per week', peak: 'peak', avg: 'avg', wk: 'wk', followers: 'followers',
     duel: 'duel', sameRules: 'same AI, same ticks', wins: 'wins', tie: 'tie', pts: 'pts', devoured: 'devoured',
     versus: 'versus', currentStreak: 'current streak', longestStreak: 'longest streak', topLanguage: 'top language',
+    fingerprint: 'fingerprint', contributionsShort: 'contributions', favoriteDay: 'favorite day', bestMonth: 'best month',
+    consistency: 'consistency', weeklyRhythm: 'weekly rhythm',
+    shareOf: (n) => `${n}% of your contributions`, activeOf: (a, d) => `${a} of ${d} days active`,
+    weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    weekdaysShort: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
     months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   },
   es: {
@@ -34,6 +39,11 @@ const LABELS = {
     activity: 'actividad', perWeek: 'por semana', peak: 'máx', avg: 'media', wk: 'sem', followers: 'seguidores',
     duel: 'duelo', sameRules: 'misma IA, mismos ticks', wins: 'gana', tie: 'empate', pts: 'pts', devoured: 'devorado',
     versus: 'versus', currentStreak: 'racha actual', longestStreak: 'racha más larga', topLanguage: 'lenguaje principal',
+    fingerprint: 'tu huella', contributionsShort: 'contribuciones', favoriteDay: 'día favorito', bestMonth: 'mes más activo',
+    consistency: 'constancia', weeklyRhythm: 'ritmo semanal',
+    shareOf: (n) => `${n} % de tus contribuciones`, activeOf: (a, d) => `${a} de ${d} días activos`,
+    weekdays: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+    weekdaysShort: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
     months: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
   }
 };

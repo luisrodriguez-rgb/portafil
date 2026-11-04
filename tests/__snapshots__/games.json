@@ -26,5 +26,9 @@
   "life/amber_terminal": "266e2814324da3a2",
   "pacman/amber_terminal": "c0800239e5a7c1a4",
   "invaders/amber_terminal": "c182eaecf1ec4fcd",
-  "tetris/amber_terminal": "f3bbbb8898dee010"
+  "tetris/amber_terminal": "f3bbbb8898dee010",
+  "life/ruby": "cfb6a2f637da4a32",
+  "pacman/ruby": "9b5cc9e6b3ca0f76",
+  "invaders/ruby": "7ffecffd1a0f2444",
+  "tetris/ruby": "d8ddb2b352b0f379"
 }

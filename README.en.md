@@ -64,7 +64,7 @@ That is @luisrodriguez-rgb real data served live, light or dark to match your Gi
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Your numbers next to another profile's |
 | Duel | `/api/duel/<a>-vs-<b>.svg` | The same AI on both graphs, with the score; the `/duel/<a>-vs-<b>` page is for sharing and challenging |
 
-All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`: with `mood=auto` (the default) it sleeps after a week without contributions and shows off your streak once it passes 7 days. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
+All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`: with `mood=auto` (the default) it sleeps after a week without contributions and shows off your streak once it passes 7 days. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
 On the web, each piece can have its own style (the header in Ink, the streak in Phosphor, the snake in Cyberpunk...). Ink/Paper and Phosphor/GitHub light follow GitHub light or dark mode; Cyberpunk, Cyan and Amber always look the same.
 

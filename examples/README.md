@@ -11,5 +11,6 @@ Un perfil completo por estilo, generado con `node scripts/build-examples.js`. Ca
 | [Cyberpunk](cyberpunk.md) | `cyberpunk` | `cyberpunk` |
 | [Cian](neon_cyan.md) | `neon_cyan` | `neon_cyan` |
 | [Ámbar](amber_terminal.md) | `amber_terminal` | `amber_terminal` |
+| [Rubí](ruby.md) | `ruby` | `ruby` |
 
 Para cambiar el perfil de demostración, edita `demoUser` en `shared/brand.js` y vuelve a generar.

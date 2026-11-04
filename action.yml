@@ -15,7 +15,7 @@ inputs:
         dist/portafil-snake.svg?theme=paper
         dist/portafil-snake-dark.svg?theme=ink&speed=fast
         dist/portafil-pacman.svg?game=pacman&theme=cyberpunk
-      Options: game (snake, life, pacman, invaders, tetris), theme (ink, paper, dark, light, cyberpunk, neon_cyan, amber_terminal),
+      Options: game (snake, life, pacman, invaders, tetris), theme (ink, paper, dark, light, cyberpunk, neon_cyan, amber_terminal, ruby),
       lang (en, es), mood (auto, off) and, for the snake, speed (normal, fast, relaxed), morph (matrix_viper, capsule, retro), pause (fast, medium, none).
     required: true
   github_token:

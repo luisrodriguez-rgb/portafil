@@ -8,7 +8,7 @@ Las URL de este documento ya están pegadas en perfiles reales. Regla: **se pued
 
 | Opción | Valores | Por defecto |
 | --- | --- | --- |
-| `theme` | `ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal` | `ink` |
+| `theme` | `ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby` | `ink` |
 | `speed` | `normal`, `fast`, `relaxed` | `normal` |
 | `morph` | `matrix_viper`, `capsule`, `retro` | `matrix_viper` |
 | `pause` | `fast`, `medium`, `none` | `fast` |

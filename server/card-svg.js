@@ -33,7 +33,7 @@ async function renderCardSvg({ kind, user, query = '', token, fetchImpl = fetch 
   const { SnakeCore } = engine;
   let options = {};
   let tokens = T.get('ink');
-  const width = kind === 'header' || kind === 'kit' ? T.size.full : T.size.half;
+  const width = (KINDS[kind] && KINDS[kind].WIDTH) || (kind === 'kit' ? T.size.full : T.size.half);
 
   if (!KINDS[kind]) {
     return svgResponse(404, messageCard(`pieza '${kind}' desconocida. Válidas: ${Object.keys(KINDS).join(', ')}`, tokens, width), CACHE_ERROR);

@@ -64,14 +64,21 @@ const ThemeTokens = {
       empty: '#241806', l1: '#4a3006', l2: '#855304', l3: '#d98200', l4: '#ffaa00',
       head: '#ffffff', body: '#ffaa00', glow: 'rgba(255, 170, 0, 0.85)', spine: '#ffffff',
       series: ['#ffaa00', '#d98200', '#ffd27a', '#855304', '#ffe2b0', '#5c4520']
+    },
+    // Rubí: rojo intenso sobre casi negro, para quien quiere que su perfil se vea de lejos
+    ruby: {
+      text: '#ffe3e4', muted: '#c4898d', bg: '#0f0506', border: 'rgba(255, 59, 71, 0.25)',
+      empty: '#26090c', l1: '#4f0f16', l2: '#8a1521', l3: '#d11f31', l4: '#ff3b47',
+      head: '#ffffff', body: '#ff3b47', glow: 'rgba(255, 59, 71, 0.85)', spine: '#ffffff',
+      series: ['#ff3b47', '#ff8a8f', '#d11f31', '#ffb36b', '#ffd1d3', '#7a2730']
     }
   },
 
   // Temas claros y su pareja para el otro modo (README adaptable): la web y los ejemplos usan la misma
   light: ['paper', 'light'],
   // Temas de color propio: se ven igual en el modo claro y en el oscuro de GitHub (no cambian a su pareja)
-  fixed: ['cyberpunk', 'neon_cyan', 'amber_terminal'],
-  partner: { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper' },
+  fixed: ['cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby'],
+  partner: { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper', ruby: 'paper' },
 
   names() {
     return Object.keys(this.themes);

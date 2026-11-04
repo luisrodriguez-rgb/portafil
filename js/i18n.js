@@ -29,6 +29,7 @@ const STATIC_EN = {
   'GitHub claro': 'GitHub light',
   'Cian': 'Cyan',
   'Ámbar': 'Amber',
+  'Rubí': 'Ruby',
   'Víbora': 'Viper',
   'Cápsula': 'Capsule',
   'Continua': 'Smooth',
