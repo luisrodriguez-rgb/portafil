@@ -13,9 +13,11 @@
 
 # Portafil
 
-**One style for your whole GitHub profile.** Header, stats, streak, languages, activity, the snake that eats your commits, versus and duels against other profiles: every piece shares theme, type and sizes, so your profile looks like one design instead of a collage of widgets.
+**One style for your whole GitHub profile. And one that looks like nobody else's.**
 
-Type your username on the web, pick what you like and copy the code. No YAML, nothing to configure. GitHub runs no JavaScript in a README, so every piece is an SVG with CSS animation served from a URL.
+Most GitHub profiles look the same: a card from one tool, another from another, the green snake and a row of badges. Portafil builds every piece of your profile with **one visual system** (theme, type and sizes) and adds pieces that **only exist here**: your year as a fingerprint, your year in review with your style, and your contribution graph turned into Pac-Man, Tetris or the Game of Life.
+
+Type your username, pick what you like and copy the code. No YAML, nothing to configure. GitHub runs no JavaScript in a README, so every piece is an SVG with CSS animation served from a URL, with your real data and always up to date.
 
 <p align="center"><a href="https://perfila-lr.vercel.app"><b>Try it with your username →</b></a> · <a href="https://perfila-lr.vercel.app/play.html">Studio</a> · <a href="#github-action">GitHub Action</a></p>
 
@@ -29,66 +31,126 @@ Type your username on the web, pick what you like and copy the code. No YAML, no
     </picture>
   </a>
 </p>
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=ink">
-    <img alt="Pac-Man eating @luisrodriguez-rgb contribution graph" src="https://perfila-lr.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=paper" width="100%">
-  </picture>
-</p>
 
-That is @luisrodriguez-rgb real data served live, light or dark to match your GitHub: exactly what your profile will show.
+That is [@luisrodriguez-rgb](https://github.com/luisrodriguez-rgb) real data served live, light or dark to match your GitHub: exactly what your profile will show.
 
 ### In three steps
 
 1. Open [perfila-lr.vercel.app](https://perfila-lr.vercel.app) and type your GitHub username.
-2. Pick the style and the pieces (or a profile template).
+2. Pick the style and the pieces (or a profile template). Every piece can have its own style.
 3. Press **«Open my README on GitHub»**: the code is copied, or already written if you have no README yet. Press «Commit changes» and you are done.
 
 **Like it?** Give the repository a ⭐: it helps more people find it. And if you already use it, [show your profile](https://github.com/luisrodriguez-rgb/portafil/issues/new?template=3-mi-perfil.yml) to be featured here.
 
+## Only on Portafil
+
+**Your fingerprint.** Your year as a circle: 53 weeks around and the 7 days as rings. No two are alike. Next to it, your favorite day, best month, longest streak, consistency and weekly rhythm.
+
+<p align="center">
+  <img alt="@luisrodriguez-rgb fingerprint in the Ruby theme" src="https://perfila-lr.vercel.app/api/fingerprint/luisrodriguez-rgb.svg?theme=ruby" width="100%">
+</p>
+
+**Your year.** The calendar-year review to share in December: your total against the same period last year, your best moments, your project of the year and **your style**, a label based on how you contribute («Clockwork», «Weekend warrior», «On the rise»...). In January it shows the whole previous year.
+
+<p align="center">
+  <img alt="@luisrodriguez-rgb year in review in the Sand theme" src="https://perfila-lr.vercel.app/api/year/luisrodriguez-rgb.svg?theme=sand" width="100%">
+</p>
+
+**Your graph, playable.** The AI snake, Pac-Man, invaders, Tetris and the Game of Life play on your real contributions, animated in an SVG under 120 KB.
+
+<p align="center">
+  <img alt="Pac-Man eating @luisrodriguez-rgb contribution graph in the Cyan theme" src="https://perfila-lr.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=neon_cyan" width="100%">
+</p>
+
+## Styles
+
+Nine themes designed as one system: every piece changes together. The neutral and green ones **follow GitHub light or dark mode**; the color ones **always look the same**, so your profile is recognizable from afar.
+
+| Theme | Key | Character | Light and dark |
+| --- | --- | --- | --- |
+| Ink | `ink` | Charcoal grey, the default | Pairs with Paper |
+| Paper | `paper` | Clean white, dark ink | Pairs with Ink |
+| Phosphor | `dark` | Terminal green on black | Pairs with GitHub light |
+| GitHub light | `light` | GitHub's familiar greens | Pairs with Phosphor |
+| Sand | `sand` | Warm beige with terracotta | Pairs with Amber |
+| Cyberpunk | `cyberpunk` | Magenta and cyan on dark violet | Always the same |
+| Cyan | `neon_cyan` | Blue neon on night blue | Always the same |
+| Amber | `amber_terminal` | Amber phosphor monitor | Always the same |
+| Ruby | `ruby` | Deep red on near black | Always the same |
+
+On the web, **every piece can have its own style**: the header in Ink, the streak in Phosphor, your fingerprint in Ruby... The README code and the preview follow each piece's theme in each mode. There is a full example profile per style in [examples/](examples/README.md).
+
 ## Pieces
+
+**Your profile**
 
 | Piece | URL | Shows |
 | --- | --- | --- |
-| Header | `/api/header/<user>.svg` | Avatar, name, bio, followers, repos, stars and active days |
+| Header | `/api/header/<user>.svg` | Avatar, name, bio, followers, own repos, stars and active days |
 | Stats | `/api/stats/<user>.svg` | Contributions, commits, PRs, issues, reviews and stars in the last year |
-| Streak | `/api/streak/<user>.svg` | Current streak, longest and the last 30 days |
-| Languages | `/api/langs/<user>.svg` | Languages by code size in your public repos |
+| Streak | `/api/streak/<user>.svg` | Current and longest streak, and the last 30 days |
+| Languages | `/api/langs/<user>.svg` | Languages by code size in your public repos, no forks |
 | Activity | `/api/activity/<user>.svg` | Contributions per week, 53 weeks |
-| Your fingerprint | `/api/fingerprint/<user>.svg` | Your year as a circle, unique to every profile, with your favorite day, best month, streak, consistency and weekly rhythm |
-| Your year | `/api/year/<user>.svg` | Calendar-year review: total vs the same period last year, your style, best moments, project of the year and the year month by month |
-| All in one | `/api/kit/<user>.svg` | The five above in a single image |
-| Snake | `/api/<user>.svg` | An AI (BFS + Flood Fill) eats your contribution graph |
-| Game of Life | `/api/<user>.svg?game=life` | Your contributions evolve with Conway's rules |
+| Your fingerprint | `/api/fingerprint/<user>.svg` | Your year as a circle, with favorite day, best month, streak, consistency and weekly rhythm |
+| Your year | `/api/year/<user>.svg` | Calendar-year review: comparison, your style, best moments, project of the year and the year month by month |
+| All in one | `/api/kit/<user>.svg` | Header, stats, streak, languages and activity in a single image |
+
+**Games**
+
+| Piece | URL | Shows |
+| --- | --- | --- |
+| Snake | `/api/<user>.svg` | An AI (BFS + Flood Fill) eats your graph; it sleeps after a week without contributions and shows off your streak |
+| Game of Life | `/api/<user>.svg?game=life` | Your busiest days evolve under Conway's rules |
 | Pac-Man | `/api/<user>.svg?game=pacman` | Pac-Man eats your graph while two ghosts chase it |
-| Invaders | `/api/<user>.svg?game=invaders` | A ship shoots your contributions, column by column |
+| Invaders | `/api/<user>.svg?game=invaders` | A ship shoots at your contributions, column by column |
 | Tetris | `/api/<user>.svg?game=tetris` | Your year falls toward the past and pieces complete weeks |
+
+**Against another profile**
+
+| Piece | URL | Shows |
+| --- | --- | --- |
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Your numbers next to another profile's |
-| Duel | `/api/duel/<a>-vs-<b>.svg` | The same AI on both graphs, with the score; the `/duel/<a>-vs-<b>` page is for sharing and challenging |
+| Duel | `/api/duel/<a>-vs-<b>.svg` | The same AI on both graphs, with a scoreboard; the `/duel/<a>-vs-<b>` page is for sharing and challenging |
 
-All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`, `sand`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`: with `mood=auto` (the default) it sleeps after a week without contributions and shows off your streak once it passes 7 days. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
-
-On the web, each piece can have its own style (the header in Ink, the streak in Phosphor, the snake in Cyberpunk...). Ink/Paper and Phosphor/GitHub light follow GitHub light or dark mode; Cyberpunk, Cyan and Amber always look the same.
+All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`, `sand`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`. They refresh on their own during the day, at most about 2 hours behind. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
 ## Sharing outside GitHub
 
-`/api/og/<user>.png` is your 1200×630 card for LinkedIn or X, and `/u/<user>` is the link that shows it when shared. Duels have their own at `/api/og/duel/<a>-vs-<b>.png`. The web also has profile templates with text (developer, student, maintainer) and a preview of the README as it will look on GitHub.
+X, LinkedIn or Instagram don't show SVG, so the most shareable pieces have a 1200×630 PNG, with the brand and the link to make yours:
+
+| Image | URL |
+| --- | --- |
+| Your profile | `/api/og/<user>.png` |
+| Your year | `/api/og/year/<user>.png` |
+| Your fingerprint | `/api/og/fingerprint/<user>.png` |
+| A duel | `/api/og/duel/<a>-vs-<b>.png` |
+
+When you share the `/u/<user>` link, the social preview is your card; with `/u/<user>?p=year` or `?p=fingerprint`, your year or your fingerprint. On the web, «Your year» and «Your fingerprint» have a **«PNG for social»** button.
 
 ## Studio
 
-`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok. «Download SVG» and «Social clip» export the mode you are playing, and the «My year» clip turns «Your year» into a vertical video for Reels, TikTok or Shorts.
+[`/play.html`](https://perfila-lr.vercel.app/play.html) is the playable side: the live snake, manual mode, a duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you) and Commit Art.
+
+And the **social clips**, vertical (Reels, TikTok, Shorts), square or landscape, rendered in your browser:
+
+- **My profile:** the snake or the game you are playing, on your graph.
+- **My year:** your GitHub «Wrapped» in 13 seconds: counter, your year's calendar, your best moments and your style, with the post text already written.
+- **Last duel:** the duel between two profiles, with its winner.
+
+«Download SVG» also exports the mode you are playing.
 
 ## GitHub Action
 
-If you would rather not depend on the server, the Action generates the snake in your own repository:
+If you'd rather not depend on the server, the Action generates the SVGs in your own repository, every day:
 
 ```yaml
 - uses: luisrodriguez-rgb/portafil@v1
   with:
-    github_user_name: your-user
+    github_user_name: your-username
     outputs: |
       dist/portafil-snake.svg?theme=paper
       dist/portafil-snake-dark.svg?theme=ink
+      dist/portafil-pacman.svg?game=pacman&theme=ruby
 ```
 
 ## Feedback
@@ -117,7 +179,17 @@ GITHUB_TOKEN=ghp_xxx npm run dev
 npm test
 ```
 
-`npm run smoke` opens the home page and the studio in headless Chrome, with test data and the security headers from `vercel.json`, and checks that they render (Chrome path via `CHROME=...`).
+`npm run smoke` opens the home page and the studio in headless Chrome, with test data and the security headers from `vercel.json`, and checks that they render (Chrome path via `CHROME=...`). `npm run check:deploy` checks production route by route; the [Monitor](.github/workflows/monitor.yml) workflow runs it every 30 minutes and alerts if something fails.
+
+| Folder | Contents |
+| --- | --- |
+| `index.html`, `css/site.css`, `js/site.js` | The web: home page, username field and piece gallery |
+| `play.html`, `css/studio.css`, `js/` | The studio and the engine (snake, pathfinding, games, SVG exporter, duel, video) |
+| `shared/` | Shared by web, API and Action: brand, design tokens, games, contract, README code |
+| `server/`, `api/` | Vercel functions: snake, pieces, your year, duel, calendar and social cards |
+| `action/` | GitHub Action |
+| `tests/` | Tests, including visual fingerprints of every SVG per theme |
+| `docs/` | Brand, plan, contract, metrics and launch (in Spanish) |
 
 Deployment: Vercel serves the web and the API together; it needs the `GITHUB_TOKEN` variable (a token with no scopes is enough). The public domain and repository are set in `shared/brand.js`.
 
