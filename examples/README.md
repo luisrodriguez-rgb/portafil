@@ -12,5 +12,6 @@ Un perfil completo por estilo, generado con `node scripts/build-examples.js`. Ca
 | [Cian](neon_cyan.md) | `neon_cyan` | `neon_cyan` |
 | [Ámbar](amber_terminal.md) | `amber_terminal` | `amber_terminal` |
 | [Rubí](ruby.md) | `ruby` | `ruby` |
+| [Arena](sand.md) | `amber_terminal` | `sand` |
 
 Para cambiar el perfil de demostración, edita `demoUser` en `shared/brand.js` y vuelve a generar.

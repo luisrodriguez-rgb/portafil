@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { T, escapeXml, fmtNumber, truncate, wrap } = require('./cards/frame');
+const { T, escapeXml, fmtNumber, truncate, wrap, CARD_CSS } = require('./cards/frame');
 const { metricsOf } = require('./cards/versus');
 
 const W = 1200;
@@ -196,6 +196,23 @@ function duelCardSvg({ duel, tokens, lang = 'en', url = '' }) {
   return frame(tokens, body + brand(tokens, W - MARGIN + 8, H - 66));
 }
 
+/**
+ * Una pieza del kit (Tu año, Tu huella...) para compartir: la tarjeta ampliada sobre un lienzo de 1200×630 del
+ * mismo tema, con la marca y el enlace para hacer la tuya. card: lo que devuelve KINDS[kind].render(data).
+ */
+function pieceCardSvg({ card, tokens, url = '' }) {
+  const footer = 70;
+  const scale = Math.min((W - MARGIN) / card.width, (H - MARGIN / 2 - footer) / card.height);
+  const w = card.width * scale;
+  const h = card.height * scale;
+  const x = (W - w) / 2;
+  const y = (H - footer - h) / 2 + 6;
+  const body = `<svg x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" width="${+w.toFixed(1)}" height="${+h.toFixed(1)}" viewBox="0 0 ${card.width} ${card.height}">`
+    + `<style>${CARD_CSS}</style>${card.content}</svg>`
+    + (url ? text(x, H - 40, escapeXml(url), { size: 20, fill: tokens.muted }) : '');
+  return frame(tokens, body + brand(tokens, x + w + 8, H - 34));
+}
+
 let Resvg = null;
 /** SVG -> PNG. La primera llamada carga el binario de resvg (solo en el servidor) */
 function toPng(svg) {
@@ -207,4 +224,4 @@ function toPng(svg) {
   return new Resvg(svg, { font, fitTo: { mode: 'width', value: W } }).render().asPng();
 }
 
-module.exports = { profileCardSvg, duelCardSvg, toPng, printable, W, H };
+module.exports = { profileCardSvg, duelCardSvg, pieceCardSvg, toPng, printable, W, H };

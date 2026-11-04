@@ -30,5 +30,9 @@
   "life/ruby": "cfb6a2f637da4a32",
   "pacman/ruby": "9b5cc9e6b3ca0f76",
   "invaders/ruby": "7ffecffd1a0f2444",
-  "tetris/ruby": "d8ddb2b352b0f379"
+  "tetris/ruby": "d8ddb2b352b0f379",
+  "life/sand": "b4ea9226d87e1531",
+  "pacman/sand": "b19b1ebf4406d2ff",
+  "invaders/sand": "e87cb4e6a8d28622",
+  "tetris/sand": "c6007e636870f3de"
 }

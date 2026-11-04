@@ -15,7 +15,7 @@ const DIR = path.join(__dirname, '..', 'examples');
 const LIGHT = ThemeTokens.light;
 // Tema del modo contrario: el mismo que en la web (shared/theme-tokens.js)
 const PARTNER = ThemeTokens.partner;
-const NAMES = { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub claro', cyberpunk: 'Cyberpunk', neon_cyan: 'Cian', amber_terminal: 'Ámbar', ruby: 'Rubí' };
+const NAMES = { ink: 'Tinta', paper: 'Papel', dark: 'Fósforo', light: 'GitHub claro', cyberpunk: 'Cyberpunk', neon_cyan: 'Cian', amber_terminal: 'Ámbar', ruby: 'Rubí', sand: 'Arena' };
 const THEMES = [...SnakeCore.CARD_OPTION_VALUES.theme];
 
 function pairFor(theme) {

@@ -8,7 +8,7 @@ const { SnakeCore, ThemeTokens } = loadEngine();
 // en vez de editar esta lista, añade la opción nueva sin quitar las viejas, o sube CONTRACT_VERSION.
 const V1 = {
   snake: {
-    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby'],
+    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby', 'sand'],
     speed: ['normal', 'fast', 'relaxed'],
     morph: ['matrix_viper', 'capsule', 'retro'],
     pause: ['fast', 'medium', 'none'],
@@ -17,7 +17,7 @@ const V1 = {
     mood: ['auto', 'off']
   },
   cards: {
-    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby'],
+    theme: ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby', 'sand'],
     lang: ['en', 'es']
   },
   kinds: ['header', 'stats', 'streak', 'langs', 'activity', 'kit'],

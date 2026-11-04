@@ -30,6 +30,7 @@ const STATIC_EN = {
   'Cian': 'Cyan',
   'Ámbar': 'Amber',
   'Rubí': 'Ruby',
+  'Arena': 'Sand',
   'Víbora': 'Viper',
   'Cápsula': 'Capsule',
   'Continua': 'Smooth',

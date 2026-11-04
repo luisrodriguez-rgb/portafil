@@ -71,14 +71,21 @@ const ThemeTokens = {
       empty: '#26090c', l1: '#4f0f16', l2: '#8a1521', l3: '#d11f31', l4: '#ff3b47',
       head: '#ffffff', body: '#ff3b47', glow: 'rgba(255, 59, 71, 0.85)', spine: '#ffffff',
       series: ['#ff3b47', '#ff8a8f', '#d11f31', '#ffb36b', '#ffd1d3', '#7a2730']
+    },
+    // Arena: claro y cálido, beige con acentos terracota; en el modo oscuro de GitHub hace pareja con Ámbar
+    sand: {
+      text: '#2b2118', muted: '#7a6a58', bg: '#fbf6ee', border: 'rgba(43, 33, 24, 0.14)',
+      empty: '#efe5d6', l1: '#e7c9a5', l2: '#d69a64', l3: '#b8642f', l4: '#7f3712',
+      head: '#4a1f08', body: '#b8642f', glow: 'rgba(184, 100, 47, 0.3)', spine: '#fbf6ee',
+      series: ['#b8642f', '#7f3712', '#d69a64', '#6f7d55', '#e7c9a5', '#a08a70']
     }
   },
 
   // Temas claros y su pareja para el otro modo (README adaptable): la web y los ejemplos usan la misma
-  light: ['paper', 'light'],
+  light: ['paper', 'light', 'sand'],
   // Temas de color propio: se ven igual en el modo claro y en el oscuro de GitHub (no cambian a su pareja)
   fixed: ['cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby'],
-  partner: { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper', ruby: 'paper' },
+  partner: { ink: 'paper', paper: 'ink', dark: 'light', light: 'dark', cyberpunk: 'paper', neon_cyan: 'paper', amber_terminal: 'paper', ruby: 'paper', sand: 'amber_terminal' },
 
   names() {
     return Object.keys(this.themes);

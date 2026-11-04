@@ -13,6 +13,14 @@
       "destination": "/api/og?kind=duel&slug=:pair&format=svg"
     },
     {
+      "source": "/api/og/:piece(year|fingerprint)/:user.png",
+      "destination": "/api/og?kind=:piece&slug=:user&format=png"
+    },
+    {
+      "source": "/api/og/:piece(year|fingerprint)/:user.svg",
+      "destination": "/api/og?kind=:piece&slug=:user&format=svg"
+    },
+    {
       "source": "/api/og/:user.png",
       "destination": "/api/og?kind=profile&slug=:user&format=png"
     },

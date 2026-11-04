@@ -9,7 +9,12 @@
 const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed, withCdnCache } = require('./common');
 const { getProfile } = require('./profile');
 const { parsePair, runDuel } = require('./duel');
-const { profileCardSvg, duelCardSvg, toPng } = require('./social');
+const { profileCardSvg, duelCardSvg, pieceCardSvg, toPng } = require('./social');
+const { KINDS } = require('./cards');
+const { getYear } = require('./year');
+
+// Piezas del kit que también tienen versión para redes
+const SOCIAL_PIECES = ['year', 'fingerprint'];
 const { T, escapeXml } = require('./cards/frame');
 const { logRender } = require('./metrics');
 
@@ -19,7 +24,7 @@ const SITE_HOST = new URL(engine.Brand.site).host;
 // Las claves de la ruta las pone la reescritura de vercel.json (Vercel añade también los parámetros con nombre de
 // la ruta, user y pair); cualquier otra opción desconocida da 400:
 // generar el PNG es lo más caro de la API y una query inventada no debe saltarse la caché del CDN
-const ROUTE_KEYS = ['kind', 'slug', 'format', 'a', 'b', 'user', 'pair'];
+const ROUTE_KEYS = ['kind', 'slug', 'format', 'a', 'b', 'user', 'pair', 'piece'];
 
 function readOptions(params) {
   const query = new URLSearchParams(params);
@@ -39,7 +44,7 @@ function githubError(err) {
 
 /**
  * Lógica pura de las tarjetas (testeable sin servidor).
- * kind: 'profile' | 'duel'; format: 'png' | 'svg'
+ * kind: 'profile' | 'duel' | 'year' | 'fingerprint'; format: 'png' | 'svg'
  */
 async function renderSocialCard({ kind, slug, query = '', format = 'png', token, fetchImpl = fetch, origin = engine.Brand.site }) {
   const params = new URLSearchParams(query);
@@ -61,6 +66,14 @@ async function renderSocialCard({ kind, slug, query = '', format = 'png', token,
       const weeks = await Promise.all(users.map(u => getCalendarWeeks(u, token, fetchImpl)));
       const duel = runDuel(users, weeks);
       svg = duelCardSvg({ duel, tokens, lang, url: `${origin}/duel/${users[0]}-vs-${users[1]}` });
+    } else if (SOCIAL_PIECES.includes(kind)) {
+      if (!USER_RE.test(slug || '')) return errorResponse(400, 'usuario de GitHub no válido', CACHE_ERROR);
+      const [year, weeks] = await Promise.all([
+        kind === 'year' ? getYear(slug, token, fetchImpl) : null,
+        kind === 'fingerprint' ? getCalendarWeeks(slug, token, fetchImpl) : null
+      ]);
+      const card = KINDS[kind].render({ year, weeks: weeks || [], tokens, lang, login: slug });
+      svg = pieceCardSvg({ card, tokens, url: `${new URL(origin).host}/u/${slug}` });
     } else {
       if (!USER_RE.test(slug || '')) return errorResponse(400, 'usuario de GitHub no válido', CACHE_ERROR);
       const [profile, weeks] = await Promise.all([getProfile(slug, token, fetchImpl), getCalendarWeeks(slug, token, fetchImpl)]);
@@ -81,8 +94,8 @@ async function renderSocialCard({ kind, slug, query = '', format = 'png', token,
 }
 
 const PAGE_TEXT = {
-  en: { title: (u) => `@${u}'s GitHub profile · Portafil`, description: 'Header, stats, streak, languages, activity and games for a GitHub profile, all in one style.', go: (u) => `See @${u}'s pieces` },
-  es: { title: (u) => `Perfil de GitHub de @${u} · Portafil`, description: 'Cabecera, estadísticas, racha, lenguajes, actividad y juegos para un perfil de GitHub, todo con un solo estilo.', go: (u) => `Ver las piezas de @${u}` }
+  en: { year: (u) => `@${u}'s year on GitHub · Portafil`, fingerprint: (u) => `@${u}'s GitHub fingerprint · Portafil`, title: (u) => `@${u}'s GitHub profile · Portafil`, description: 'Header, stats, streak, languages, activity and games for a GitHub profile, all in one style.', go: (u) => `See @${u}'s pieces` },
+  es: { year: (u) => `El año de @${u} en GitHub · Portafil`, fingerprint: (u) => `La huella de GitHub de @${u} · Portafil`, title: (u) => `Perfil de GitHub de @${u} · Portafil`, description: 'Cabecera, estadísticas, racha, lenguajes, actividad y juegos para un perfil de GitHub, todo con un solo estilo.', go: (u) => `Ver las piezas de @${u}` }
 };
 
 /** Página para compartir un perfil: metadatos para redes y redirección a la web */
@@ -95,7 +108,10 @@ function renderSharePage({ user, query = '', origin, acceptLanguage = '' }) {
   }
   const theme = engine.SnakeCore.CARD_OPTION_VALUES.theme.includes(params.get('t')) ? params.get('t') : 'ink';
   const P = PAGE_TEXT[lang];
-  const image = `${origin}/api/og/${user}.png?theme=${theme}${lang === 'es' ? '&lang=es' : ''}`;
+  // ?p=year o ?p=fingerprint: la vista previa en redes es esa pieza
+  const piece = SOCIAL_PIECES.includes(params.get('p')) ? params.get('p') : '';
+  const image = `${origin}/api/og/${piece ? `${piece}/` : ''}${user}.png?theme=${theme}${lang === 'es' ? '&lang=es' : ''}`;
+  const title = piece ? P[piece](user) : P.title(user);
   const target = `${origin}/?u=${encodeURIComponent(user)}${theme !== 'ink' ? `&t=${theme}` : ''}`;
   const e = escapeXml;
   const body = `<!doctype html>
@@ -103,12 +119,12 @@ function renderSharePage({ user, query = '', origin, acceptLanguage = '' }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${e(P.title(user))}</title>
+<title>${e(title)}</title>
 <meta name="description" content="${e(P.description)}">
 <meta property="og:type" content="profile">
-<meta property="og:title" content="${e(P.title(user))}">
+<meta property="og:title" content="${e(title)}">
 <meta property="og:description" content="${e(P.description)}">
-<meta property="og:url" content="${e(`${origin}/u/${user}`)}">
+<meta property="og:url" content="${e(`${origin}/u/${user}${piece ? `?p=${piece}` : ''}`)}">
 <meta property="og:image" content="${e(image)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">

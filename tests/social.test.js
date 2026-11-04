@@ -172,3 +172,27 @@ test('seguridad: CSP sin scripts en los SVG y con el hash del script en la pági
   assert.match(staticCsp, /script-src 'self' https:\/\/static\.cloudflareinsights\.com;/);
   assert.ok(!/unsafe-inline'[^;]*;/.test(staticCsp.split('script-src')[1].split(';')[0] + ';'), 'sin unsafe-inline en script-src');
 });
+
+test('tu año y tu huella para redes: PNG de 1200×630 y página para compartir con esa vista previa', async () => {
+  const { fixtureYearUser, fixtureWeeks } = require('./visual.helpers');
+  require('../server/year').yearCache.clear();
+  clearCaches();
+  const fetchImpl = async (url, init = {}) => {
+    const query = JSON.parse(init.body).query;
+    const user = query.includes('thisYear') ? fixtureYearUser() : { contributionsCollection: { contributionCalendar: { weeks: fixtureWeeks() } } };
+    return { ok: true, json: async () => ({ data: { user } }) };
+  };
+  for (const kind of ['year', 'fingerprint']) {
+    const png = await renderSocialCard({ kind, slug: 'octocat', query: 'kind=x&slug=octocat&piece=x&user=octocat&theme=ruby&lang=es', token: 't', fetchImpl, origin: 'https://example.app' });
+    assert.strictEqual(png.status, 200, kind);
+    assert.deepStrictEqual(pngSize(png.body), [1200, 630], kind);
+    const svg = await renderSocialCard({ kind, slug: 'octocat', query: 'lang=es', format: 'svg', token: 't', fetchImpl, origin: 'https://example.app' });
+    assert.ok(svg.body.includes('example.app/u/octocat'), `${kind}: enlace para hacer la tuya`);
+    assert.ok(svg.body.includes(kind === 'year' ? 'tu año 2026' : 'tu huella'), kind);
+  }
+  const page = renderSharePage({ user: 'octocat', query: 'p=year&t=ruby&lang=es', origin: 'https://example.app' });
+  assert.match(page.body, /og:image" content="https:\/\/example\.app\/api\/og\/year\/octocat\.png\?theme=ruby&amp;lang=es"/);
+  assert.match(page.body, /<title>El año de @octocat en GitHub/);
+  // Un valor de p desconocido vuelve a la tarjeta del perfil
+  assert.match(renderSharePage({ user: 'octocat', query: 'p=hack', origin: 'https://example.app' }).body, /api\/og\/octocat\.png/);
+});

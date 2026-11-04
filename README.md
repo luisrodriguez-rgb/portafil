@@ -66,7 +66,7 @@ Son los datos reales de @luisrodriguez-rgb servidos en vivo, en claro u oscuro s
 | Versus | `/api/versus/<a>-vs-<b>.svg` | Tus cifras frente a las de otro perfil |
 | Duelo | `/api/duel/<a>-vs-<b>.svg` | La misma IA en los dos gráficos, con marcador; la página `/duel/<a>-vs-<b>` sirve para compartir y retar |
 
-Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed`, `pause` y `mood`: con `mood=auto` (por defecto) duerme si llevas una semana sin contribuir y presume de tu racha cuando pasa de 7 días. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
+Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`, `sand`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed`, `pause` y `mood`: con `mood=auto` (por defecto) duerme si llevas una semana sin contribuir y presume de tu racha cuando pasa de 7 días. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
 En la web, cada pieza puede llevar su propio estilo (la cabecera en Tinta, la racha en Fósforo, la serpiente en Cyberpunk...). Tinta/Papel y Fósforo/GitHub claro cambian con el modo claro u oscuro de GitHub; Cyberpunk, Cian y Ámbar se ven siempre igual.
 

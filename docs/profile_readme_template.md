@@ -6,7 +6,7 @@ Lo más rápido es la web: escribe tu usuario, elige las piezas y copia. Este ar
 2. Pega uno de los bloques de abajo en ese `README.md` y cambia `tu-usuario`.
 3. Listo: las piezas se actualizan solas cada hora y cambian con el modo claro u oscuro de GitHub.
 
-Cambia `theme=ink` / `theme=paper` por cualquiera de `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal` o `ruby`, y quita `&lang=es` para tenerlo en inglés. El contrato completo de URL está en [contract.md](contract.md).
+Cambia `theme=ink` / `theme=paper` por cualquiera de `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby` o `sand`, y quita `&lang=es` para tenerlo en inglés. El contrato completo de URL está en [contract.md](contract.md).
 
 ## Perfil completo
 

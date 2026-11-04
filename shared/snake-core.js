@@ -5,7 +5,7 @@
  */
 
 // Temas del contrato: los mismos para la serpiente, los juegos y las tarjetas
-const CONTRACT_THEMES = ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby'];
+const CONTRACT_THEMES = ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby', 'sand'];
 
 const SnakeCore = {
   LEVELS: { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 },
