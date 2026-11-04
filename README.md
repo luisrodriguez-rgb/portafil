@@ -76,7 +76,7 @@ En la web, cada pieza puede llevar su propio estilo (la cabecera en Tinta, la ra
 
 ## Estudio
 
-En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y clips de video para X, LinkedIn, Reels o TikTok. «Descargar SVG» y «Clip para redes» exportan el modo que estés jugando.
+En `/play.html` está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y clips de video para X, LinkedIn, Reels o TikTok. «Descargar SVG» y «Clip para redes» exportan el modo que estés jugando, y el clip «Mi año» convierte «Tu año» en un vídeo vertical para Reels, TikTok o Shorts.
 
 ## GitHub Action
 

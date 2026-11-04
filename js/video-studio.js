@@ -31,7 +31,16 @@ const VIDEO_TEXT = {
     duelSub: 'Challenge any profile: same AI, 60 seconds',
     games: { life: 'GAME OF LIFE', pacman: 'PAC-MAN', invaders: 'INVADERS', tetris: 'TETRIS' },
     units: { life: 'generations', pacman: 'pts', invaders: 'hits', tetris: 'full weeks' },
-    ctaGame: (name) => `Put ${name} on your profile with one line`
+    ctaGame: (name) => `Put ${name} on your profile with one line`,
+    year: {
+      title: (y) => `Your ${y}`, contributions: (y) => `contributions in ${y}`, vs: (pct, y) => `${pct} vs ${y}`,
+      upFromZero: (y) => `▲ up from 0 in ${y}`, samePeriod: 'same period last year',
+      bestMonth: 'best month', bestDay: 'best day', streak: 'longest streak', project: 'project of the year', favDay: 'favorite day',
+      style: 'your style', cta: 'What did your year look like?', ctaSub: 'Make yours in one minute', days: 'days', contributionsShort: 'contributions', commits: 'commits',
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    }
   },
   es: {
     contributions: 'contribuciones en el último año',
@@ -49,7 +58,16 @@ const VIDEO_TEXT = {
     duelSub: 'Reta a cualquier perfil: misma IA, 60 segundos',
     games: { life: 'JUEGO DE LA VIDA', pacman: 'PAC-MAN', invaders: 'INVASORES', tetris: 'TETRIS' },
     units: { life: 'generaciones', pacman: 'pts', invaders: 'impactos', tetris: 'semanas completas' },
-    ctaGame: (name) => `Pon ${name} en tu perfil con una línea`
+    ctaGame: (name) => `Pon ${name} en tu perfil con una línea`,
+    year: {
+      title: (y) => `Tu ${y}`, contributions: (y) => `contribuciones en ${y}`, vs: (pct, y) => `${pct} vs ${y}`,
+      upFromZero: (y) => `▲ desde 0 en ${y}`, samePeriod: 'mismo periodo del año pasado',
+      bestMonth: 'mejor mes', bestDay: 'mejor día', streak: 'racha más larga', project: 'proyecto del año', favDay: 'día favorito',
+      style: 'tu estilo', cta: '¿Cómo fue tu año?', ctaSub: 'Haz el tuyo en un minuto', days: 'días', contributionsShort: 'contribuciones', commits: 'commits',
+      months: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+      monthsShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+      weekdays: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+    }
   }
 };
 
@@ -600,8 +618,262 @@ class VideoStudio {
     ctx.globalAlpha = 1;
   }
 
+  /**
+   * Escena de «Tu año»: data es la respuesta de /api/year/<usuario>.json (los mismos datos y resumen que la
+   * tarjeta). Calendario del año natural de enero a diciembre, con los días que aún no han llegado en hueco.
+   */
+  buildYearScene({ data, user, lang, theme, format, shareUrl, avatar }) {
+    const size = VIDEO_FORMATS[format] || VIDEO_FORMATS.landscape;
+    const palette = this.exporter.themePalettes[theme] || this.exporter.themePalettes.ink;
+    const muted = (typeof ThemeTokens !== 'undefined' ? ThemeTokens.get(theme).muted : null) || palette.l3;
+    const text = (VIDEO_TEXT[lang] || VIDEO_TEXT.en);
+
+    // Celdas del año: columna = semana desde el domingo de la semana del 1 de enero, fila = día de la semana
+    const jan1 = Date.UTC(data.year, 0, 1);
+    const offset = new Date(jan1).getUTCDay();
+    const daysInYear = (Date.UTC(data.year + 1, 0, 1) - jan1) / 86400000;
+    const levels = new Map(data.days.map(d => [d.date, d.level]));
+    const cells = [];
+    for (let i = 0; i < daysInYear; i++) {
+      const date = new Date(jan1 + i * 86400000).toISOString().slice(0, 10);
+      cells.push({ x: Math.floor((i + offset) / 7), y: (i + offset) % 7, level: levels.get(date) || 0, future: data.partial && date > data.until });
+    }
+    const cols = cells[cells.length - 1].x + 1;
+
+    // Distribución: en horizontal una banda de semanas; en cuadrado y vertical, dos bandas con celdas mayores
+    const wide = format === 'landscape';
+    const unit = format === 'vertical' ? size.width / 560 : Math.min(size.width, size.height) / 720;
+    const margin = Math.round(size.width * 0.06);
+    const bands = wide ? 1 : 2;
+    const perBand = Math.ceil(cols / bands);
+    const maxBoardHeight = size.height * (wide ? 0.27 : format === 'square' ? 0.21 : 0.25);
+    const step = Math.min((size.width - margin * 2) / perBand, maxBoardHeight / (7 * bands + 0.9 * (bands - 1)));
+    const cell = step * 0.8;
+    const bandGap = step * 0.9;
+    const boardWidth = step * perBand;
+    const boardHeight = step * 7 * bands + bandGap * (bands - 1);
+    const boardLeft = (size.width - boardWidth) / 2;
+    const boardY = Math.round(size.height * (wide ? 0.36 : format === 'square' ? 0.33 : 0.3));
+    const cardsY = boardY + boardHeight + size.height * (wide ? 0.07 : 0.05);
+
+    // Ritmo del clip (s): intro con el contador, calendario, momentos, estilo y llamada a la acción
+    const timing = { intro: 2.2, grid: 2.8, cards: 4.5, style: 2.1, cta: 1.8 };
+    timing.total = timing.intro + timing.grid + timing.cards + timing.style + timing.cta;
+
+    return {
+      kind: 'year', ...size, format, palette, muted, user, lang, avatar, shareUrl, text, data, cells, cols, timing,
+      layout: { unit, margin, wide, bands, perBand, step, cell, bandGap, boardWidth, boardHeight, boardLeft, boardX: boardLeft + (step - cell) / 2, boardY, cardsY }
+    };
+  }
+
+  /** Fotograma del segundo t del clip «Tu año» */
+  drawYearFrame(ctx, scene, t) {
+    const { width: W, height: H, palette: P, layout: L, timing: T, data, muted } = scene;
+    const tx = scene.text.year;
+    const s = data.summary;
+    const font = '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+    const u = L.unit;
+    const gridStart = T.intro;
+    const cardsStart = gridStart + T.grid;
+    const styleStart = cardsStart + T.cards;
+    const ctaStart = styleStart + T.style;
+    const fmt = (n) => this.formatNumber(n, scene.lang);
+    const colors = [P.empty, P.l1, P.l2, P.l3, P.l4];
+
+    // Fondo con un halo suave del color del tema
+    ctx.fillStyle = P.bg;
+    ctx.fillRect(0, 0, W, H);
+    const halo = ctx.createRadialGradient(W / 2, L.boardY + L.boardHeight / 2, 0, W / 2, L.boardY + L.boardHeight / 2, W * 0.75);
+    halo.addColorStop(0, P.glow.replace(/[\d.]+\)$/, '0.14)'));
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
+    ctx.fillRect(0, 0, W, H);
+
+    // Mientras se revela el estilo, todo lo demás se atenúa
+    const dim = t >= styleStart ? 1 - 0.7 * this.ease((t - styleStart) / 0.5) : 1;
+    ctx.textBaseline = 'alphabetic';
+
+    // --- Cabecera: avatar, usuario y «Tu 2026» ---
+    ctx.globalAlpha = this.ease(t / 0.5) * dim;
+    const headerY = H * (L.wide ? 0.11 : 0.085);
+    const avatarSize = 64 * u;
+    let textX = L.margin;
+    if (scene.avatar) {
+      this.drawAvatar(ctx, scene.avatar, L.margin, headerY - avatarSize / 2, avatarSize, P.body);
+      textX += avatarSize + 20 * u;
+    }
+    ctx.fillStyle = muted;
+    ctx.textAlign = 'left';
+    this.fitFont(ctx, scene.user ? `@${scene.user}` : 'portafil', 600, 24 * u, W - textX - L.margin, font);
+    ctx.fillText(scene.user ? `@${scene.user}` : 'portafil', textX, headerY - 10 * u);
+    ctx.fillStyle = P.text;
+    this.fitFont(ctx, tx.title(data.year), 900, 44 * u, W - textX - L.margin, font);
+    ctx.fillText(tx.title(data.year), textX, headerY + 30 * u);
+
+    // --- Contador del total y comparación ---
+    const counterY = H * (L.wide ? 0.27 : 0.19);
+    const counter = Math.round(data.total * this.ease((t - 0.3) / 1.6));
+    ctx.globalAlpha = this.ease((t - 0.2) / 0.5) * dim;
+    ctx.fillStyle = P.body;
+    ctx.shadowColor = P.glow;
+    ctx.shadowBlur = 18 * u;
+    this.fitFont(ctx, fmt(counter), 900, 92 * u, W * 0.6, font);
+    ctx.fillText(fmt(counter), L.margin, counterY);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = muted;
+    this.fitFont(ctx, tx.contributions(data.year), 500, 22 * u, W * 0.6, font);
+    ctx.fillText(tx.contributions(data.year), L.margin, counterY + 34 * u);
+    // Comparación a la derecha del contador (debajo en vertical)
+    const vsAlpha = this.ease((t - gridStart - 0.8) / 0.5) * dim;
+    if (vsAlpha > 0 && data.total > 0) {
+      ctx.globalAlpha = vsAlpha;
+      const up = data.total >= data.prevTotal;
+      const label = data.prevTotal > 0
+        ? tx.vs(`${up ? '▲ +' : '▼ '}${fmt(Math.round(((data.total - data.prevTotal) / data.prevTotal) * 100))} %`, data.year - 1)
+        : tx.upFromZero(data.year - 1);
+      const vsX = L.wide ? W - L.margin : L.margin;
+      const vsY = L.wide ? counterY - 6 * u : counterY + 74 * u;
+      ctx.textAlign = L.wide ? 'right' : 'left';
+      ctx.fillStyle = up ? P.l4 : muted;
+      this.fitFont(ctx, label, 800, 30 * u, L.wide ? W * 0.45 : W - L.margin * 2, font);
+      ctx.fillText(label, vsX, vsY);
+      if (data.prevTotal > 0 && data.partial) {
+        ctx.fillStyle = muted;
+        this.fitFont(ctx, tx.samePeriod, 500, 18 * u, L.wide ? W * 0.45 : W - L.margin * 2, font);
+        ctx.fillText(tx.samePeriod, vsX, vsY + 26 * u);
+      }
+      ctx.textAlign = 'left';
+    }
+
+    // --- Calendario del año: se dibuja en barrido de enero a diciembre ---
+    const sweep = Math.max(0, Math.min(1, (t - gridStart) / (T.grid * 0.85)));
+    for (const c of scene.cells) {
+      const appear = this.ease((sweep * (scene.cols + 6) - c.x) / 6);
+      if (appear <= 0) continue;
+      const band = Math.min(L.bands - 1, Math.floor(c.x / L.perBand));
+      const px = L.boardX + (c.x - band * L.perBand) * L.step;
+      const py = L.boardY + band * (7 * L.step + L.bandGap) + c.y * L.step;
+      ctx.globalAlpha = appear * dim * (c.future ? 0.35 : 1);
+      ctx.fillStyle = colors[c.level] || P.empty;
+      this.roundRect(ctx, px, py, L.cell, L.cell, L.cell * 0.2);
+      ctx.fill();
+    }
+
+    // --- Momentos del año: aparecen uno tras otro ---
+    const cards = [
+      [tx.bestMonth, s.bestMonth >= 0 ? tx.months[s.bestMonth] : '—', s.bestMonth >= 0 ? `${fmt(s.byMonth[s.bestMonth])} ${tx.contributionsShort}` : ''],
+      [tx.bestDay, s.bestDay ? `${Number(s.bestDay.date.slice(8, 10))} ${tx.monthsShort[Number(s.bestDay.date.slice(5, 7)) - 1]}` : '—', s.bestDay ? `${fmt(s.bestDay.count)} ${tx.contributionsShort}` : ''],
+      [tx.streak, `${s.longest.length} ${tx.days}`, ''],
+      [tx.project, data.topRepo ? data.topRepo.name : '—', data.topRepo ? `${fmt(data.topRepo.commits)} ${tx.commits}` : ''],
+      [tx.favDay, s.favDay >= 0 ? tx.weekdays[s.favDay] : '—', '']
+    ];
+    const format = scene.format;
+    const cols = L.wide ? 5 : 2;
+    const gap = 16 * u;
+    const cardW = (W - L.margin * 2 - gap * (cols - 1)) / cols;
+    const cardH = (L.wide ? 0.2 : format === 'square' ? 0.1 : 0.088) * H;
+    cards.forEach(([label, value, sub], i) => {
+      const start = cardsStart + i * 0.75;
+      const appear = this.ease((t - start) / 0.45);
+      if (appear <= 0) return;
+      // En dos columnas, la quinta tarjeta ocupa el ancho entero
+      const full = !L.wide && i === cards.length - 1 && cards.length % 2;
+      const cx = L.margin + (full ? 0 : (i % cols) * (cardW + gap));
+      const cy = L.cardsY + Math.floor(i / cols) * (cardH + gap) + (1 - appear) * 24 * u;
+      const w = full ? W - L.margin * 2 : cardW;
+      ctx.globalAlpha = appear * dim;
+      ctx.fillStyle = P.empty;
+      ctx.strokeStyle = P.border;
+      ctx.lineWidth = 2 * u;
+      this.roundRect(ctx, cx, cy, w, cardH, 16 * u);
+      ctx.fill();
+      ctx.stroke();
+      // Etiqueta arriba, valor en medio y detalle abajo, repartidos en el alto de la tarjeta
+      const pad = Math.min(18 * u, cardH * 0.14);
+      const labelSize = Math.min(20 * u, cardH * 0.16);
+      const valueSize = Math.min(36 * u, cardH * 0.32);
+      const labelY = cy + pad + labelSize * 0.8;
+      ctx.fillStyle = muted;
+      this.fitFont(ctx, label, 500, labelSize, w - pad * 2, font);
+      ctx.fillText(label, cx + pad, labelY);
+      ctx.fillStyle = i === 0 ? P.body : P.text;
+      const shown = [...value].length > 18 ? `${[...value].slice(0, 17).join('')}…` : value;
+      this.fitFont(ctx, shown, 800, valueSize, w - pad * 2, font);
+      ctx.fillText(shown, cx + pad, labelY + valueSize * 1.15);
+      if (sub) {
+        ctx.fillStyle = muted;
+        this.fitFont(ctx, sub, 500, labelSize * 0.9, w - pad * 2, font);
+        ctx.fillText(sub, cx + pad, cy + cardH - pad * 0.8);
+      }
+    });
+    ctx.globalAlpha = 1;
+
+    // --- Tu estilo, a lo grande ---
+    if (t >= styleStart && t < ctaStart + 0.5) {
+      const p = this.ease((t - styleStart - 0.2) / 0.6);
+      const fade = t > ctaStart ? 1 - this.ease((t - ctaStart) / 0.4) : 1;
+      ctx.globalAlpha = p * fade;
+      ctx.textAlign = 'center';
+      const cy = H * 0.5;
+      ctx.fillStyle = muted;
+      this.fitFont(ctx, tx.style, 600, 26 * u, W - L.margin * 2, font);
+      ctx.fillText(tx.style, W / 2, cy - 70 * u);
+      const name = s.style.name;
+      const nameSize = this.fitFont(ctx, name, 900, 54 * u * (0.85 + 0.15 * p), W - L.margin * 2 - 60 * u, font);
+      const pillW = Math.min(W - L.margin * 2, ctx.measureText(name).width + 70 * u);
+      const pillH = nameSize * 1.7;
+      ctx.fillStyle = P.empty;
+      ctx.strokeStyle = P.body;
+      ctx.lineWidth = 3 * u;
+      ctx.shadowColor = P.glow;
+      ctx.shadowBlur = 30 * u;
+      this.roundRect(ctx, W / 2 - pillW / 2, cy - pillH / 2 - nameSize * 0.32, pillW, pillH, pillH / 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = P.text;
+      this.fitFont(ctx, name, 900, nameSize, W - L.margin * 2 - 60 * u, font);
+      ctx.fillText(name, W / 2, cy);
+      ctx.fillStyle = muted;
+      this.fitFont(ctx, s.style.line, 500, 24 * u, W - L.margin * 2, font);
+      ctx.fillText(s.style.line, W / 2, cy + pillH * 0.75);
+      ctx.textAlign = 'left';
+      ctx.globalAlpha = 1;
+    }
+
+    // --- Llamada a la acción ---
+    if (t >= ctaStart) {
+      const p = this.ease((t - ctaStart) / 0.45);
+      ctx.globalAlpha = p;
+      ctx.fillStyle = 'rgba(0,0,0,0.8)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      this.fitFont(ctx, tx.cta, 900, 52 * u, W - L.margin * 2, font);
+      ctx.fillText(tx.cta, W / 2, H * 0.45);
+      ctx.fillStyle = P.l4;
+      this.fitFont(ctx, tx.ctaSub, 600, 26 * u, W - L.margin * 2, font);
+      ctx.fillText(tx.ctaSub, W / 2, H * 0.45 + 60 * u);
+      ctx.fillStyle = P.head;
+      this.fitFont(ctx, scene.shareUrl, 700, 24 * u, W - L.margin * 2, font);
+      ctx.fillText(scene.shareUrl, W / 2, H * 0.45 + 116 * u);
+      ctx.textAlign = 'left';
+      ctx.globalAlpha = 1;
+    }
+
+    // Marca discreta
+    ctx.font = `700 ${14 * u}px ${font}`;
+    ctx.fillStyle = P.text;
+    ctx.globalAlpha = 0.55;
+    ctx.textAlign = 'right';
+    ctx.fillText('portafil', W - L.margin, L.margin * 0.6);
+    ctx.textAlign = 'left';
+    ctx.globalAlpha = 1;
+  }
+
   drawScene(ctx, scene, t) {
     if (scene.kind === 'duel') this.drawDuelFrame(ctx, scene, t);
+    else if (scene.kind === 'year') this.drawYearFrame(ctx, scene, t);
     else this.drawFrame(ctx, scene, t);
   }
 
@@ -792,11 +1064,14 @@ class VideoStudio {
   /**
    * Genera el video. onProgress(0..1). Devuelve { blob, mimeType, extension, method }.
    */
-  async render({ grid, user = '', lang = 'en', theme = 'ink', format = 'landscape', shareUrl = '', avatar = null, duel = null, game = 'snake', fps = 30, onProgress = () => {} }) {
+  async render({ grid, user = '', lang = 'en', theme = 'ink', format = 'landscape', shareUrl = '', avatar = null, duel = null, game = 'snake', year = null, fps = 30, onProgress = () => {} }) {
     // duel: [{ grid, user, avatar }, { grid, user, avatar }] genera el video del duelo
+    // year: respuesta de /api/year/<usuario>.json para el clip «Tu año»
     const scene = duel
       ? this.buildDuelScene({ players: duel, lang, theme, format, shareUrl })
-      : this.buildScene({ grid, user, lang, theme, format, shareUrl, avatar, game });
+      : year
+        ? this.buildYearScene({ data: year, user, lang, theme, format, shareUrl, avatar })
+        : this.buildScene({ grid, user, lang, theme, format, shareUrl, avatar, game });
     const canvas = document.createElement('canvas');
     canvas.width = scene.width;
     canvas.height = scene.height;

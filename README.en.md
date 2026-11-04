@@ -76,7 +76,7 @@ On the web, each piece can have its own style (the header in Ink, the streak in 
 
 ## Studio
 
-`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok. «Download SVG» and «Social clip» export the mode you are playing.
+`/play.html` is the playable side: the live snake, manual mode, duel against the AI, real-time duels between profiles, the four game modes (played by the AI or by you), Commit Art and video clips for X, LinkedIn, Reels or TikTok. «Download SVG» and «Social clip» export the mode you are playing, and the «My year» clip turns «Your year» into a vertical video for Reels, TikTok or Shorts.
 
 ## GitHub Action
 

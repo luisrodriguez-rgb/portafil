@@ -1418,7 +1418,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     return document.querySelector('input[name="vsContent"]:checked').value;
   }
 
+  // Datos del clip «Mi año» (/api/year/<usuario>.json): se guardan para el texto de la publicación
+  let yearVideoData = null;
+  const yearShareLink = (user) => `${snakeApiBase || window.location.origin}/u/${user}?p=year`;
+
   function videoPostText() {
+    if (selectedVideoContent() === 'year' && yearVideoData) {
+      return t('video.yearPostText', { year: yearVideoData.year, total: videoStudio.formatNumber(yearVideoData.total, I18n.lang), style: yearVideoData.summary.style.name, link: yearShareLink(gridOwner) });
+    }
     if (selectedVideoContent() === 'duel' && duelResult) {
       const [a, b] = duelResult.players;
       const link = duelUrl(a.username, b.username);
@@ -1464,8 +1471,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function generateVideo() {
     const format = document.querySelector('input[name="vsFormat"]:checked').value;
     const content = selectedVideoContent();
+    if (content === 'year' && !gridOwner) {
+      vsStatus.textContent = t('video.yearNeedsUser');
+      return;
+    }
     // Un video con datos inventados no debe acabar publicado como si fuera el perfil real
-    const simulated = content === 'duel'
+    const simulated = content === 'year' ? false : content === 'duel'
       ? duelResult.players.some(p => p.simulated)
       : Boolean(gridOwner) && dataIsSimulated;
     if (simulated) {
@@ -1489,6 +1500,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const link = duelUrl(players[0].user, players[1].user).replace(/^https?:\/\//, '').replace(/#.*$/, '');
         fileOwner = `${players[0].user}-vs-${players[1].user}`;
         out = await videoStudio.render({ duel: players, lang: I18n.lang, theme: vsTheme.value, format, shareUrl: link, onProgress });
+      } else if (content === 'year') {
+        const res = await fetch(`${snakeApiBase}/api/year/${encodeURIComponent(gridOwner)}.json?lang=${I18n.lang}`);
+        if (!res.ok) {
+          vsStatus.textContent = t('video.yearError');
+          return;
+        }
+        yearVideoData = await res.json();
+        const avatar = await loadAvatarForVideo();
+        fileOwner = `${gridOwner}-${yearVideoData.year}`;
+        out = await videoStudio.render({ year: yearVideoData, user: gridOwner, lang: I18n.lang, theme: vsTheme.value, format, shareUrl: yearShareLink(gridOwner).replace(/^https?:\/\//, ''), avatar, onProgress });
       } else {
         const avatar = await loadAvatarForVideo();
         const link = shareLinkFor(gridOwner).replace(/^https?:\/\//, '');

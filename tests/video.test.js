@@ -104,3 +104,35 @@ test('clip de un modo de juego: la partida de la IA de ese modo, dibujable en ca
   // Sin modo, la serpiente de siempre
   assert.strictEqual(studio.buildScene({ grid, user: 'octocat', lang: 'es', theme: 'ink', format: 'landscape', shareUrl: 'x' }).game, 'snake');
 });
+
+test('clip «Tu año»: mismos datos que la tarjeta, ~13 s y dibujable en los tres formatos', async () => {
+  const engine = loadStudio(loadEngine());
+  const studio = new engine.VideoStudio(new engine.ExporterEngine());
+  const { renderYearJson } = require('../server/calendar');
+  const { fixtureYearUser } = require('./visual.helpers');
+  require('../server/year').yearCache.clear();
+  const fetchImpl = async () => ({ ok: true, json: async () => ({ data: { user: fixtureYearUser() } }) });
+  const res = await renderYearJson({ user: 'octocat', lang: 'es', token: 't', fetchImpl });
+  assert.strictEqual(res.status, 200);
+  const data = JSON.parse(res.body);
+  assert.ok(data.summary.style.name && data.summary.style.line, 'estilo ya traducido');
+  const calls = [];
+  const ctx = new Proxy({}, {
+    get: (target, prop) => (prop in target ? target[prop] : (...args) => {
+      calls.push(prop);
+      if (prop === 'createRadialGradient') return { addColorStop() {} };
+      if (prop === 'measureText') return { width: 100 };
+      return undefined;
+    }),
+    set: (target, prop, value) => { target[prop] = value; return true; }
+  });
+  for (const format of ['vertical', 'square', 'landscape']) {
+    const scene = studio.buildYearScene({ data, user: 'octocat', lang: 'es', theme: 'ruby', format, shareUrl: 'x/u/octocat?p=year' });
+    assert.strictEqual(scene.kind, 'year');
+    assert.ok(scene.timing.total >= 12 && scene.timing.total <= 15, `${format}: ${scene.timing.total}s`);
+    assert.ok(scene.cols >= 52 && scene.cols <= 54, `${format}: ${scene.cols} semanas`);
+    assert.ok(scene.layout.boardLeft >= 0 && scene.layout.boardLeft + scene.layout.boardWidth <= scene.width, `${format}: calendario dentro`);
+    for (const t of [0, 1, 3, 6, 10, 12.5, scene.timing.total - 0.05]) studio.drawScene(ctx, scene, t);
+  }
+  assert.ok(calls.includes('fillText') && calls.includes('roundRect') === false);
+});
