@@ -29,6 +29,8 @@ Las URL de este documento ya están pegadas en perfiles reales. Regla: **se pued
 | `streak` | 390×160 | Racha actual, racha más larga del último año y los últimos 30 días |
 | `langs` | 390×160 | Lenguajes por tamaño en los repos públicos propios (sin forks) |
 | `activity` | 390×160 | Contribuciones por semana, 53 semanas |
+| `fingerprint` | 797×300 | Tu año en un círculo: día favorito, mes más activo, racha, constancia y ritmo semanal |
+| `year` | 797×340 | Año natural frente al mismo periodo del anterior (en enero, el año anterior completo), estilo, momentos y proyecto del año |
 | `kit` | 797×474 | Las cinco anteriores en una sola imagen |
 
 | Opción | Valores | Por defecto |

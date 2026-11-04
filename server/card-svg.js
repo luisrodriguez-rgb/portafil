@@ -6,6 +6,7 @@
 
 const { engine, USER_RE, CACHE_OK, getCalendarWeeks, sendCompressed, userFromRequest } = require('./common');
 const { getProfile } = require('./profile');
+const { getYear } = require('./year');
 const { KINDS, renderCard } = require('./cards');
 const { messageCard, T } = require('./cards/frame');
 const { logRender } = require('./metrics');
@@ -58,11 +59,13 @@ async function renderCardSvg({ kind, user, query = '', token, fetchImpl = fetch 
   const needs = KINDS[kind].needs;
   let profile = null;
   let weeks = null;
+  let year = null;
   try {
     // En paralelo y cada una con su caché: las seis piezas de un perfil cuestan dos consultas a GitHub
-    [profile, weeks] = await Promise.all([
+    [profile, weeks, year] = await Promise.all([
       needs.includes('profile') ? getProfile(user, token, fetchImpl) : null,
-      needs.includes('calendar') ? getCalendarWeeks(user, token, fetchImpl) : null
+      needs.includes('calendar') ? getCalendarWeeks(user, token, fetchImpl) : null,
+      needs.includes('year') ? getYear(user, token, fetchImpl) : null
     ]);
   } catch (err) {
     if (err.code === 'NOT_FOUND') return svgResponse(404, messageCard(`no existe el usuario ${user}`, tokens, width), CACHE_ERROR);
@@ -71,7 +74,7 @@ async function renderCardSvg({ kind, user, query = '', token, fetchImpl = fetch 
   }
 
   const login = profile ? profile.login : user;
-  const body = renderCard(kind, { profile, weeks: weeks || [], tokens, lang: options.lang === 'es' ? 'es' : 'en', login });
+  const body = renderCard(kind, { profile, weeks: weeks || [], year, tokens, lang: options.lang === 'es' ? 'es' : 'en', login });
   return svgResponse(200, body, CACHE_OK);
 }
 

@@ -31,6 +31,28 @@ function fixtureWeeks(variant = 0) {
   return weeks;
 }
 
+/**
+ * Respuesta GraphQL fija de «Tu año» (server/year.js): 2026 hasta el 28 de octubre, con el mismo calendario que
+ * fixtureWeeks, un 25 % más que el mismo periodo de 2025 y un proyecto del año
+ */
+function fixtureYearUser(variant = 0) {
+  const weeks = fixtureWeeks(variant)
+    .map(w => ({ contributionDays: w.contributionDays.filter(d => d.date >= '2026-01-01') }))
+    .filter(w => w.contributionDays.length);
+  const total = weeks.reduce((sum, w) => sum + w.contributionDays.reduce((s, d) => s + d.contributionCount, 0), 0);
+  return {
+    thisYear: {
+      totalCommitContributions: Math.round(total * 0.7), totalPullRequestContributions: 96, totalIssueContributions: 31, totalPullRequestReviewContributions: 140,
+      contributionCalendar: { totalContributions: total, weeks },
+      commitContributionsByRepository: [{ repository: { name: 'portafil' }, contributions: { totalCount: 412 } }]
+    },
+    lastYear: { contributionCalendar: { totalContributions: Math.round(total / 1.25) } }
+  };
+}
+
+/** Periodo fijo de las pruebas: el mismo que el de fixtureYearUser */
+const FIXTURE_PERIOD = { year: 2026, partial: true, from: '2026-01-01', to: '2026-10-28', prevFrom: '2025-01-01', prevTo: '2025-10-28' };
+
 /** Perfil normalizado fijo (mismo formato que devuelve server/profile.js) */
 function fixtureProfile() {
   return {
@@ -73,4 +95,4 @@ function checkSnapshots(name, outputs) {
   return { written: false, diff };
 }
 
-module.exports = { fixtureWeeks, fixtureProfile, checkSnapshots, LEVEL_NAMES };
+module.exports = { fixtureWeeks, fixtureProfile, fixtureYearUser, FIXTURE_PERIOD, checkSnapshots, LEVEL_NAMES };

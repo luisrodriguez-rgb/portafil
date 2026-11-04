@@ -84,6 +84,7 @@
         langs: ['Lenguajes', 'Por tamaño de código, sin forks'],
         activity: ['Actividad', 'Contribuciones por semana'],
         fingerprint: ['Tu huella', 'Tu año en un círculo, distinto para cada perfil'],
+        year: ['Tu año', 'Tu resumen del año: mejores momentos, tu estilo y la comparación con el anterior'],
         kit: ['Todo en una imagen', 'Las cinco piezas en un solo SVG'],
         snake: ['Serpiente', 'Se come tu año de commits'],
         life: ['Juego de la vida', 'Tus contribuciones evolucionan con las reglas de Conway'],
@@ -167,6 +168,7 @@
         langs: ['Languages', 'By code size, no forks'],
         activity: ['Activity', 'Contributions per week'],
         fingerprint: ['Your fingerprint', 'Your year as a circle, unique to every profile'],
+        year: ['Your year', 'Your year in review: best moments, your style and how it compares'],
         kit: ['All in one image', 'The five pieces in a single SVG'],
         snake: ['Snake', 'Eats your year of commits'],
         life: ['Game of Life', 'Your contributions evolve with Conway\'s rules'],
@@ -180,7 +182,7 @@
   };
 
   const GROUPS = [
-    { id: 'profile', pieces: ['header', 'stats', 'streak', 'langs', 'activity', 'fingerprint', 'kit'] },
+    { id: 'profile', pieces: ['header', 'stats', 'streak', 'langs', 'activity', 'fingerprint', 'year', 'kit'] },
     { id: 'games', pieces: ['snake', 'life', 'pacman', 'invaders', 'tetris'] },
     { id: 'pair', pieces: ['versus', 'duel'] }
   ];
@@ -394,7 +396,7 @@
 
   // --- Galería ---
 // Alto de cada pieza (el ancho sale de ThemeTokens): reservar el hueco evita que la página salte al cargar
-  const PIECE_HEIGHT = { header: 120, kit: 474, fingerprint: 300, versus: 278, duel: 442 };
+  const PIECE_HEIGHT = { header: 120, kit: 474, fingerprint: 300, year: 340, versus: 278, duel: 442 };
 
   function pieceUrl(kind, base = previewBase) {
     const opts = snippetOptions(base);

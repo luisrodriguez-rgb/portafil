@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const { loadEngine } = require('../action/lib');
-const { fixtureWeeks, fixtureProfile, checkSnapshots } = require('./visual.helpers');
+const { fixtureWeeks, fixtureProfile, fixtureYearUser, FIXTURE_PERIOD, checkSnapshots } = require('./visual.helpers');
 
 const engine = loadEngine();
 const { SnakeCore } = engine;
@@ -22,12 +22,14 @@ test('la serpiente no cambia por accidente en ningún tema ni morfología', () =
 test('las tarjetas del kit no cambian por accidente en ningún tema ni idioma', () => {
   const { renderCard, KINDS } = require('../server/cards');
   const { T } = require('../server/cards/frame');
+  const { normalizeYear } = require('../server/year');
+  const year = normalizeYear(fixtureYearUser(), FIXTURE_PERIOD);
   const outputs = {};
   for (const theme of SnakeCore.CARD_OPTION_VALUES.theme) {
     for (const lang of SnakeCore.CARD_OPTION_VALUES.lang) {
       for (const kind of Object.keys(KINDS)) {
         outputs[`${kind}/${theme}/${lang}`] = renderCard(kind, {
-          profile: fixtureProfile(), weeks: fixtureWeeks(), tokens: T.get(theme), lang, login: 'octocat'
+          profile: fixtureProfile(), weeks: fixtureWeeks(), year, tokens: T.get(theme), lang, login: 'octocat'
         });
       }
     }

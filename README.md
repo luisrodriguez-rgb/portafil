@@ -55,6 +55,8 @@ Son los datos reales de @luisrodriguez-rgb servidos en vivo, en claro u oscuro s
 | Racha | `/api/streak/<usuario>.svg` | Racha actual, la más larga y los últimos 30 días |
 | Lenguajes | `/api/langs/<usuario>.svg` | Lenguajes por tamaño de código en tus repos públicos |
 | Actividad | `/api/activity/<usuario>.svg` | Contribuciones por semana, 53 semanas |
+| Tu huella | `/api/fingerprint/<usuario>.svg` | Tu año en un círculo, distinto para cada perfil, con tu día favorito, mes más activo, racha, constancia y ritmo semanal |
+| Tu año | `/api/year/<usuario>.svg` | Resumen del año natural: total frente al mismo periodo del año anterior, tu estilo, mejores momentos, proyecto del año y el año mes a mes |
 | Todo en una | `/api/kit/<usuario>.svg` | Las cinco anteriores en una sola imagen |
 | Serpiente | `/api/<usuario>.svg` | Una IA (BFS + Flood Fill) se come tu gráfico de contribuciones |
 | Juego de la vida | `/api/<usuario>.svg?game=life` | Tus contribuciones evolucionan con las reglas de Conway |

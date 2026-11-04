@@ -8,7 +8,7 @@ const { daysOf, streaks, weeklyTotals } = require('../server/cards/data');
 const { wrap, fmtNumber } = require('../server/cards/frame');
 const { topLanguages } = require('../server/cards/langs');
 const { loadEngine } = require('../action/lib');
-const { fixtureWeeks, fixtureProfile } = require('./visual.helpers');
+const { fixtureWeeks, fixtureProfile, fixtureYearUser } = require('./visual.helpers');
 
 const PNG = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8ffff3f0005fe02fea7d6a4bb0000000049454e44ae426082', 'hex');
 
@@ -34,13 +34,17 @@ function graphqlProfile(overrides = {}) {
 
 /** GitHub simulado: GraphQL (perfil o calendario) y descarga del avatar. Cuenta las llamadas. */
 function fakeGitHub(profileOverrides = {}, avatar = { type: 'image/png', body: PNG }) {
-  const calls = { calendar: 0, profile: 0, avatar: 0 };
+  const calls = { calendar: 0, profile: 0, avatar: 0, year: 0 };
   const fetchImpl = async (url, init = {}) => {
     if (!String(url).includes('graphql')) {
       calls.avatar++;
       return { ok: true, headers: { get: () => avatar.type }, arrayBuffer: async () => avatar.body };
     }
     const query = JSON.parse(init.body).query;
+    if (query.includes('thisYear')) {
+      calls.year++;
+      return { ok: true, json: async () => ({ data: { user: fixtureYearUser() } }) };
+    }
     const isCalendar = query.includes('contributionCalendar');
     calls[isCalendar ? 'calendar' : 'profile']++;
     const user = isCalendar
@@ -54,6 +58,7 @@ function fakeGitHub(profileOverrides = {}, avatar = { type: 'image/png', body: P
 function clearCaches() {
   calendarCache.clear();
   profileCache.clear();
+  require('../server/year').yearCache.clear();
 }
 
 test('cada pieza responde 200 con el tema pedido, sin JavaScript ni recursos externos', async () => {
@@ -70,8 +75,8 @@ test('cada pieza responde 200 con el tema pedido, sin JavaScript ni recursos ext
     assert.ok(!/<script|on[a-z]+=|javascript:/i.test(res.body), `${kind} sin JavaScript`);
     assert.ok(!/href="(?!data:|#)/.test(res.body), `${kind} sin enlaces externos`);
   }
-  // Seis piezas: una consulta de perfil, una de calendario y un avatar
-  assert.deepStrictEqual(calls, { calendar: 1, profile: 1, avatar: 1 });
+  // Todas las piezas: una consulta de perfil, una de calendario, una del año y un avatar
+  assert.deepStrictEqual(calls, { calendar: 1, profile: 1, avatar: 1, year: 1 });
 });
 
 test('el dashboard completo cabe en el presupuesto de peso y contiene las cinco piezas', async () => {
@@ -276,4 +281,40 @@ test('tu huella: 53 semanas × 7 días en círculo, día y mes favoritos, y sin 
   const empty = renderCard('fingerprint', { weeks: [], tokens: T.get('ink'), lang: 'en', login: 'nobody' });
   assert.ok(empty.includes('—') && empty.includes('no streak yet'));
   assert.ok(svg.length < 60 * 1024, `${svg.length} bytes`);
+});
+
+test('tu año: periodo natural, comparación con el mismo periodo, estilo y sin datos no se rompe', () => {
+  const { periodOf, normalizeYear } = require('../server/year');
+  const { renderCard } = require('../server/cards');
+  const { styleOf } = require('../server/cards/year');
+  const { T } = require('../server/cards/frame');
+  const { FIXTURE_PERIOD } = require('./visual.helpers');
+
+  // Del 1 de enero a hoy frente al mismo periodo del año anterior; en enero, el año anterior completo
+  assert.deepStrictEqual(periodOf(new Date(Date.UTC(2026, 10, 4))), { year: 2026, partial: true, from: '2026-01-01', to: '2026-11-04', prevFrom: '2025-01-01', prevTo: '2025-11-04' });
+  assert.deepStrictEqual(periodOf(new Date(Date.UTC(2027, 0, 15))), { year: 2026, partial: false, from: '2026-01-01', to: '2026-12-31', prevFrom: '2025-01-01', prevTo: '2025-12-31' });
+  assert.strictEqual(periodOf(new Date(Date.UTC(2028, 1, 29))).prevTo, '2027-02-28', 'el 29 de febrero se compara con el 28');
+
+  const year = normalizeYear(fixtureYearUser(), FIXTURE_PERIOD);
+  assert.ok(year.days.every(d => d.date >= '2026-01-01' && d.date <= '2026-10-28'));
+  assert.strictEqual(year.topRepo.name, 'portafil');
+  const svg = renderCard('year', { year, tokens: T.get('ruby'), lang: 'es', login: 'octocat' });
+  assert.match(svg, /viewBox="0 0 797 340"/);
+  for (const label of ['tu año 2026', 'hasta el 28 oct', '+25 % vs 2025', 'tu estilo', 'proyecto del año', 'portafil', 'tu año, mes a mes']) assert.ok(svg.includes(label), label);
+
+  // Estilos: de lo más llamativo a lo más general
+  const base = { total: 100, prevTotal: 100, days: Array.from({ length: 100 }, (_, i) => ({ count: i % 2 })), longest: 3, byWeekday: [10, 20, 20, 20, 20, 0, 10], bestMonthShare: 0.1 };
+  assert.strictEqual(styleOf({ ...base, prevTotal: 50 }).key, 'rise');
+  assert.strictEqual(styleOf({ ...base, days: base.days.map(() => ({ count: 1 })) }).key, 'clockwork');
+  assert.strictEqual(styleOf({ ...base, longest: 40 }).key, 'unstoppable');
+  assert.strictEqual(styleOf({ ...base, byWeekday: [20, 10, 10, 10, 10, 10, 30] }).key, 'weekend');
+  assert.strictEqual(styleOf({ ...base, bestMonthShare: 0.4 }).key, 'sprinter');
+  assert.strictEqual(styleOf(base).key, 'steady');
+  assert.strictEqual(styleOf({ ...base, total: 0 }).key, 'quiet');
+
+  // Sin año anterior: «desde 0»; sin datos: la tarjeta sale igual
+  const first = renderCard('year', { year: { ...year, prevTotal: 0 }, tokens: T.get('ink'), lang: 'en', login: 'octocat' });
+  assert.ok(first.includes('up from 0 in 2025'));
+  const empty = renderCard('year', { year: { year: 2026, partial: true, until: '2026-11-04', days: [], total: 0, prevTotal: 0, commits: 0, topRepo: null }, tokens: T.get('ink'), lang: 'es', login: 'nadie' });
+  assert.ok(empty.includes('Año en calma') && empty.includes('—'));
 });

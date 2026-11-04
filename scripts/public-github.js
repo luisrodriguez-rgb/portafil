@@ -46,6 +46,45 @@ function publicFetch(realFetch = fetch) {
     const { query, variables } = JSON.parse(init.body);
     const login = String(variables.login);
 
+    // «Tu año»: calendario del año natural y del anterior (jogruber por año) y totales por búsqueda, aproximados
+    if (query.includes('thisYear')) {
+      const day = (s) => String(s).slice(0, 10);
+      const yearOf = async (from, to) => {
+        const res = await realFetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(login)}?y=${day(from).slice(0, 4)}`);
+        if (res.status === 404) return null;
+        if (!res.ok) throw Object.assign(new Error('calendario no disponible'), { status: res.status });
+        return ((await res.json()).contributions || []).filter(c => c.date >= day(from) && c.date <= day(to));
+      };
+      const [current, previous] = await Promise.all([yearOf(variables.from, variables.to), yearOf(variables.prevFrom, variables.prevTo)]);
+      if (!current) return graphqlError('NOT_FOUND', `Could not resolve to a User with the login of '${login}'.`);
+      const range = `${day(variables.from)}..${day(variables.to)}`;
+      const [commits, pullRequests, issues, reviews] = await Promise.all([
+        searchCount('commits', `author:${login} committer-date:${range}`),
+        searchCount('issues', `author:${login} type:pr created:${range}`),
+        searchCount('issues', `author:${login} type:issue created:${range}`),
+        searchCount('issues', `reviewed-by:${login} type:pr created:${range}`)
+      ]);
+      // Proyecto del año: el repo que más se repite entre los últimos 100 commits del año
+      let top = [];
+      const search = await get(`https://api.github.com/search/commits?q=${encodeURIComponent(`author:${login} committer-date:${range}`)}&per_page=100`);
+      if (search.ok) {
+        const tally = new Map();
+        for (const item of (await search.json()).items || []) tally.set(item.repository.name, (tally.get(item.repository.name) || 0) + 1);
+        const [name, count] = [...tally].sort((x, y) => y[1] - x[1])[0] || [];
+        if (name) top = [{ repository: { name }, contributions: { totalCount: count } }];
+      }
+      const user = {
+        thisYear: {
+          totalCommitContributions: commits, totalPullRequestContributions: pullRequests,
+          totalIssueContributions: issues, totalPullRequestReviewContributions: reviews,
+          contributionCalendar: { totalContributions: current.reduce((s, c) => s + c.count, 0), weeks: toWeeks(current) },
+          commitContributionsByRepository: top
+        },
+        lastYear: { contributionCalendar: { totalContributions: (previous || []).reduce((s, c) => s + c.count, 0) } }
+      };
+      return { ok: true, json: async () => ({ data: { user } }) };
+    }
+
     if (query.includes('contributionCalendar')) {
       const res = await realFetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(login)}?y=last`);
       if (res.status === 404) return graphqlError('NOT_FOUND', `Could not resolve to a User with the login of '${login}'.`);

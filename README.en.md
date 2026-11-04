@@ -55,6 +55,8 @@ That is @luisrodriguez-rgb real data served live, light or dark to match your Gi
 | Streak | `/api/streak/<user>.svg` | Current streak, longest and the last 30 days |
 | Languages | `/api/langs/<user>.svg` | Languages by code size in your public repos |
 | Activity | `/api/activity/<user>.svg` | Contributions per week, 53 weeks |
+| Your fingerprint | `/api/fingerprint/<user>.svg` | Your year as a circle, unique to every profile, with your favorite day, best month, streak, consistency and weekly rhythm |
+| Your year | `/api/year/<user>.svg` | Calendar-year review: total vs the same period last year, your style, best moments, project of the year and the year month by month |
 | All in one | `/api/kit/<user>.svg` | The five above in a single image |
 | Snake | `/api/<user>.svg` | An AI (BFS + Flood Fill) eats your contribution graph |
 | Game of Life | `/api/<user>.svg?game=life` | Your contributions evolve with Conway's rules |

@@ -4,7 +4,7 @@
  * Solo intercepta la API GraphQL; el resto de peticiones (avatares) van a la red de verdad.
  */
 
-const { fixtureWeeks, fixtureProfile } = require('../tests/visual.helpers');
+const { fixtureWeeks, fixtureProfile, fixtureYearUser } = require('../tests/visual.helpers');
 
 function variantOf(login) {
   let h = 0;
@@ -21,6 +21,8 @@ function fixtureFetch(realFetch = fetch) {
       return { ok: true, json: async () => ({ data: { user: null }, errors: [{ type: 'NOT_FOUND', message: 'Could not resolve' }] }) };
     }
     const v = variantOf(login);
+    // «Tu año» (server/year.js): su consulta lleva los alias thisYear y lastYear
+    if (query.includes('thisYear')) return { ok: true, json: async () => ({ data: { user: fixtureYearUser(v) } }) };
     if (query.includes('contributionCalendar')) {
       return { ok: true, json: async () => ({ data: { user: { contributionsCollection: { contributionCalendar: { weeks: fixtureWeeks(v) } } } } }) };
     }
