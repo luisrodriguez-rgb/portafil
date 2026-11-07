@@ -15,8 +15,10 @@ inputs:
         dist/portafil-snake.svg?theme=paper
         dist/portafil-snake-dark.svg?theme=ink&speed=fast
         dist/portafil-pacman.svg?game=pacman&theme=cyberpunk
+        dist/portafil-companion.svg?kind=companion&skin=capybara&variant=card&theme=ink&lang=es
       Options: game (snake, life, pacman, invaders, tetris), theme (ink, paper, dark, light, cyberpunk, neon_cyan, amber_terminal, ruby, sand),
-      lang (en, es), mood (auto, off) and, for the snake, speed (normal, fast, relaxed), morph (matrix_viper, capsule, retro), pause (fast, medium, none).
+      lang (en, es), mood (auto, off), speed (normal, fast, relaxed), morph (matrix_viper, capsule, retro), pause (fast, medium, none),
+      or kind=companion with skin (53 MySkin companions), variant (card, divider, badge), state (auto, FOCUS, VICTORY_GITHUB, WALK, IDLE, ALERT_SEMESTRE, SLEEP) and say.
     required: true
   github_token:
     description: Token to read the calendar with the official GraphQL API. Empty = public third-party API.

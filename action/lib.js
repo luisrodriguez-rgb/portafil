@@ -59,13 +59,33 @@ function parseOutputs(text) {
 
   return lines.map(line => {
     const [file, query = ''] = line.split('?');
-    const options = core.parseOptions(query, line);
     if (!file.endsWith('.svg')) {
       throw new Error(`La salida '${file}' debe terminar en .svg`);
     }
+    const params = new URLSearchParams(query);
+    let options;
+    if (params.get('kind') === 'companion' || params.has('skin') || params.has('variant') || params.has('state')) {
+      const say = params.get('say');
+      params.delete('say');
+      params.delete('kind');
+      options = { ...core.parseOptions(params.toString(), line, core.COMPANION_OPTION_VALUES), kind: 'companion' };
+      if (say !== null && String(say).trim() !== '') options.say = String(say).trim().slice(0, 110);
+    } else {
+      options = { ...core.parseOptions(query, line) };
+    }
     // Objeto del contexto principal: el del sandbox tiene otro prototipo y falla en deepStrictEqual
-    return { file, options: { ...options } };
+    return { file, options };
   });
+}
+
+function gridToWeeks(grid) {
+  return (grid || []).map(col => ({
+    contributionDays: col.filter(c => c && c.date).map(c => ({
+      date: c.date,
+      weekday: c.y,
+      contributionCount: c.count || 0
+    }))
+  })).filter(w => w.contributionDays.length > 0);
 }
 
 async function run({ username, outputs, token, cwd = process.cwd(), log = console.log }) {
@@ -85,8 +105,22 @@ async function run({ username, outputs, token, cwd = process.cwd(), log = consol
   }
 
   const exporter = new engine.ExporterEngine();
+  const weeks = gridToWeeks(grid);
   for (const { file, options } of targets) {
-    const svg = exporter.buildSvg(grid, { ...options, user: username });
+    let svg;
+    if (options.kind === 'companion') {
+      const { renderCard } = require('../server/cards');
+      const { T } = require('../server/cards/frame');
+      svg = renderCard('companion', {
+        weeks,
+        tokens: T.get(options.theme),
+        lang: options.lang === 'es' ? 'es' : 'en',
+        login: username,
+        options
+      });
+    } else {
+      svg = exporter.buildSvg(grid, { ...options, user: username });
+    }
     const fullPath = path.resolve(cwd, file);
     fs.mkdirSync(path.dirname(fullPath), { recursive: true });
     fs.writeFileSync(fullPath, svg);
@@ -94,4 +128,4 @@ async function run({ username, outputs, token, cwd = process.cwd(), log = consol
   }
 }
 
-module.exports = { loadEngine, weeksToGrid, parseOutputs, run, OPTION_VALUES, ENGINE_FILES };
+module.exports = { loadEngine, weeksToGrid, gridToWeeks, parseOutputs, run, OPTION_VALUES, ENGINE_FILES };

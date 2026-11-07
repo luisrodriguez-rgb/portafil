@@ -9,6 +9,7 @@
     "test": "node --test tests/*.test.js",
     "smoke": "node scripts/smoke.js",
     "check:deploy": "node scripts/check-deploy.js",
+    "companion": "node scripts/companion-cli.js",
     "snapshots": "UPDATE_SNAPSHOTS=1 node --test tests/visual.test.js"
   },
   "engines": {
