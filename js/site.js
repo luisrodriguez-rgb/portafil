@@ -72,6 +72,10 @@
       'rival.label': 'Usuario rival', 'rival.cta': 'Comparar', 'rival.placeholder': 'rival',
       'rival.needed': 'Escribe un rival arriba para ver esta pieza.',
       'snake.morph': 'Forma', 'snake.speed': 'Velocidad',
+      'companion.skin': 'Personaje', 'companion.variant': 'Formato', 'companion.state': 'Estado',
+      'companion.say': 'Frase', 'companion.sayPh': 'Diálogo por defecto',
+      companionVariant: { card: 'Tarjeta', divider: 'Patrulla', badge: 'Insignia' },
+      companionState: { auto: 'Automático', FOCUS: 'Modo foco', VICTORY_GITHUB: 'Commit merged', WALK: 'En patrulla', IDLE: 'En guardia', ALERT_SEMESTRE: 'Entrega próxima', SLEEP: 'Modo siesta' },
       'piece.theme': 'Estilo', 'piece.themeAll': 'Igual que el resto',
       'res.fixed': (name) => `${name} es un tema de color: se ve igual en el modo claro y en el oscuro. La casilla afecta a las piezas con Tinta, Papel, Fósforo o GitHub claro.`,
       morph: { matrix_viper: 'Víbora', capsule: 'Cápsula', retro: 'Retro' },
@@ -85,6 +89,7 @@
         activity: ['Actividad', 'Contribuciones por semana'],
         fingerprint: ['Tu huella', 'Tu año en un círculo, distinto para cada perfil'],
         year: ['Tu año', 'Tu resumen del año: mejores momentos, tu estilo y la comparación con el anterior'],
+        companion: ['Tu compañero', 'Mascota pixel-art de MySkin (53 personajes) que reacciona a tu actividad en GitHub'],
         kit: ['Todo en una imagen', 'Las cinco piezas en un solo SVG'],
         snake: ['Serpiente', 'Se come tu año de commits'],
         life: ['Juego de la vida', 'Tus contribuciones evolucionan con las reglas de Conway'],
@@ -158,6 +163,10 @@
       'rival.label': 'Rival username', 'rival.cta': 'Compare', 'rival.placeholder': 'rival',
       'rival.needed': 'Type a rival above to see this piece.',
       'snake.morph': 'Shape', 'snake.speed': 'Speed',
+      'companion.skin': 'Character', 'companion.variant': 'Format', 'companion.state': 'State',
+      'companion.say': 'Quote', 'companion.sayPh': 'Default dialogue',
+      companionVariant: { card: 'Card', divider: 'Patrol', badge: 'Badge' },
+      companionState: { auto: 'Auto', FOCUS: 'Focus mode', VICTORY_GITHUB: 'Commit merged', WALK: 'On patrol', IDLE: 'On guard', ALERT_SEMESTRE: 'Deadline alert', SLEEP: 'Sleep mode' },
       morph: { matrix_viper: 'Viper', capsule: 'Capsule', retro: 'Retro' },
       speed: { normal: 'Normal', fast: 'Fast', relaxed: 'Relaxed' },
       themes: { ink: 'Ink', paper: 'Paper', dark: 'Phosphor', light: 'GitHub light', cyberpunk: 'Cyberpunk', neon_cyan: 'Cyan', amber_terminal: 'Amber', ruby: 'Ruby', sand: 'Sand' },
@@ -169,6 +178,7 @@
         activity: ['Activity', 'Contributions per week'],
         fingerprint: ['Your fingerprint', 'Your year as a circle, unique to every profile'],
         year: ['Your year', 'Your year in review: best moments, your style and how it compares'],
+        companion: ['Your companion', 'MySkin pixel-art companion (53 characters) that reacts to your GitHub activity'],
         kit: ['All in one image', 'The five pieces in a single SVG'],
         snake: ['Snake', 'Eats your year of commits'],
         life: ['Game of Life', 'Your contributions evolve with Conway\'s rules'],
@@ -182,7 +192,7 @@
   };
 
   const GROUPS = [
-    { id: 'profile', pieces: ['header', 'stats', 'streak', 'langs', 'activity', 'fingerprint', 'year', 'kit'] },
+    { id: 'profile', pieces: ['header', 'stats', 'streak', 'langs', 'activity', 'fingerprint', 'year', 'companion', 'kit'] },
     { id: 'games', pieces: ['snake', 'life', 'pacman', 'invaders', 'tetris'] },
     { id: 'pair', pieces: ['versus', 'duel'] }
   ];
@@ -200,6 +210,10 @@
     rival: '',
     morph: params.get('m') || 'matrix_viper',
     speed: params.get('s') || 'normal',
+    companionSkin: KitSnippet.COMPANIONS.some(c => c.id === params.get('cs')) ? params.get('cs') : 'capybara',
+    companionVariant: ['card', 'divider', 'badge'].includes(params.get('cv')) ? params.get('cv') : 'card',
+    companionState: ['auto', 'FOCUS', 'VICTORY_GITHUB', 'WALK', 'IDLE', 'ALERT_SEMESTRE', 'SLEEP'].includes(params.get('cm')) ? params.get('cm') : 'auto',
+    companionSay: String(params.get('cy') || '').trim().slice(0, 110),
     template: KitSnippet.TEMPLATES[params.get('tpl')] ? params.get('tpl') : 'pieces',
     group: 'profile',
     previewMode: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
@@ -244,7 +258,8 @@
       themes: state.pieceThemes,
       lang: state.ui,
       rival: state.rival,
-      snake: { morph: state.morph, speed: state.speed }
+      snake: { morph: state.morph, speed: state.speed },
+      companion: { skin: state.companionSkin, variant: state.companionVariant, state: state.companionState, say: state.companionSay }
     };
   };
 
@@ -387,6 +402,10 @@
     if (state.rival) p.set('r', state.rival);
     if (state.morph !== 'matrix_viper') p.set('m', state.morph);
     if (state.speed !== 'normal') p.set('s', state.speed);
+    if (state.companionSkin !== 'capybara') p.set('cs', state.companionSkin);
+    if (state.companionVariant !== 'card') p.set('cv', state.companionVariant);
+    if (state.companionState !== 'auto') p.set('cm', state.companionState);
+    if (state.companionSay) p.set('cy', state.companionSay);
     if (state.template !== 'pieces') p.set('tpl', state.template);
     const picked = [...state.picked].join(',');
     if (picked !== KitSnippet.DEFAULT_SELECTION.join(',')) p.set('p', picked);
@@ -498,6 +517,15 @@
       const select = (id, label, values, current) => `<label class="inline">${label} <select data-opt="${id}">${Object.entries(values).map(([v, name]) => `<option value="${v}"${v === current ? ' selected' : ''}>${name}</option>`).join('')}</select></label>`;
       opts += select('morph', T('snake.morph'), T('morph'), state.morph) + select('speed', T('snake.speed'), T('speed'), state.speed);
     }
+    if (kind === 'companion') {
+      const select = (id, label, values, current) => `<label class="inline">${label} <select data-opt="${id}">${Object.entries(values).map(([v, name]) => `<option value="${v}"${v === current ? ' selected' : ''}>${name}</option>`).join('')}</select></label>`;
+      const skins = Object.fromEntries(KitSnippet.COMPANIONS.map(c => [c.id, c.isOriginal ? `${c.name} ★` : c.name]));
+      const safeSay = state.companionSay.replace(/[&"]/g, c => ({ '&': '&amp;', '"': '&quot;' })[c]);
+      opts += select('companionSkin', T('companion.skin'), skins, state.companionSkin)
+        + select('companionVariant', T('companion.variant'), T('companionVariant'), state.companionVariant)
+        + select('companionState', T('companion.state'), T('companionState'), state.companionState)
+        + `<label class="inline">${T('companion.say')} <input type="text" data-opt-say maxlength="110" placeholder="${T('companion.sayPh')}" value="${safeSay}"></label>`;
+    }
     opts = `<div class="piece-opts">${opts}</div>`;
     card.innerHTML = `<div class="piece-head"><h4>${title}</h4><span>${desc}</span></div>
       ${opts}
@@ -527,6 +555,21 @@
       state[sel.dataset.opt] = sel.value;
       refresh();
     }));
+    const sayInput = card.querySelector('[data-opt-say]');
+    if (sayInput) {
+      let sayTimer = null;
+      const commitSay = () => {
+        const next = sayInput.value.trim().slice(0, 110);
+        if (state.companionSay === next) return;
+        state.companionSay = next;
+        refresh();
+      };
+      sayInput.addEventListener('change', commitSay);
+      sayInput.addEventListener('input', () => {
+        clearTimeout(sayTimer);
+        sayTimer = setTimeout(commitSay, 350);
+      });
+    }
     return card;
   }
 
@@ -588,6 +631,10 @@
         img.addEventListener('load', () => box.classList.remove('loading'));
         img.addEventListener('error', () => box.classList.remove('loading'));
         box.appendChild(img);
+      }
+      if (kind === 'companion') {
+        img.width = state.companionVariant === 'badge' ? ThemeTokens.size.half : ThemeTokens.size.full;
+        img.height = state.companionVariant === 'card' ? 160 : 96;
       }
       img.alt = KitSnippet.alt(kind, KitSnippet.context(state.user, { rival: state.rival }));
       if (img.getAttribute('src') !== src) {

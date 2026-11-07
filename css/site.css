@@ -225,7 +225,8 @@ body.calm .blob { animation-play-state: paused; }
 .check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .check input { width: 16px; height: 16px; accent-color: var(--strong); margin: 0; }
 .inline { display: inline-flex; align-items: center; gap: 8px; }
-select { font: inherit; font-size: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+select, .piece-opts input[type="text"] { font: inherit; font-size: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.piece-opts input[type="text"] { width: 190px; }
 
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 28px; align-items: start; }
 .gallery { display: grid; gap: 40px; min-width: 0; }
