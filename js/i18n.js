@@ -76,6 +76,19 @@ const STATIC_EN = {
   'Compartir en X': 'Share on X',
   'Copiar enlace': 'Copy link',
 
+  // Laboratorio de compañeros (MySkin × Portafil)
+  'Laboratorio (53 skins)': 'Companion Lab (53 skins)',
+  'Laboratorio de Compañeros (MySkin × Portafil)': 'Companion Lab (MySkin × Portafil)',
+  'Explora las 53 skins pixel-art (15 originales de MySkin y 38 tributos), pruébalas en vivo y llévatelas como SVG para tu README, GitHub Action o Web Component interactivo para tu portafolio.':
+    'Explore all 53 pixel-art skins (15 MySkin originals and 38 tributes), test them live and export them as an SVG for your README, GitHub Action or interactive Web Component for your portfolio.',
+  'Tarjeta (797×160)': 'Card (797×160)',
+  'Separador en patrulla (797×96)': 'Patrol divider (797×96)',
+  'Insignia compacta (390×96)': 'Compact badge (390×96)',
+  'Automático (según GitHub)': 'Auto (from GitHub activity)',
+  'Probar Widget flotante aquí': 'Test floating Web Widget here',
+  'Descargar SVG animado': 'Download animated SVG',
+  'Copiar código': 'Copy code',
+
   // Perfiles destacados y documentación
 
   // Modal de video

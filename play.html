@@ -190,6 +190,26 @@
         </div>
       </dl>
 
+      <!-- Compañero en vivo acompañando la partida del tablero -->
+      <div class="board-companion" id="boardCompanionBar" aria-label="Compañero activo en el tablero">
+        <div class="board-comp-main">
+          <div class="board-comp-stage" title="Haz clic para cambiar de animación">
+            <span class="board-comp-sprite" id="boardCompSprite"></span>
+          </div>
+          <div class="board-comp-text">
+            <div class="board-comp-head">
+              <span class="board-comp-name" id="boardCompName">★ Capibara</span>
+              <span class="board-comp-badge" id="boardCompBadge">● MODO FOCO</span>
+            </div>
+            <p class="board-comp-quote" id="boardCompQuote">“Respira hondo, compila con calma y sigamos avanzando.”</p>
+          </div>
+        </div>
+        <div class="board-comp-actions">
+          <select id="boardCompSelect" aria-label="Compañero en vivo"></select>
+          <button type="button" id="openCompanionLabBtn" class="btn btn-cyber-secondary">Laboratorio (53 skins)</button>
+        </div>
+      </div>
+
     </section>
 
     <section class="tools" aria-label="Herramientas">
@@ -262,6 +282,83 @@
           <button type="button" id="duelShareBtn" class="btn btn-cyber-primary" hidden>Compartir en X</button>
           <button type="button" id="duelCopyBtn" class="btn btn-cyber-secondary" hidden>Copiar enlace</button>
           <button type="button" id="duelVideoBtn" class="btn btn-cyber-primary" hidden>Video del duelo</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Laboratorio de Compañeros (MySkin × Portafil) -->
+    <section id="companionSection" class="card section">
+      <div class="section-title-bar">
+        <div>
+          <h2>Laboratorio de Compañeros (MySkin × Portafil)</h2>
+          <p>Explora las 53 skins pixel-art (15 originales de MySkin y 38 tributos), pruébalas en vivo y llévatelas como SVG para tu README, GitHub Action o Web Component interactivo para tu portafolio.</p>
+        </div>
+      </div>
+
+      <div class="comp-toolbar">
+        <input type="search" id="compSearchInput" class="comp-search" placeholder="Buscar compañero (ej: capibara, ninja, goku, spider, messi)..." autocomplete="off" spellcheck="false" aria-label="Buscar compañero">
+        <span class="comp-count" id="compCountLabel">Mostrando 53 de 53 compañeros</span>
+      </div>
+
+      <div class="comp-pills" id="compCategoryPills" role="group" aria-label="Categorías de compañeros"></div>
+
+      <div class="comp-grid" id="compGrid" role="region" aria-label="Galería de los 53 compañeros"></div>
+
+      <div class="comp-workbench">
+        <div class="comp-controls">
+          <div class="comp-controls-grid">
+            <label>Formato
+              <select id="compVariantSelect">
+                <option value="card" selected>Tarjeta (797×160)</option>
+                <option value="divider">Separador en patrulla (797×96)</option>
+                <option value="badge">Insignia compacta (390×96)</option>
+              </select>
+            </label>
+            <label>Animación / Estado
+              <select id="compStateSelect">
+                <option value="auto" selected>Automático (según GitHub)</option>
+                <option value="FOCUS">Modo foco (FOCUS)</option>
+                <option value="VICTORY_GITHUB">Commit merged (VICTORY)</option>
+                <option value="WALK">En patrulla (WALK)</option>
+                <option value="IDLE">En guardia (IDLE)</option>
+                <option value="ALERT_SEMESTRE">Entrega urgente (ALERT)</option>
+                <option value="SLEEP">Modo siesta (SLEEP)</option>
+              </select>
+            </label>
+            <label>Tema Portafil
+              <select id="compThemeSelect">
+                <option value="ink" selected>Tinta</option>
+                <option value="paper">Papel</option>
+                <option value="dark">Fósforo</option>
+                <option value="light">GitHub claro</option>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="neon_cyan">Cian</option>
+                <option value="amber_terminal">Ámbar</option>
+                <option value="ruby">Rubí</option>
+                <option value="sand">Arena</option>
+              </select>
+            </label>
+          </div>
+          <label>Frase personalizada (opcional)
+            <input type="text" id="compSayInput" maxlength="110" placeholder="Deja vacío para usar el diálogo original del personaje..." autocomplete="off">
+          </label>
+          <div class="comp-export-actions">
+            <button type="button" id="compToggleDockBtn" class="btn btn-cyber-primary">Probar Widget flotante aquí</button>
+            <button type="button" id="compDownloadSvgBtn" class="btn btn-cyber-secondary">Descargar SVG animado</button>
+          </div>
+        </div>
+
+        <div class="comp-preview-box">
+          <div class="comp-preview-frame">
+            <img id="compSvgPreview" src="/api/companion/torvalds.svg?theme=ink&amp;lang=es&amp;skin=capybara" alt="Vista previa del compañero en Portafil" loading="lazy">
+          </div>
+          <div class="comp-code-tabs" role="tablist" aria-label="Formato de código">
+            <button type="button" class="comp-tab active" data-comp-tab="markdown" role="tab" aria-selected="true">README / Markdown</button>
+            <button type="button" class="comp-tab" data-comp-tab="widget" role="tab" aria-selected="false">Widget Web (&lt;portafil-companion&gt;)</button>
+            <button type="button" class="comp-tab" data-comp-tab="action" role="tab" aria-selected="false">GitHub Action (.yml)</button>
+          </div>
+          <textarea id="compCodeOutput" class="code-box" readonly style="min-height: 110px;" aria-label="Código para incrustar el compañero"></textarea>
+          <button type="button" id="compCopyCodeBtn" class="btn btn-cyber-primary" style="width: 100%;">Copiar código</button>
         </div>
       </div>
     </section>
@@ -668,9 +765,11 @@
   <script src="js/renderer.js?v=20261104-studio17"></script>
   <script src="js/duel.js?v=20261104-studio17"></script>
   <script src="shared/games.js?v=20261104-studio17"></script>
+  <script src="shared/companion-widget.js?v=20261104-studio17"></script>
   <script src="js/video-studio.js?v=20261104-studio17"></script>
   <script src="js/app.js?v=20261104-studio17"></script>
   <script src="js/arcade.js?v=20261104-studio17"></script>
+  <script src="js/companion-studio.js?v=20261104-studio17"></script>
   <script src="js/shell.js?v=20261104-studio17"></script>
 </body>
 </html>
