@@ -38,10 +38,10 @@ const kit = {
   }
 };
 
-// Tu huella y tu año van aparte: no forman parte del dashboard de cinco piezas
-const KINDS = { ...PIECES, fingerprint: require('./fingerprint'), year: require('./year'), kit };
+// Tu huella, tu año y tu compañero van aparte: no forman parte del dashboard de cinco piezas
+const KINDS = { ...PIECES, fingerprint: require('./fingerprint'), year: require('./year'), companion: require('./companion'), kit };
 
-/** SVG final de una pieza. data: { profile, weeks, tokens, lang, login } */
+/** SVG final de una pieza. data: { profile, weeks, tokens, lang, login, options } */
 function renderCard(kind, data) {
   return toSvg(KINDS[kind].render(data));
 }

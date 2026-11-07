@@ -154,9 +154,9 @@ function framed({ width, height, tokens, title, subtitle = '', right = '', body 
 }
 
 /** Documento SVG completo de una pieza */
-function toSvg({ width, height, title, content }) {
+function toSvg({ width, height, title, content, css = '' }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img">`
-    + `<title>${escapeXml(title)}</title><style>${CARD_CSS}</style>${content}</svg>`;
+    + `<title>${escapeXml(title)}</title><style>${CARD_CSS}${css}</style>${content}</svg>`;
 }
 
 /** Tarjeta de error legible, con el tema pedido si se pudo leer */

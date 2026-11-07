@@ -41,7 +41,7 @@
       "destination": "/api/duel?pair=:pair&format=versus"
     },
     {
-      "source": "/api/:kind(header|stats|streak|langs|activity|kit|fingerprint|year)/:user.svg",
+      "source": "/api/:kind(header|stats|streak|langs|activity|kit|fingerprint|year|companion)/:user.svg",
       "destination": "/api/card?kind=:kind&user=:user"
     },
     {

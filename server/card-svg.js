@@ -44,7 +44,14 @@ async function renderCardSvg({ kind, user, query = '', token, fetchImpl = fetch 
     const params = new URLSearchParams(query);
     params.delete('user');
     params.delete('kind');
-    options = { ...SnakeCore.parseOptions(params.toString(), '', SnakeCore.CARD_OPTION_VALUES) };
+    let say = '';
+    if (kind === 'companion' && params.has('say')) {
+      say = String(params.get('say') || '').trim().slice(0, 110);
+      params.delete('say');
+    }
+    const allowed = kind === 'companion' ? SnakeCore.COMPANION_OPTION_VALUES : SnakeCore.CARD_OPTION_VALUES;
+    options = { ...SnakeCore.parseOptions(params.toString(), '', allowed) };
+    if (say) options.say = say;
     tokens = T.get(options.theme);
   } catch (err) {
     return svgResponse(400, messageCard(err.message, tokens, width), CACHE_ERROR);
@@ -74,7 +81,7 @@ async function renderCardSvg({ kind, user, query = '', token, fetchImpl = fetch 
   }
 
   const login = profile ? profile.login : user;
-  const body = renderCard(kind, { profile, weeks: weeks || [], year, tokens, lang: options.lang === 'es' ? 'es' : 'en', login });
+  const body = renderCard(kind, { profile, weeks: weeks || [], year, tokens, lang: options.lang === 'es' ? 'es' : 'en', login, options });
   return svgResponse(200, body, CACHE_OK);
 }
 

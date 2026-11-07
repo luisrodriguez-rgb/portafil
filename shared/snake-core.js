@@ -7,6 +7,17 @@
 // Temas del contrato: los mismos para la serpiente, los juegos y las tarjetas
 const CONTRACT_THEMES = ['ink', 'paper', 'dark', 'light', 'cyberpunk', 'neon_cyan', 'amber_terminal', 'ruby', 'sand'];
 
+// Catálogo de los 53 compañeros de MySkin × Portafil (/api/companion/<usuario>.svg)
+const COMPANION_SKINS = [
+  'capybara', 'labrador-retriever', 'little-girl', 'cat-mystic', 'shiba-inu', 'panda-zen', 'arctic-penguin',
+  'spiderman', 'captain-america', 'iron-man', 'thor-odinson', 'batman-detective', 'superman-man-of-steel',
+  'harry-potter', 'lord-voldemort', 'fantasy-wizard', 'spartan', 'astro-lost', 'darth-vader', 'master-yoda', 'gandalf-grey',
+  'cyber-ninja', 'son-goku', 'vegeta-prince', 'naruto-uzumaki', 'monkey-d-luffy', 'roronoa-zoro', 'satoru-gojo', 'tanjiro-kamado', 'nezuko-kamado', 'saitama-hero', 'levi-ackerman',
+  'dev-avatar', 'ghost-dev', 'game-slime', 'super-mario', 'link-hero', 'pikachu-electric', 'sonic-hedgehog', 'kirby-dream', 'mega-man-blue', 'master-chief-117', 'kratos-war', 'sans-undertale', 'steve-craft',
+  'bugs-bunny', 'spongebob-square', 'rick-sanchez',
+  'football-10', 'neymar-jr', 'lionel-messi', 'cristiano-cr7', 'michael-jordan-23'
+];
+
 const SnakeCore = {
   LEVELS: { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 },
 
@@ -26,10 +37,20 @@ const SnakeCore = {
   },
 
   // Tarjetas del kit (/api/<pieza>/<usuario>.svg): solo tema e idioma, para que todas combinen
-  CARD_KINDS: ['header', 'stats', 'streak', 'langs', 'activity', 'kit', 'fingerprint', 'year'],
+  CARD_KINDS: ['header', 'stats', 'streak', 'langs', 'activity', 'kit', 'fingerprint', 'year', 'companion'],
   CARD_OPTION_VALUES: {
     theme: CONTRACT_THEMES,
     lang: ['en', 'es']
+  },
+
+  // Pieza compañero (/api/companion/<usuario>.svg): 53 skins de MySkin, 3 formatos y máquina de estados reactiva
+  COMPANION_SKINS,
+  COMPANION_OPTION_VALUES: {
+    theme: CONTRACT_THEMES,
+    lang: ['en', 'es'],
+    skin: COMPANION_SKINS,
+    variant: ['card', 'divider', 'badge'],
+    state: ['auto', 'FOCUS', 'VICTORY_GITHUB', 'WALK', 'IDLE', 'ALERT_SEMESTRE', 'SLEEP']
   },
 
   // Piezas de dos perfiles (/api/<pieza>/<a>-vs-<b>.svg): mismas opciones que las tarjetas

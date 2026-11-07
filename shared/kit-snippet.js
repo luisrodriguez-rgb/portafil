@@ -7,6 +7,63 @@
 const KitSnippet = {
   DEFAULT_API: Brand.site,
 
+  // Catálogo de los 53 compañeros de MySkin × Portafil (los 15 con isOriginal=true son creaciones 100% originales)
+  COMPANIONS: [
+    { id: 'capybara', name: 'Capibara', category: 'mascotas', isOriginal: true },
+    { id: 'labrador-retriever', name: 'Labrador', category: 'mascotas', isOriginal: true },
+    { id: 'little-girl', name: 'Lily', category: 'mascotas', isOriginal: true },
+    { id: 'cat-mystic', name: 'Gato Negro', category: 'mascotas', isOriginal: true },
+    { id: 'shiba-inu', name: 'Shiba Inu', category: 'mascotas', isOriginal: true },
+    { id: 'panda-zen', name: 'Panda Zen', category: 'mascotas', isOriginal: true },
+    { id: 'arctic-penguin', name: 'Pingüino Antártico', category: 'mascotas', isOriginal: true },
+    { id: 'spiderman', name: 'Spider-Hero', category: 'heroes', isOriginal: false },
+    { id: 'captain-america', name: 'Capitán América', category: 'heroes', isOriginal: false },
+    { id: 'iron-man', name: 'Iron Man', category: 'heroes', isOriginal: false },
+    { id: 'thor-odinson', name: 'Thor Odinson', category: 'heroes', isOriginal: false },
+    { id: 'batman-detective', name: 'Batman', category: 'heroes', isOriginal: false },
+    { id: 'superman-man-of-steel', name: 'Superman', category: 'heroes', isOriginal: false },
+    { id: 'harry-potter', name: 'Harry Potter', category: 'cine', isOriginal: false },
+    { id: 'lord-voldemort', name: 'Lord Voldemort', category: 'cine', isOriginal: false },
+    { id: 'fantasy-wizard', name: 'Mago', category: 'cine', isOriginal: true },
+    { id: 'spartan', name: 'Leónidas', category: 'cine', isOriginal: true },
+    { id: 'astro-lost', name: 'Astronauta', category: 'cine', isOriginal: true },
+    { id: 'darth-vader', name: 'Darth Vader', category: 'cine', isOriginal: false },
+    { id: 'master-yoda', name: 'Maestro Yoda', category: 'cine', isOriginal: false },
+    { id: 'gandalf-grey', name: 'Gandalf el Gris', category: 'cine', isOriginal: false },
+    { id: 'cyber-ninja', name: 'Cyber Ninja', category: 'anime', isOriginal: true },
+    { id: 'son-goku', name: 'Son Goku', category: 'anime', isOriginal: false },
+    { id: 'vegeta-prince', name: 'Príncipe Vegeta', category: 'anime', isOriginal: false },
+    { id: 'naruto-uzumaki', name: 'Naruto Uzumaki', category: 'anime', isOriginal: false },
+    { id: 'monkey-d-luffy', name: 'Monkey D. Luffy', category: 'anime', isOriginal: false },
+    { id: 'roronoa-zoro', name: 'Roronoa Zoro', category: 'anime', isOriginal: false },
+    { id: 'satoru-gojo', name: 'Satoru Gojo', category: 'anime', isOriginal: false },
+    { id: 'tanjiro-kamado', name: 'Tanjiro Kamado', category: 'anime', isOriginal: false },
+    { id: 'nezuko-kamado', name: 'Nezuko Kamado', category: 'anime', isOriginal: false },
+    { id: 'saitama-hero', name: 'Saitama', category: 'anime', isOriginal: false },
+    { id: 'levi-ackerman', name: 'Capitán Levi', category: 'anime', isOriginal: false },
+    { id: 'dev-avatar', name: 'Tu avatar', category: 'gaming', isOriginal: true },
+    { id: 'ghost-dev', name: 'Dev fantasma', category: 'gaming', isOriginal: true },
+    { id: 'game-slime', name: 'Slime', category: 'gaming', isOriginal: true },
+    { id: 'super-mario', name: 'Super Mario', category: 'gaming', isOriginal: false },
+    { id: 'link-hero', name: 'Link (Héroe del Tiempo)', category: 'gaming', isOriginal: false },
+    { id: 'pikachu-electric', name: 'Pikachu', category: 'gaming', isOriginal: false },
+    { id: 'sonic-hedgehog', name: 'Sonic the Hedgehog', category: 'gaming', isOriginal: false },
+    { id: 'kirby-dream', name: 'Kirby', category: 'gaming', isOriginal: false },
+    { id: 'mega-man-blue', name: 'Mega Man', category: 'gaming', isOriginal: false },
+    { id: 'master-chief-117', name: 'Master Chief', category: 'gaming', isOriginal: false },
+    { id: 'kratos-war', name: 'Kratos', category: 'gaming', isOriginal: false },
+    { id: 'sans-undertale', name: 'Sans el Esqueleto', category: 'gaming', isOriginal: false },
+    { id: 'steve-craft', name: 'Steve', category: 'gaming', isOriginal: false },
+    { id: 'bugs-bunny', name: 'Bugs Bunny', category: 'cartoons', isOriginal: false },
+    { id: 'spongebob-square', name: 'Bob Esponja', category: 'cartoons', isOriginal: false },
+    { id: 'rick-sanchez', name: 'Rick Sanchez', category: 'cartoons', isOriginal: false },
+    { id: 'football-10', name: 'Futbolista 10', category: 'deportes', isOriginal: true },
+    { id: 'neymar-jr', name: 'Neymar Jr.', category: 'deportes', isOriginal: false },
+    { id: 'lionel-messi', name: 'Lionel Messi', category: 'deportes', isOriginal: false },
+    { id: 'cristiano-cr7', name: 'Cristiano Ronaldo', category: 'deportes', isOriginal: false },
+    { id: 'michael-jordan-23', name: 'Michael Jordan', category: 'deportes', isOriginal: false }
+  ],
+
   // Catálogo: ancho en el README y si necesita un rival. El orden es el del bloque completo.
   PIECES: {
     header: { width: 'full' },
@@ -16,6 +73,7 @@ const KitSnippet = {
     activity: { width: 'half' },
     fingerprint: { width: 'full' },
     year: { width: 'full' },
+    companion: { width: 'full' },
     kit: { width: 'full' },
     snake: { width: 'full', game: 'snake' },
     life: { width: 'full', game: 'life' },
@@ -34,7 +92,7 @@ const KitSnippet = {
   },
 
   /**
-   * options: { apiBase, dark, light, lang, adaptive, rival, snake: { morph, speed, pause }, themes: { pieza: tema } }
+   * options: { apiBase, dark, light, lang, adaptive, rival, snake: { morph, speed, pause }, companion: { skin, variant, state, say }, themes: { pieza: tema } }
    * adaptive=false usa solo el tema oscuro. themes da a una pieza su propio estilo en vez del general.
    */
   context(username, options = {}) {
@@ -47,6 +105,7 @@ const KitSnippet = {
       adaptive: options.adaptive !== false,
       lang: options.lang && options.lang !== 'en' ? options.lang : '',
       snake: options.snake || {},
+      companion: options.companion || {},
       themes: options.themes || {}
     };
   },
@@ -65,6 +124,13 @@ const KitSnippet = {
     if (game) {
       if (game !== 'snake') params.set('game', game);
       return `${ctx.api}/api/${ctx.user}.svg?${params}`;
+    }
+    if (kind === 'companion') {
+      const c = ctx.companion || {};
+      if (c.skin && c.skin !== 'capybara') params.set('skin', c.skin);
+      if (c.variant && c.variant !== 'card') params.set('variant', c.variant);
+      if (c.state && c.state !== 'auto') params.set('state', c.state);
+      if (c.say && String(c.say).trim()) params.set('say', String(c.say).trim().slice(0, 110));
     }
     if (this.PIECES[kind].pair) return `${ctx.api}/api/${kind}/${ctx.user}-vs-${ctx.rival}.svg?${params}`;
     return `${ctx.api}/api/${kind}/${ctx.user}.svg?${params}`;
@@ -97,6 +163,7 @@ const KitSnippet = {
       activity: `${u} weekly activity`,
       fingerprint: `${u} contribution fingerprint by Portafil`,
       year: `${u} year in review by Portafil`,
+      companion: `${u} companion by Portafil`,
       kit: `${u} GitHub profile by Portafil`,
       snake: `snake eating ${u} contributions by Portafil`,
       life: `game of life from ${u} contributions by Portafil`,
@@ -114,7 +181,8 @@ const KitSnippet = {
     if (!meta || (meta.pair && (!ctx.rival || ctx.rival.toLowerCase() === ctx.user.toLowerCase()))) return null;
     // Las de media anchura llevan su tamaño real: en escritorio caben dos por fila y en el móvil GitHub las
     // limita al ancho (max-width: 100%) y se apilan, legibles. Con 49% quedaban dos de ~170 px en el móvil.
-    const width = meta.width === 'half' ? '390' : '100%';
+    const isHalf = meta.width === 'half' || (kind === 'companion' && ctx.companion && ctx.companion.variant === 'badge');
+    const width = isHalf ? '390' : '100%';
     const themes = this.themesFor(kind, ctx);
     const img = `<img alt="${this.alt(kind, ctx)}" src="${this.url(kind, themes.light, ctx)}" width="${width}">`;
     let html = themes.adaptive
