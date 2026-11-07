@@ -21,8 +21,8 @@
       'hero.caption': (u, t) => `@${u} · ${t}`,
       'play.eyebrow': 'Estudio', 'play.title': 'Y además, se juega.', 'play.cta': 'Abrir el estudio',
       'play.lead': 'Tu gráfico de contribuciones es el tablero: la serpiente, Pac-Man, invasores, Tetris y el juego de la vida. Míralos jugar solos o toma el control, reta a otro perfil en un duelo en vivo y graba un clip para redes.',
-      'play.m1': 'Serpiente', 'play.m3': 'Invasores', 'play.m5': 'Juego de la vida', 'play.m6': 'Duelo en vivo',
-      'res.copy': 'Copiar README', 'piece.play': 'Jugar',
+      'play.m1': 'Serpiente', 'play.m3': 'Invasores', 'play.m5': 'Juego de la vida', 'play.m6': 'Duelo en vivo', 'play.m7': '53 compañeros MySkin',
+      'res.copy': 'Copiar README', 'piece.play': 'Jugar', 'companion.lab': 'Laboratorio (53)',
       'data.fixture': (u) => `<strong>Datos de prueba.</strong> El servidor local se inició con --fixture: lo que ves no son los datos de @${u}. Inícialo con npm run dev para ver los reales.`,
       'data.public': '<strong>Datos reales de GitHub, leídos sin token.</strong> Perfil, contribuciones, rachas, seguidores y estrellas son exactos; commits, PRs y lenguajes son aproximados. En la web publicada todo sale de la API oficial.',
       'hero.title': 'Tu perfil de GitHub, con un solo estilo.',
@@ -73,7 +73,8 @@
       'rival.needed': 'Escribe un rival arriba para ver esta pieza.',
       'snake.morph': 'Forma', 'snake.speed': 'Velocidad',
       'companion.skin': 'Personaje', 'companion.variant': 'Formato', 'companion.state': 'Estado',
-      'companion.say': 'Frase', 'companion.sayPh': 'Diálogo por defecto',
+      'companion.say': 'Frase', 'companion.sayPh': 'Diálogo por defecto', 'companion.search': 'Buscar entre las 53 skins…',
+      companionCats: { all: 'Todas (53)', originals: '★ Originales (15)', mascotas: 'Mascotas', heroes: 'Héroes', cine: 'Cine', anime: 'Anime', gaming: 'Gaming', cartoons: 'Cartoons', deportes: 'Deportes' },
       companionVariant: { card: 'Tarjeta', divider: 'Patrulla', badge: 'Insignia' },
       companionState: { auto: 'Automático', FOCUS: 'Modo foco', VICTORY_GITHUB: 'Commit merged', WALK: 'En patrulla', IDLE: 'En guardia', ALERT_SEMESTRE: 'Entrega próxima', SLEEP: 'Modo siesta' },
       'piece.theme': 'Estilo', 'piece.themeAll': 'Igual que el resto',
@@ -110,8 +111,8 @@
       'hero.caption': (u, t) => `@${u} · ${t}`,
       'play.eyebrow': 'Studio', 'play.title': 'And you can play it.', 'play.cta': 'Open the studio',
       'play.lead': 'Your contribution graph is the board: the snake, Pac-Man, invaders, Tetris and the Game of Life. Watch them play on their own or take control, challenge another profile to a live duel and record a clip for social media.',
-      'play.m1': 'Snake', 'play.m3': 'Invaders', 'play.m5': 'Game of Life', 'play.m6': 'Live duel',
-      'res.copy': 'Copy README', 'piece.play': 'Play',
+      'play.m1': 'Snake', 'play.m3': 'Invaders', 'play.m5': 'Game of Life', 'play.m6': 'Live duel', 'play.m7': '53 MySkin companions',
+      'res.copy': 'Copy README', 'piece.play': 'Play', 'companion.lab': 'Companion Lab (53)',
       'data.fixture': (u) => `<strong>Test data.</strong> The local server was started with --fixture: this is not @${u}'s data. Start it with npm run dev to see the real one.`,
       'data.public': '<strong>Real GitHub data, read without a token.</strong> Profile, contributions, streaks, followers and stars are exact; commits, PRs and languages are approximate. The published site uses the official API for everything.',
       'hero.title': 'One style for your whole GitHub profile.',
@@ -164,7 +165,8 @@
       'rival.needed': 'Type a rival above to see this piece.',
       'snake.morph': 'Shape', 'snake.speed': 'Speed',
       'companion.skin': 'Character', 'companion.variant': 'Format', 'companion.state': 'State',
-      'companion.say': 'Quote', 'companion.sayPh': 'Default dialogue',
+      'companion.say': 'Quote', 'companion.sayPh': 'Default dialogue', 'companion.search': 'Search 53 skins…',
+      companionCats: { all: 'All (53)', originals: '★ Originals (15)', mascotas: 'Pets', heroes: 'Heroes', cine: 'Cinema', anime: 'Anime', gaming: 'Gaming', cartoons: 'Cartoons', deportes: 'Sports' },
       companionVariant: { card: 'Card', divider: 'Patrol', badge: 'Badge' },
       companionState: { auto: 'Auto', FOCUS: 'Focus mode', VICTORY_GITHUB: 'Commit merged', WALK: 'On patrol', IDLE: 'On guard', ALERT_SEMESTRE: 'Deadline alert', SLEEP: 'Sleep mode' },
       morph: { matrix_viper: 'Viper', capsule: 'Capsule', retro: 'Retro' },
@@ -521,10 +523,20 @@
       const select = (id, label, values, current) => `<label class="inline">${label} <select data-opt="${id}">${Object.entries(values).map(([v, name]) => `<option value="${v}"${v === current ? ' selected' : ''}>${name}</option>`).join('')}</select></label>`;
       const skins = Object.fromEntries(KitSnippet.COMPANIONS.map(c => [c.id, c.isOriginal ? `${c.name} ★` : c.name]));
       const safeSay = state.companionSay.replace(/[&"]/g, c => ({ '&': '&amp;', '"': '&quot;' })[c]);
+      const cats = Object.entries(T('companionCats')).map(([catId, label]) =>
+        `<button type="button" class="comp-cat-btn${catId === 'all' ? ' active' : ''}" data-comp-cat="${catId}" aria-pressed="${catId === 'all'}">${label}</button>`
+      ).join('');
+      const chips = KitSnippet.COMPANIONS.map(c =>
+        `<button type="button" class="comp-skin-chip${c.id === state.companionSkin ? ' active' : ''}" data-pick-skin="${c.id}" data-skin-cat="${c.category}" data-skin-orig="${c.isOriginal ? '1' : '0'}" aria-pressed="${c.id === state.companionSkin}">${c.isOriginal ? '★ ' : ''}${c.name}</button>`
+      ).join('');
       opts += select('companionSkin', T('companion.skin'), skins, state.companionSkin)
         + select('companionVariant', T('companion.variant'), T('companionVariant'), state.companionVariant)
         + select('companionState', T('companion.state'), T('companionState'), state.companionState)
-        + `<label class="inline">${T('companion.say')} <input type="text" data-opt-say maxlength="110" placeholder="${T('companion.sayPh')}" value="${safeSay}"></label>`;
+        + `<label class="inline">${T('companion.say')} <input type="text" data-opt-say maxlength="110" placeholder="${T('companion.sayPh')}" value="${safeSay}"></label>`
+        + `<div class="companion-picker" data-companion-picker>`
+        + `<div class="companion-picker-bar"><div class="companion-cats" role="group">${cats}</div><input type="search" class="companion-search" data-comp-search placeholder="${T('companion.search')}" autocomplete="off"></div>`
+        + `<div class="companion-chips" role="group">${chips}</div>`
+        + `</div>`;
     }
     opts = `<div class="piece-opts">${opts}</div>`;
     card.innerHTML = `<div class="piece-head"><h4>${title}</h4><span>${desc}</span></div>
@@ -532,7 +544,7 @@
       <div class="preview"></div>
       <div class="piece-foot">
         <label class="check"><input type="checkbox" data-pick${state.picked.has(kind) ? ' checked' : ''}> ${T('piece.add')}</label>
-        <div class="piece-actions"><a target="_blank" rel="noopener noreferrer" data-open>${T('piece.open')}</a>${SOCIAL_PIECES.includes(kind) ? `<a class="btn small" href="#" data-png>${T('piece.png')}</a>` : ''}${meta.game ? `<a class="btn small" href="play.html" data-play>${T('piece.play')}</a>` : ''}<button type="button" class="btn small" data-copy>${T('piece.copy')}</button></div>
+        <div class="piece-actions"><a target="_blank" rel="noopener noreferrer" data-open>${T('piece.open')}</a>${SOCIAL_PIECES.includes(kind) ? `<a class="btn small" href="#" data-png>${T('piece.png')}</a>` : ''}${kind === 'companion' ? `<a class="btn small" href="play.html#companionSection" data-companion-lab>${T('companion.lab')}</a>` : ''}${meta.game ? `<a class="btn small" href="play.html" data-play>${T('piece.play')}</a>` : ''}<button type="button" class="btn small" data-copy>${T('piece.copy')}</button></div>
       </div>`;
     card.querySelector('[data-pick]').addEventListener('change', (e) => {
       if (e.target.checked) state.picked.add(kind); else state.picked.delete(kind);
@@ -553,8 +565,57 @@
     });
     card.querySelectorAll('[data-opt]').forEach(sel => sel.addEventListener('change', () => {
       state[sel.dataset.opt] = sel.value;
+      if (sel.dataset.opt === 'companionSkin') {
+        card.querySelectorAll('[data-pick-skin]').forEach(btn => {
+          const active = btn.dataset.pickSkin === state.companionSkin;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-pressed', String(active));
+        });
+      }
       refresh();
     }));
+    const picker = card.querySelector('[data-companion-picker]');
+    if (picker) {
+      let activeCat = 'all';
+      const searchEl = picker.querySelector('[data-comp-search]');
+      const filterChips = () => {
+        const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
+        picker.querySelectorAll('[data-pick-skin]').forEach(btn => {
+          const id = btn.dataset.pickSkin;
+          const cat = btn.dataset.skinCat;
+          const orig = btn.dataset.skinOrig === '1';
+          const name = btn.textContent.toLowerCase();
+          const catOk = activeCat === 'all' || (activeCat === 'originals' ? orig : cat === activeCat);
+          const qOk = !q || id.includes(q) || name.includes(q) || cat.includes(q);
+          btn.hidden = !(catOk && qOk);
+        });
+      };
+      picker.querySelectorAll('[data-comp-cat]').forEach(catBtn => {
+        catBtn.addEventListener('click', () => {
+          activeCat = catBtn.dataset.compCat;
+          picker.querySelectorAll('[data-comp-cat]').forEach(b => {
+            const on = b === catBtn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', String(on));
+          });
+          filterChips();
+        });
+      });
+      if (searchEl) searchEl.addEventListener('input', filterChips);
+      picker.querySelectorAll('[data-pick-skin]').forEach(skinBtn => {
+        skinBtn.addEventListener('click', () => {
+          state.companionSkin = skinBtn.dataset.pickSkin;
+          const skinSel = card.querySelector('[data-opt="companionSkin"]');
+          if (skinSel) skinSel.value = state.companionSkin;
+          picker.querySelectorAll('[data-pick-skin]').forEach(b => {
+            const on = b === skinBtn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', String(on));
+          });
+          refresh();
+        });
+      });
+    }
     const sayInput = card.querySelector('[data-opt-say]');
     if (sayInput) {
       let sayTimer = null;
@@ -600,6 +661,7 @@
     document.querySelectorAll('.piece').forEach(card => {
       const kind = card.dataset.kind;
       const play = card.querySelector('[data-play]');
+      const compLab = card.querySelector('[data-companion-lab]');
       const png = card.querySelector('[data-png]');
       if (png) {
         const theme = state.pieceThemes[kind] || state.theme;
@@ -607,6 +669,7 @@
         png.setAttribute('download', `portafil-${kind}-${state.user}.png`);
       }
       if (play) play.href = studioUrl({ game: KitSnippet.PIECES[kind].game });
+      if (compLab) compLab.href = `${studioUrl()}#companionSection`;
       const box = card.querySelector('.preview');
       const ready = !KitSnippet.PIECES[kind].pair || state.rival;
       card.querySelector('[data-copy]').disabled = !ready;
