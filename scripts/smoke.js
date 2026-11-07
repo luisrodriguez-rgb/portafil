@@ -33,12 +33,17 @@ function dumpDom(url, profileDir) {
 
 const CHECKS = [
   {
-    name: 'portada con un usuario: resultados, piezas y pestañas',
-    url: '/?u=octocat',
+    name: 'portada con un usuario: resultados, piezas, selector de 53 compañeros y pestañas',
+    url: '/?u=octocat&cs=cyber-ninja&cv=divider&cm=WALK&cy=Hola',
     expect: (dom) => [
       [/id="who">@octocat</.test(dom), 'el usuario cargado aparece en la barra'],
       [!/id="results"[^>]*\shidden/.test(dom), 'los resultados están visibles'],
-      [(dom.match(/class="piece[ "]/g) || []).length >= 13, 'están las 13 piezas'],
+      [(dom.match(/class="piece[ "]/g) || []).length >= 14, 'están las 14 piezas (incluida Tu compañero)'],
+      [/data-kind="companion"/.test(dom), 'está la tarjeta de Tu compañero en la galería'],
+      [(dom.match(/<select data-opt="companionSkin">([\s\S]*?)<\/select>/)?.[1].match(/<option /g) || []).length === 53, 'el selector de personaje tiene las 53 skins'],
+      [(dom.match(/data-pick-skin="/g) || []).length === 53 && (dom.match(/data-comp-cat="/g) || []).length === 9, 'tiene el selector visual rápido con las 53 skins y 9 filtros de categoría'],
+      [/data-opt="companionVariant"/.test(dom) && /data-opt="companionState"/.test(dom) && /data-opt-say/.test(dom), 'tiene selectores de formato, estado y frase'],
+      [/data-companion-lab/.test(dom), 'tiene enlace directo al Laboratorio de 53 skins'],
       [/class="group-tabs"/.test(dom), 'hay pestañas de grupos'],
       [/<pre[^>]*id="readmeCode"[^>]*>[^<]*octocat/.test(dom), 'el código del README lleva el usuario']
     ]
@@ -52,13 +57,16 @@ const CHECKS = [
     ]
   },
   {
-    name: 'estudio con un usuario',
+    name: 'estudio con un usuario y laboratorio de 53 compañeros',
     url: '/play.html?u=octocat',
     expect: (dom) => [
       [/id="activeDevUsername">@octocat</.test(dom), 'carga el perfil pedido'],
       [/id="mobileDpad"/.test(dom), 'tiene la cruceta táctil'],
       [/id="boardCompanionBar"/.test(dom), 'muestra el compañero en vivo en el tablero'],
-      [/id="companionSection"/.test(dom) && (dom.match(/data-skin-id="/g) || []).length === 53, 'renderiza el laboratorio con las 53 skins']
+      [(dom.match(/<select id="boardCompSelect"[^>]*>([\s\S]*?)<\/select>/)?.[1].match(/<option /g) || []).length === 53, 'el selector rápido del tablero tiene las 53 skins'],
+      [/id="companionSection"/.test(dom) && (dom.match(/data-skin-id="/g) || []).length === 53, 'renderiza el laboratorio con las 53 skins'],
+      [/id="compVariantSelect"/.test(dom) && /id="compStateSelect"/.test(dom) && /id="compThemeSelect"/.test(dom) && /id="compSayInput"/.test(dom), 'tiene todos los selectores del laboratorio'],
+      [/id="compCodeOutput"/.test(dom) && /api\/companion\/octocat\.svg/.test(dom), 'genera el código del compañero para el usuario activo']
     ]
   }
 ];
