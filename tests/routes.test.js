@@ -20,6 +20,8 @@ test('todas las rutas de vercel.json responden como en Vercel (con los parámetr
       const res = await fetch(`http://localhost:${port}${url}`);
       assert.strictEqual(res.status, 200, `${source} -> ${url} respondió ${res.status}: ${(await res.text()).slice(0, 120)}`);
     }
+    const companionRes = await fetch(`http://localhost:${port}/api/companion/octocat.svg?skin=capybara&variant=card&theme=ink&lang=es`);
+    assert.strictEqual(companionRes.status, 200);
   } finally {
     server.kill();
   }

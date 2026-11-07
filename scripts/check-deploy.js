@@ -60,7 +60,7 @@ async function main() {
   // Los juegos y un tema que no es el de por defecto
   routes.push([`/api/${user}.svg?game=pacman&theme=paper`, { type: 'image/svg+xml', csp: true }]);
   routes.push([`/api/stats/${user}.svg?theme=cyberpunk&lang=es`, { type: 'image/svg+xml', csp: true }]);
-  routes.push([`/api/year/${user}.svg`, { type: 'image/svg+xml', csp: true }], [`/api/fingerprint/${user}.svg`, { type: 'image/svg+xml', csp: true }]);
+  routes.push([`/api/year/${user}.svg`, { type: 'image/svg+xml', csp: true }], [`/api/fingerprint/${user}.svg`, { type: 'image/svg+xml', csp: true }], [`/api/companion/${user}.svg`, { type: 'image/svg+xml', csp: true }]);
 
   // Modo rápido: lo que ve casi todo el mundo (la web, la serpiente, una tarjeta y Tu año)
   const selected = quick

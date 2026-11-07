@@ -56,4 +56,10 @@ test('cada tema del contrato tiene sus design tokens completos', () => {
 test('las tarjetas validan con su propio contrato', () => {
   assert.deepStrictEqual({ ...SnakeCore.parseOptions('theme=light&lang=es', '', SnakeCore.CARD_OPTION_VALUES) }, { theme: 'light', lang: 'es' });
   assert.throws(() => SnakeCore.parseOptions('morph=retro', '', SnakeCore.CARD_OPTION_VALUES), /Opción desconocida 'morph'/);
+  assert.deepStrictEqual(
+    { ...SnakeCore.parseOptions('skin=capybara&variant=divider&state=WALK&theme=ink&lang=es', '', SnakeCore.COMPANION_OPTION_VALUES) },
+    { skin: 'capybara', variant: 'divider', state: 'WALK', theme: 'ink', lang: 'es' }
+  );
+  assert.strictEqual(SnakeCore.COMPANION_SKINS.length, 53);
+  assert.throws(() => SnakeCore.parseOptions('skin=inventado', '', SnakeCore.COMPANION_OPTION_VALUES), /Valor 'inventado' no válido para 'skin'/);
 });

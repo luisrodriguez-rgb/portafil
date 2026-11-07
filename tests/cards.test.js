@@ -318,3 +318,83 @@ test('tu año: periodo natural, comparación con el mismo periodo, estilo y sin 
   const empty = renderCard('year', { year: { year: 2026, partial: true, until: '2026-11-04', days: [], total: 0, prevTotal: 0, commits: 0, topRepo: null }, tokens: T.get('ink'), lang: 'es', login: 'nadie' });
   assert.ok(empty.includes('Año en calma') && empty.includes('—'));
 });
+
+test('tu compañero (MySkin × Portafil): 53 skins, 3 formatos, reacción automática a GitHub y escape de say', async () => {
+  clearCaches();
+  const { fetchImpl } = fakeGitHub();
+  const { resolveGitHubCompanionState, resolveCompanionState } = require('../server/cards/companion');
+  const bundle = require('../shared/companions-bundle.json');
+  const { KitSnippet, SnakeCore } = loadEngine();
+
+  // Las 53 skins del bundle coinciden con el catálogo del cliente y del contrato (15 originales + 38 tributos)
+  assert.strictEqual(Object.keys(bundle.skins).length, 53);
+  assert.strictEqual(KitSnippet.COMPANIONS.length, 53);
+  assert.strictEqual(KitSnippet.COMPANIONS.filter(c => c.isOriginal).length, 15);
+  assert.deepStrictEqual([...SnakeCore.COMPANION_SKINS], [...KitSnippet.COMPANIONS.map(c => c.id)]);
+
+  // Regla reactiva de actividad en GitHub
+  assert.strictEqual(resolveGitHubCompanionState({ urgentDeadlines: 1, commitsToday: 5 }), 'ALERT_SEMESTRE');
+  assert.strictEqual(resolveGitHubCompanionState({ commitsToday: 2, streakDays: 4 }), 'VICTORY_GITHUB');
+  assert.strictEqual(resolveGitHubCompanionState({ commitsToday: 0, daysSinceLastCommit: 7 }), 'SLEEP');
+  assert.strictEqual(resolveGitHubCompanionState({ commitsToday: 0, daysSinceLastCommit: 1, streakDays: 5 }), 'FOCUS');
+  assert.strictEqual(resolveGitHubCompanionState({ commitsToday: 0, daysSinceLastCommit: 1, streakDays: 1 }), 'WALK');
+  assert.strictEqual(resolveGitHubCompanionState({ commitsToday: 0, daysSinceLastCommit: 3, streakDays: 0 }), 'IDLE');
+
+  const day = (date, count) => ({ date, count, level: count ? 1 : 0 });
+  const sleepingDays = Array.from({ length: 8 }, (_, i) => day(`2026-10-2${i}`, 0));
+  assert.strictEqual(resolveCompanionState(sleepingDays, 'auto', 'card'), 'SLEEP');
+
+  // Los 3 formatos (card 797×160, divider 797×96, badge 390×96) y el escape de say contra inyección
+  const card = await renderCardSvg({
+    kind: 'companion', user: 'octocat',
+    query: 'skin=capybara&variant=card&state=FOCUS&theme=ink&lang=es&say=<script>alert(1)</script>Hola+equipo',
+    token: 't', fetchImpl
+  });
+  assert.strictEqual(card.status, 200);
+  assert.match(card.body, /viewBox="0 0 797 160"/);
+  assert.match(card.body, /Capibara/);
+  assert.match(card.body, /MODO FOCO/);
+  assert.match(card.body, /image-rendering:pixelated/);
+  assert.ok(!card.body.includes('<script>'));
+  assert.match(card.body, /&lt;script&gt;alert\(1\)&lt;\/script&gt;Hola equipo/);
+
+  const divider = await renderCardSvg({
+    kind: 'companion', user: 'octocat',
+    query: 'skin=ghost-dev&variant=divider&theme=dark&lang=es',
+    token: 't', fetchImpl
+  });
+  assert.strictEqual(divider.status, 200);
+  assert.match(divider.body, /viewBox="0 0 797 96"/);
+  assert.match(divider.body, /@keyframes zcp/);
+
+  const badge = await renderCardSvg({
+    kind: 'companion', user: 'octocat',
+    query: 'skin=cyber-ninja&variant=badge&state=SLEEP&theme=ruby&lang=en',
+    token: 't', fetchImpl
+  });
+  assert.strictEqual(badge.status, 200);
+  assert.match(badge.body, /viewBox="0 0 390 96"/);
+  assert.match(badge.body, /SLEEP MODE/);
+
+  // Opciones no válidas responden 400 con mensaje legible
+  const badSkin = await renderCardSvg({ kind: 'companion', user: 'octocat', query: 'skin=no-existe', token: 't', fetchImpl });
+  assert.strictEqual(badSkin.status, 400);
+
+  // El generador de fragmentos README incluye skin, variant, state y say en ambos modos (claro/oscuro)
+  const snippet = KitSnippet.piece('companion', 'octocat', {
+    dark: 'ink', light: 'paper', lang: 'es',
+    companion: { skin: 'ghost-dev', variant: 'divider', state: 'WALK', say: 'Listo para producción' }
+  });
+  assert.match(snippet, /\/api\/companion\/octocat\.svg\?theme=ink&lang=es&skin=ghost-dev&variant=divider&state=WALK&say=Listo\+para\+producci%C3%B3n/);
+  assert.match(snippet, /\/api\/companion\/octocat\.svg\?theme=paper&lang=es&skin=ghost-dev&variant=divider&state=WALK&say=Listo\+para\+producci%C3%B3n/);
+
+  // Módulo PortafilCompanion (shared/companion-widget.js) y CLI (scripts/companion-cli.js)
+  const PortafilCompanion = require('../shared/companion-widget');
+  const { generateCompanionSvg } = require('../scripts/companion-cli');
+  assert.strictEqual(PortafilCompanion.SKINS.length, 53);
+  assert.strictEqual(PortafilCompanion.filterSkins({ category: 'originals' }).length, 15);
+  assert.ok(PortafilCompanion.filterSkins({ query: 'capibara' }).some(s => s.id === 'capybara'));
+  assert.match(PortafilCompanion.generateEmbedCode({ user: 'octocat', skin: 'capybara', theme: 'cyberpunk' }), /<portafil-companion user="octocat" skin="capybara" theme="cyberpunk"/);
+  assert.match(PortafilCompanion.generateActionYaml({ user: 'octocat', skin: 'spartan', variant: 'badge' }), /dist\/portafil-companion\.svg\?kind=companion&skin=spartan&variant=badge/);
+  assert.match(generateCompanionSvg({ user: 'octocat', skin: 'spartan', variant: 'badge', theme: 'ruby' }), /viewBox="0 0 390 96"/);
+});

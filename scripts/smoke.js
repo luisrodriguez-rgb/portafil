@@ -56,7 +56,9 @@ const CHECKS = [
     url: '/play.html?u=octocat',
     expect: (dom) => [
       [/id="activeDevUsername">@octocat</.test(dom), 'carga el perfil pedido'],
-      [/id="mobileDpad"/.test(dom), 'tiene la cruceta táctil']
+      [/id="mobileDpad"/.test(dom), 'tiene la cruceta táctil'],
+      [/id="boardCompanionBar"/.test(dom), 'muestra el compañero en vivo en el tablero'],
+      [/id="companionSection"/.test(dom) && (dom.match(/data-skin-id="/g) || []).length === 53, 'renderiza el laboratorio con las 53 skins']
     ]
   }
 ];

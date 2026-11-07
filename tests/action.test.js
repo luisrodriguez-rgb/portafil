@@ -184,3 +184,39 @@ test('lang es una opción válida de la Action y el generador de la web la inclu
   const yaml = new engine.ExporterEngine().generateWorkflowYaml('octocat', { adaptive: false, darkTheme: 'dark', lang: 'es' });
   assert.match(yaml, /dist\/portafil-snake\.svg\?theme=dark&lang=es/);
 });
+
+test('la Action también genera salidas de compañeros (kind=companion) con las 53 skins', async () => {
+  const { run } = require('../action/lib');
+  assert.deepStrictEqual(
+    parseOutputs('dist/comp.svg?kind=companion&skin=capybara&variant=divider&theme=dark&lang=es&say=Hola+mundo'),
+    [{ file: 'dist/comp.svg', options: { kind: 'companion', skin: 'capybara', variant: 'divider', theme: 'dark', lang: 'es', say: 'Hola mundo' } }]
+  );
+
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'companion-action-'));
+  const realFetch = global.fetch;
+  global.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      contributions: fakeWeeks().flatMap(w => w.contributionDays).map(d => ({
+        date: d.date, count: d.contributionCount, level: LEVEL_NAMES.indexOf(d.contributionLevel)
+      }))
+    })
+  });
+  try {
+    await run({
+      username: 'octocat',
+      outputs: 'out/capybara.svg?kind=companion&skin=capybara&variant=card&theme=ink&lang=es\nout/ninja.svg?skin=cyber-ninja&variant=badge&theme=cyberpunk',
+      token: '',
+      cwd: dir,
+      log: () => {}
+    });
+  } finally {
+    global.fetch = realFetch;
+  }
+  const cardSvg = fs.readFileSync(path.join(dir, 'out/capybara.svg'), 'utf8');
+  const badgeSvg = fs.readFileSync(path.join(dir, 'out/ninja.svg'), 'utf8');
+  assert.match(cardSvg, /Capibara/);
+  assert.match(cardSvg, /viewBox="0 0 797 160"/);
+  assert.match(badgeSvg, /Cyber Ninja/);
+  assert.match(badgeSvg, /viewBox="0 0 390 96"/);
+});
