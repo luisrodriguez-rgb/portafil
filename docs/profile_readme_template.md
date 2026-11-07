@@ -81,3 +81,15 @@ El duelo enlaza a su página, donde cualquiera puede verlo en grande y retar al 
 ```html
 <img src="https://perfila-lr.vercel.app/api/kit/tu-usuario.svg?theme=ink&lang=es" width="100%">
 ```
+
+## Tu compañero (MySkin × Portafil)
+
+Tarjeta completa reactiva a tu actividad (`variant=card`), separador en patrulla (`variant=divider`) o insignia de media anchura (`variant=badge`):
+
+```html
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=ink&lang=es&skin=capybara">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=paper&lang=es&skin=capybara">
+  <img alt="@tu-usuario companion by Portafil" src="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=paper&lang=es&skin=capybara" width="100%">
+</picture>
+```

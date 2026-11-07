@@ -62,6 +62,25 @@ Son los datos reales de [@luisrodriguez-rgb](https://github.com/luisrodriguez-rg
   <img alt="Pac-Man comiéndose el gráfico de contribuciones de @luisrodriguez-rgb en el tema Cian" src="https://perfila-lr.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=neon_cyan&lang=es" width="100%">
 </p>
 
+**Tu compañero (MySkin × Portafil).** Elige entre **53 compañeros pixel-art** (15 creaciones originales de MySkin como `capybara`, `ghost-dev`, `cyber-ninja`, `fantasy-wizard` o `spartan`, y 38 tributos como `spiderman`, `son-goku`, `batman-detective`, `pikachu-electric` o `lionel-messi`) en **3 formatos** (`card`, `divider` y `badge`). Sin configurar nada (`state=auto`), tu compañero celebra cuando haces commit hoy (`COMMIT MERGED`), entra en foco cuando mantienes racha (`MODO FOCO`), patrulla tu repositorio (`EN PATRULLA`) o se echa la siesta si llevas una semana sin contribuir (`MODO SIESTA`).
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/companions/capybara-card-ink.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/companions/capybara-card-paper.svg">
+    <img alt="Capibara acompañando a @luisrodriguez-rgb en Portafil" src="assets/companions/capybara-card-paper.svg" width="100%">
+  </picture>
+</p>
+
+<p align="center">
+  <img alt="Dev fantasma patrullando el repositorio en tema Fósforo" src="assets/companions/ghost-dev-divider-dark.svg" width="100%">
+</p>
+
+<p align="center">
+  <img alt="Insignia de Cyber Ninja en tema Cyberpunk" src="assets/companions/cyber-ninja-badge-cyberpunk.svg" width="390">
+  <img alt="Insignia de Leónidas en tema Rubí" src="assets/companions/spartan-badge-ruby.svg" width="390">
+</p>
+
 ## Estilos
 
 Nueve temas diseñados como un sistema: todas las piezas cambian juntas. Los neutros y los verdes **cambian con el modo claro u oscuro de GitHub**; los de color **se ven siempre igual**, para que tu perfil se reconozca de lejos.
@@ -93,6 +112,7 @@ En la web, **cada pieza puede llevar su propio estilo**: la cabecera en Tinta, l
 | Actividad | `/api/activity/<usuario>.svg` | Contribuciones por semana, 53 semanas |
 | Tu huella | `/api/fingerprint/<usuario>.svg` | Tu año en un círculo, con día favorito, mes más activo, racha, constancia y ritmo semanal |
 | Tu año | `/api/year/<usuario>.svg` | Resumen del año natural: comparación, tu estilo, momentos, proyecto del año y el año mes a mes |
+| Tu compañero | `/api/companion/<usuario>.svg` | Mascota pixel-art de MySkin (53 personajes, 3 formatos) que reacciona a tus commits, racha o días en calma |
 | Todo en una | `/api/kit/<usuario>.svg` | Cabecera, estadísticas, racha, lenguajes y actividad en una sola imagen |
 
 **Juegos**
@@ -114,6 +134,78 @@ En la web, **cada pieza puede llevar su propio estilo**: la cabecera en Tinta, l
 
 Todas aceptan `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`, `sand`) y `lang` (`en`, `es`). La serpiente además acepta `morph`, `speed`, `pause` y `mood`. Se actualizan solas a lo largo del día, con unas 2 horas de retraso como mucho. El contrato completo está en [docs/contract.md](docs/contract.md) y una plantilla lista para copiar en [docs/profile_readme_template.md](docs/profile_readme_template.md).
 
+### Cómo usar «Tu compañero» en tu perfil o en cualquier repositorio
+
+Puedes elegir tu personaje, formato, estado y frase desde la galería web de Portafil o pegando directamente estos bloques en cualquier `README.md`, wiki o descripción de PR:
+
+#### 1. Tarjeta de perfil adaptable a modo claro y oscuro (`variant=card`)
+Con `state=auto` (por defecto), el personaje cambia de animación y diálogo según tus commits del día y tu racha actual:
+
+```html
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=ink&lang=es&skin=capybara">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=paper&lang=es&skin=capybara">
+  <img alt="@tu-usuario companion by Portafil" src="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=paper&lang=es&skin=capybara" width="100%">
+</picture>
+```
+
+#### 2. Separador animado entre secciones de un repositorio (`variant=divider`)
+El personaje camina de lado a lado del `README.md` y gira automáticamente al llegar al borde. Puedes añadirle una frase propia con `say=`:
+
+```html
+<p align="center">
+  <img alt="Dev fantasma patrullando el repositorio" src="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=dark&lang=es&skin=ghost-dev&variant=divider&say=Vigilando+los+commits+y+desplegando+sin+miedo" width="100%">
+</p>
+```
+
+#### 3. Insignia de media anchura (`variant=badge`, `390×96`)
+Mide `390 px`, igual que `stats`, `streak`, `langs` o `activity`, por lo que puedes colocar dos insignias lado a lado o emparejar tu compañero con tu tarjeta de racha:
+
+```html
+<p align="center">
+  <img alt="Cyber Ninja en modo foco" src="https://perfila-lr.vercel.app/api/companion/tu-usuario.svg?theme=cyberpunk&lang=es&skin=cyber-ninja&variant=badge&state=FOCUS" width="390">
+  <img alt="Racha de @tu-usuario" src="https://perfila-lr.vercel.app/api/streak/tu-usuario.svg?theme=cyberpunk&lang=es" width="390">
+</p>
+```
+
+#### 4. Módulo / Web Component interactivo (`<portafil-companion>`) para tu portafolio o web
+Además del SVG para GitHub, puedes incrustar cualquiera de las 53 skins como un **Web Component interactivo** con Shadow DOM, reloj Pomodoro de 25 minutos y cambio de animación al hacer clic en cualquier web (HTML, Astro, Next.js, React o Vue):
+
+```html
+<script src="https://perfila-lr.vercel.app/shared/companion-widget.js" defer></script>
+<portafil-companion
+  user="tu-usuario"
+  skin="capybara"
+  theme="ink"
+  state="FOCUS"
+  mode="dock"
+  position="bottom-right"
+  lang="es">
+</portafil-companion>
+```
+
+También incluye una API programática en JavaScript (`window.PortafilCompanion`) y una CLI local para listar o generar las 53 skins sin servidor:
+
+```bash
+# Listar las 53 skins (o filtrar las 15 creaciones 100 % originales de MySkin)
+npm run companion -- --list
+npm run companion -- --list --originals
+
+# Generar un SVG animado autónomo desde la terminal
+npm run companion -- --user tu-usuario --skin capybara --variant card --theme ink --out dist/capybara.svg
+```
+
+#### Parámetros disponibles en `/api/companion/<usuario>.svg`
+
+| Parámetro | Valores | Por defecto | Qué hace |
+| --- | --- | --- | --- |
+| `skin` | 53 disponibles: originales (`capybara`, `ghost-dev`, `cyber-ninja`, `fantasy-wizard`, `spartan`, `astro-lost`, `dev-avatar`, `game-slime`, `panda-zen`, `shiba-inu`, `cat-mystic`, `arctic-penguin`, `labrador-retriever`, `little-girl`, `football-10`) y tributos (`spiderman`, `iron-man`, `batman-detective`, `son-goku`, `naruto-uzumaki`, `monkey-d-luffy`, `satoru-gojo`, `pikachu-electric`, `super-mario`, `link-hero`, `sonic-hedgehog`, `master-chief-117`, `kratos-war`, `lionel-messi`, `cristiano-cr7`...) | `capybara` | Elige el personaje pixel-art |
+| `variant` | `card` (`797×160`), `divider` (`797×96`), `badge` (`390×96`) | `card` | Tarjeta completa, separador en patrulla o insignia de media anchura |
+| `state` | `auto`, `FOCUS`, `VICTORY_GITHUB`, `WALK`, `IDLE`, `ALERT_SEMESTRE`, `SLEEP` | `auto` | En `auto` reacciona a tus commits de hoy, tu racha activa o tus días sin actividad |
+| `say` | Texto libre (hasta 110 caracteres) | Diálogo del personaje | Sustituye la frase del globo por la tuya |
+| `theme` | `ink`, `paper`, `dark`, `light`, `sand`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby` | `ink` | Tema del sistema visual de Portafil |
+| `lang` | `en`, `es` | `en` | Idioma de las etiquetas y estados |
+
 ## Para compartir fuera de GitHub
 
 X, LinkedIn o Instagram no muestran SVG, así que las piezas más compartibles tienen versión PNG de 1200×630, con la marca y el enlace para hacer la tuya:
@@ -129,7 +221,7 @@ Al compartir el enlace `/u/<usuario>`, la vista previa en redes es tu tarjeta; c
 
 ## Estudio
 
-En [`/play.html`](https://perfila-lr.vercel.app/play.html) está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú) y Commit Art.
+En [`/play.html`](https://perfila-lr.vercel.app/play.html) está el lado jugable: la serpiente en vivo, modo manual, duelo contra la IA, duelos entre perfiles en tiempo real, los cuatro modos de juego (los juega la IA o tú), Commit Art y el **Laboratorio de Compañeros (53 skins)**, donde tu compañero pixel-art te acompaña en vivo en el tablero reaccionando mientras devoras commits y puedes probar el widget flotante o exportar su código.
 
 Y los **clips para redes**, en vertical (Reels, TikTok, Shorts), cuadrado u horizontal, generados en tu navegador:
 
@@ -141,7 +233,7 @@ Y los **clips para redes**, en vertical (Reels, TikTok, Shorts), cuadrado u hori
 
 ## GitHub Action
 
-Si prefieres no depender del servidor, la Action genera los SVG en tu propio repositorio, cada día:
+Si prefieres no depender del servidor, la Action genera los SVG en tu propio repositorio, cada día (tanto la serpiente y los modos de juego como cualquiera de los 53 compañeros con `kind=companion`):
 
 ```yaml
 - uses: luisrodriguez-rgb/portafil@v1
@@ -151,6 +243,7 @@ Si prefieres no depender del servidor, la Action genera los SVG en tu propio rep
       dist/portafil-snake.svg?theme=paper
       dist/portafil-snake-dark.svg?theme=ink
       dist/portafil-pacman.svg?game=pacman&theme=ruby
+      dist/portafil-companion.svg?kind=companion&skin=capybara&variant=card&theme=ink&lang=es
 ```
 
 ## Opiniones

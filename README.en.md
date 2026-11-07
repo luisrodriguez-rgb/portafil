@@ -62,6 +62,25 @@ That is [@luisrodriguez-rgb](https://github.com/luisrodriguez-rgb) real data ser
   <img alt="Pac-Man eating @luisrodriguez-rgb contribution graph in the Cyan theme" src="https://perfila-lr.vercel.app/api/luisrodriguez-rgb.svg?game=pacman&theme=neon_cyan" width="100%">
 </p>
 
+**Your companion (MySkin × Portafil).** Pick from **53 pixel-art companions** (15 original MySkin creations like `capybara`, `ghost-dev`, `cyber-ninja`, `fantasy-wizard` or `spartan`, plus 38 tributes like `spiderman`, `son-goku`, `batman-detective`, `pikachu-electric` or `lionel-messi`) in **3 formats** (`card`, `divider` and `badge`). With zero setup (`state=auto`), your companion celebrates when you push commits today (`COMMIT MERGED`), locks in when you keep a streak (`FOCUS MODE`), patrols your repository (`ON PATROL`) or naps after a week without contributions (`SLEEP MODE`).
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/companions/capybara-card-ink.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/companions/capybara-card-paper.svg">
+    <img alt="Capybara accompanying @luisrodriguez-rgb on Portafil" src="assets/companions/capybara-card-paper.svg" width="100%">
+  </picture>
+</p>
+
+<p align="center">
+  <img alt="Ghost Dev patrolling the repository in Phosphor theme" src="assets/companions/ghost-dev-divider-dark.svg" width="100%">
+</p>
+
+<p align="center">
+  <img alt="Cyber Ninja badge in Cyberpunk theme" src="assets/companions/cyber-ninja-badge-cyberpunk.svg" width="390">
+  <img alt="Spartan badge in Ruby theme" src="assets/companions/spartan-badge-ruby.svg" width="390">
+</p>
+
 ## Styles
 
 Nine themes designed as one system: every piece changes together. The neutral and green ones **follow GitHub light or dark mode**; the color ones **always look the same**, so your profile is recognizable from afar.
@@ -93,6 +112,7 @@ On the web, **every piece can have its own style**: the header in Ink, the strea
 | Activity | `/api/activity/<user>.svg` | Contributions per week, 53 weeks |
 | Your fingerprint | `/api/fingerprint/<user>.svg` | Your year as a circle, with favorite day, best month, streak, consistency and weekly rhythm |
 | Your year | `/api/year/<user>.svg` | Calendar-year review: comparison, your style, best moments, project of the year and the year month by month |
+| Your companion | `/api/companion/<user>.svg` | MySkin pixel-art companion (53 characters, 3 formats) that reacts to your commits, streak or quiet days |
 | All in one | `/api/kit/<user>.svg` | Header, stats, streak, languages and activity in a single image |
 
 **Games**
@@ -113,6 +133,63 @@ On the web, **every piece can have its own style**: the header in Ink, the strea
 | Duel | `/api/duel/<a>-vs-<b>.svg` | The same AI on both graphs, with a scoreboard; the `/duel/<a>-vs-<b>` page is for sharing and challenging |
 
 All of them take `theme` (`ink`, `paper`, `dark`, `light`, `cyberpunk`, `neon_cyan`, `amber_terminal`, `ruby`, `sand`) and `lang` (`en`, `es`). The snake also takes `morph`, `speed`, `pause` and `mood`. They refresh on their own during the day, at most about 2 hours behind. The full contract is in [docs/contract.md](docs/contract.md) and a ready-to-copy template in [docs/profile_readme_template.md](docs/profile_readme_template.md).
+
+### How to use "Your companion" on your profile or any repo
+
+You can pick your character, format, state and quote from the Portafil web gallery or paste these snippets directly into any `README.md`, wiki or PR description:
+
+#### 1. Adaptive profile card for light and dark mode (`variant=card`)
+With `state=auto` (default), your companion automatically switches animation and dialogue based on today's commits and your active streak:
+
+```html
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://perfila-lr.vercel.app/api/companion/your-user.svg?theme=ink&skin=capybara">
+  <source media="(prefers-color-scheme: light)" srcset="https://perfila-lr.vercel.app/api/companion/your-user.svg?theme=paper&skin=capybara">
+  <img alt="@your-user companion by Portafil" src="https://perfila-lr.vercel.app/api/companion/your-user.svg?theme=paper&skin=capybara" width="100%">
+</picture>
+```
+
+#### 2. Animated patrol divider between README sections (`variant=divider`)
+Your companion walks across the `README.md` and flips automatically at each end. Pass `say=` to set a custom message:
+
+```html
+<p align="center">
+  <img alt="Ghost Dev patrolling the repository" src="https://perfila-lr.vercel.app/api/companion/your-user.svg?theme=dark&skin=ghost-dev&variant=divider&say=Guarding+commits+and+shipping+clean+code" width="100%">
+</p>
+```
+
+#### 3. Half-width badge (`variant=badge`, `390×96`)
+At `390 px` wide—matching `stats`, `streak`, `langs` and `activity`—you can place two badges side by side or pair your companion with your streak card:
+
+```html
+<p align="center">
+  <img alt="Cyber Ninja in focus mode" src="https://perfila-lr.vercel.app/api/companion/your-user.svg?theme=cyberpunk&skin=cyber-ninja&variant=badge&state=FOCUS" width="390">
+  <img alt="@your-user streak" src="https://perfila-lr.vercel.app/api/streak/your-user.svg?theme=cyberpunk" width="390">
+</p>
+```
+
+#### 4. Interactive Web Component (`<portafil-companion>`) & CLI module
+Beyond GitHub READMEs, you can embed any of the 53 companions as a zero-dependency **Web Component** with Shadow DOM, a built-in 25-minute Pomodoro timer, and click-to-cycle animations on your personal portfolio, blog or web app:
+
+```html
+<script src="https://perfila-lr.vercel.app/shared/companion-widget.js" defer></script>
+<portafil-companion
+  user="your-user"
+  skin="capybara"
+  theme="ink"
+  state="FOCUS"
+  mode="dock"
+  position="bottom-right"
+  lang="en">
+</portafil-companion>
+```
+
+Or generate standalone SVGs and browse the 53 skins directly from your terminal or GitHub Action (`kind=companion`):
+
+```bash
+npm run companion -- --list
+npm run companion -- --user your-user --skin capybara --variant card --theme ink --out dist/capybara.svg
+```
 
 ## Sharing outside GitHub
 

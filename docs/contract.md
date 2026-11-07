@@ -31,7 +31,8 @@ Las URL de este documento ya están pegadas en perfiles reales. Regla: **se pued
 | `activity` | 390×160 | Contribuciones por semana, 53 semanas |
 | `fingerprint` | 797×300 | Tu año en un círculo: día favorito, mes más activo, racha, constancia y ritmo semanal |
 | `year` | 797×340 | Año natural frente al mismo periodo del anterior (en enero, el año anterior completo), estilo, momentos y proyecto del año |
-| `kit` | 797×474 | Las cinco anteriores en una sola imagen |
+| `companion` | 797×160 (`card`), 797×96 (`divider`), 390×96 (`badge`) | Compañero pixel-art de MySkin (53 skins) que reacciona a tu actividad en GitHub (`skin`, `variant`, `state`, `say`) |
+| `kit` | 797×474 | Las cinco primeras en una sola imagen |
 
 | Opción | Valores | Por defecto |
 | --- | --- | --- |
